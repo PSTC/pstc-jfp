@@ -1,0 +1,24 @@
+\begin{figure}
+\begin{mathpar}
+  \inferrule*[right=\defrule{wf-nil}]{\Sigma ~ \text{is well-formed}}
+    {\WF(\Sigma, \square, \square)}
+  \\
+  \inferrule*[right=\defrule{wf-local-assum}]
+    {\sgg \vdash t: \varw \and x \notin \Gamma}
+    {\WF{\Sigma, \Gamma_G, \Gamma (x:t)}}
+
+  \inferrule*[right=\defrule{wf-global-assum}]
+    {\Sigma, \Gamma_G, \square \vdash t: \varw \and x \notin \Gamma_G}
+    {\WF{\Sigma, \Gamma_G (\Assum{x}{|t|^\infty\!\!}), \square}}
+  \\
+  \inferrule*[right=\defrule{wf-local-def}]
+    {\sgg \vdash e: t \and x \notin \Gamma}
+    {\WF{\Sigma, \Gamma_G, \Gamma (x:t \coloneqq e)}}
+
+  \inferrule*[right=\defrule{wf-global-def}]
+    {\Sigma, \Gamma_G, \square \vdash e: t \and x \notin \Gamma_G}
+    {\WF{\Sigma, \Gamma_G (\Def{x}{t}{e}), \square}}
+\end{mathpar}
+\caption{Well-formedness of environments}
+\label{fig:wf}
+\end{figure}

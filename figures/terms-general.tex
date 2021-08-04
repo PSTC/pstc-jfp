@@ -1,0 +1,34 @@
+\begin{figure}
+\centering
+\begin{align*}
+S &\Coloneqq \mathcal{V} \mid \mathcal{V}^* \mid \succ{S} \mid \infty &\text{size expressions} \\
+U &\Coloneqq \text{Prop} \mid \text{Set} \mid \text{Type}_n &\text{set of universes}
+\end{align*}
+\begin{align*}
+T[\alpha] &\Coloneqq \\
+    &\mid U
+        &\textit{universes}\\
+    &\mid \mathcal{X} \mid \mathcal{X}^{\seq{\alpha}}
+        &\textit{variables} \\
+    &\mid \abs{\mathcal{X}}{T^\circ\!}{T[\alpha]}
+        &\textit{abstractions} \\
+    &\mid T[\alpha] T[\alpha]
+        &\textit{applications} \\
+    &\mid \prod{\mathcal{X}}{T[\alpha]}{T[\alpha]}
+        &\textit{function types} \\
+    &\mid \text{let} ~ \mathcal{X} : T^\circ \coloneqq T[\alpha]  ~ \text{in} ~ T[\alpha]
+        &\textit{let expressions} \\
+    &\mid \mathcal{I}^\alpha
+        &\textit{(co)inductive types} \\
+    &\mid \mathcal{C}
+        &\textit{(co)ind. constructors} \\
+    &\mid \text{case}_{T^\circ}  ~ T[\alpha]  ~ \text{of}  ~ \seq{\mathcal{C} \Rightarrow T[\alpha]}
+        &\textit{case expressions} \\
+    &\mid \text{fix}_{\seq{n}, m}  ~ \seq{\mathcal{X}: T^* \coloneqq T[\alpha]}
+        &\textit{fixpoints} \\
+    &\mid \text{cofix}_{m}  ~ \seq{\mathcal{X}: T^* \coloneqq T[\alpha]}
+        &\textit{cofixpoints}
+\end{align*}
+\caption{Syntax of \lang terms with annotations $\alpha$}
+\label{fig:terms-general}
+\end{figure}

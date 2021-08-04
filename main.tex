@@ -1,0 +1,92 @@
+\documentclass[online]{jfp}
+
+% jfp.cls uses newtxmath which defines \Bbbk, but amssymb also defines \Bbbk
+\let\Bbbk\relax
+
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\usepackage{minted}
+\usepackage{mathpartir}
+\usepackage{xspace}
+\usepackage[shortcuts]{extdash}
+\usepackage{enumitem}
+\usepackage[title]{appendix}
+\usepackage{proof}
+\usepackage{ifthen}
+\usepackage{multicol}
+\usepackage{stackengine}
+\usepackage[skip=5pt, belowskip=-6pt]{caption}
+\usepackage{pstc}
+
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection}
+\def\subsubsectionautorefname{Subsubsection}
+\def\figureautorefname{Figure}
+\def\tableautorefname{Table}
+\def\Appendixautorefname{Appendix}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\newmintinline[coqinline]{coq}{escapeinside=<>,mathescape=true}
+
+\begin{document}
+
+\journaltitle{JFP}
+\cpr{Cambridge University Press}
+\doival{10.1017/42069}
+\totalpg{\pageref{lastpage}}
+\jnlDoiYr{2021}
+
+% To reconsider
+\title{Practical Sized Typing for Coq}
+
+\begin{authgrp}
+  \author{Jonathan Chan}
+  \affiliation{
+    University of British Columbia\\
+    \emaillink{jcxz@cs.ubc.ca}
+  }
+  \author{Yufeng Li}
+  \affiliation{
+    University of Waterloo\\
+    \emaillink{yufeng.li@uwaterloo.ca}
+  }
+  \author{William J. Bowman}
+  \affiliation{
+    University of British Columbia\\
+    \emaillink{wilbowma@cs.ubc.ca}
+  }
+\end{authgrp}
+
+\input{sections/abstract.tex}
+
+\maketitle
+
+\input{sections/introduction.tex}
+\input{sections/overview.tex}
+\input{sections/lang.tex}
+\input{sections/inference.tex}
+\input{sections/examples.tex}
+\input{sections/metatheory.tex}
+\input{sections/related-work.tex}
+\input{sections/conclusion.tex}
+
+\paragraph*{Conflicts of Interest.} None.
+
+\phantom{\cite{cic-hat-minus}}
+\bibliographystyle{JFPlike}
+\bibliography{main.bib}
+
+\appendix
+
+\input{sections/reduction.tex}
+\input{sections/wellformedness.tex}
+\input{sections/supplementary.tex}
+
+\label{lastpage}
+
+\end{document}

@@ -1,0 +1,13 @@
+\begin{figure}
+\begin{mathpar}
+  \inferrule*[right=\defnamerule{delta-local}{$\delta$-local}]
+    {(x : t \coloneqq e) \in \Gamma \and \SV(e, t) = \vec{\upsilon_i}}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\delta e \overline{[\upsilon_i \coloneqq s_i]}}
+  \and
+  \inferrule*[right=\defnamerule{Delta-global}{$\Delta$-global}]
+    {(\Def{x}{t}{e}) \in \Gamma_G \and \SV(e, t) = \vec{\upsilon_i}}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\Delta e \overline{[\upsilon_i \coloneqq s_i]}}
+\end{mathpar}
+\caption{Reduction rules for local and global definitions}
+\label{fig:reduction}
+\end{figure}

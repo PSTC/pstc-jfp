@@ -1,0 +1,109 @@
+\section{Introduction}\label{sec:intro}
+
+Proof assistants based on dependent type theory rely on the termination of recursive functions and the productivity of corecursive functions to ensure two important properties: logical consistency, so that it is not possible to prove false propositions; and decidability of type checking, so that checking that a program proves a given proposition is decidable.
+
+In proof assistants such a Coq, termination and productivity are enforced by a \emph{guard predicate} on fixpoints and cofixpoints respectively.
+For fixpoints, recursive calls must be \emph{guarded by destructors}; that is, they must be performed on structurally smaller arguments.
+For cofixpoints, corecursive calls must be \emph{guarded by constructors}; that is, they must be the structural arguments of a constructor.
+The following examples illustrate these structural conditions.
+
+\begin{samepage}
+\begin{minted}{coq}
+Fixpoint plus n m : nat :=
+  match n with
+  | O => m
+  | S p => S (plus p m)
+  end.
+Variable A : Type.
+CoFixpoint const a : Stream A := Cons a (const a).
+\end{minted}
+\end{samepage}
+
+In the recursive call to \coqinline{plus}, the first argument \coqinline{p} is structurally smaller than \coqinline{S p}, which is the form of the original first argument \coqinline{n}. Similarly, in \coqinline{const}, the constructor \coqinline{Cons} is applied to the corecursive call.
+
+The actual implementation of the guard predicate extends beyond the \guardedbydestructors and \guardedbyconstructors conditions to accept a larger set of terminating and productive functions.
+In particular, function calls will be unfolded (\ie inlined) in the bodies of \cofixpoints as needed before checking the guard predicate.
+This has a few disadvantages: firstly, the bodies of these functions are required, which hinders modular design; and secondly, the \cofixpoint bodies may become very large after unfolding, which can decrease the performance of type checking.
+
+Furthermore, changes in the structural form of functions used in \cofixpoints can cause the guard predicate to reject the program even if the functions still behave the same.
+The following simple example, while artificial, illustrates this structural fragility.
+
+\begin{multicols}{2}
+\begin{minted}{coq}
+  Fixpoint minus n m :=
+    match n, m with
+    | O, _ => n
+    | _, O => n
+    | S n', S m' => minus n' m'
+    end.
+  \end{minted}
+  \begin{minted}{coq}
+  Fixpoint div n m :=
+    match n with
+    | O => O
+    | S n' => S (div (minus n' m) m)
+    end.
+  \end{minted}
+\end{multicols}
+
+If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour does not change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
+The acceptance of \coqinline{div} then depends on a function external to it, which can lead to difficulty in debugging for larger programs.
+Furthermore, the guard predicate is unaware of the obvious fact that \coqinline{minus} never returns a \coqinline{nat} larger than its first argument, which the user would have to prove in order for \coqinline{div} to be accepted with our alternate definition of \coqinline{minus}.
+
+An alternative to guard predicates for termination and productivity enforcement uses \emph{sized types}. In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
+In this paper, we follow a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
+If the argument to a constructor has size $s$, then the fully-applied constructor would have a successor size $\hat{s}$.
+For instance, the \coqinline{nat} constructors follow the below rules:
+
+\vspace{-2ex}
+\begin{mathpar}
+  \inferrule*
+    {~}
+    {\Gamma \vdash \text{O} : \text{Nat}^{\hat{s}}}
+  \and
+  \inferrule*
+    {\Gamma \vdash n : \text{Nat}^s}
+    {\Gamma \vdash \text{S} ~ n : \text{Nat}^{\hat{s}}}
+\end{mathpar}
+
+Termination and productivity checking is then simply a type checking rule that uses size information. For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
+For productivity, the returned object must have a larger size than that of the corecursive call, so the type of the body of the cofixpoint must be larger than the type of the reference to itself in the typing context.
+In short, they both follow the following (simplified) typing rule, where $\upsilon$ is an arbitrary fresh size variable annotated on the inductive types, and $s$ is an arbitrary size expression as needed.
+
+\vspace{-2ex}
+\begin{mathpar}
+  \inferrule*[]
+    {\Gamma (f:t^\upsilon) \vdash e: t^{\hat{\upsilon}}}
+    {\Gamma \vdash \text{(co)fix} ~ f : t := e : t^s}
+\end{mathpar}
+
+We can then assign \coqinline{minus} the type $\text{Nat}^\iota \to \text{Nat} \to \text{Nat}^\iota$.
+The fact that we can assign it a type indicates that it will terminate, and the $\iota$ annotations indicate that the function preserves the size of its first argument.
+Then \coqinline{div} uses only the type of \coqinline{minus} to successfully type check, not requiring its body.
+Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O} does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}. Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving, expanding the set of terminating and productive functions that can be accepted.
+
+Unfortunately, past work on sized types~\cite{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
+
+\begin{itemize}
+    \item They require nontrivial backwards-incompatible additions to the surface language.
+      These include annotations that mark the positions of \corecursive and size-preserved types, and polarity annotations on \coinductive definitions that describe how subtyping works with respect to parameters.
+    \item They require the \corecursive arguments of \cofixpoints to have literal \coinductive types.
+      That is, the types cannot be expressions that convert to \coinductive types.
+    \item Their languages do not support local and global definitions, which Coq includes.
+%      In particular, size inference should be done locally, \ie confined to within a single global definition.
+\end{itemize}
+
+In this paper, we present \lang (``\emph{CIC-star-hat}''), a calculus for representing the core of Coq with sized types, and an inference algorithm from CIC to \lang.
+It is an extension of \CIChat~\cite{cic-hat} and \CIChatminus~\cite{cic-hat-minus} that resolves the issues above.
+We also have a fork of Coq\blindimpl\xspace that implements the size inference algorithm and size-based termination and productivity checking of \lang.
+To maximize backward compatibility, the surface language is completely unchanged, and the existing guard condition and sized types can be enabled or disabled independently, or used in conjunction.
+Sized typing can be turned on with a flag that is off by default for safe and gradual testing of the new kernel.
+\blinding{We are currently working with the Coq development team to merge the work into Coq.}{A draft pull request in the Coq repository has been opened for this fork.\footnote{\url{https://github.com/coq/coq/pull/12426/}}}
+
+The remainder of this paper is organized as follows.
+We begin in \autoref{sec:sponge-cake} with a high-level overview of the design of \lang, its role in Coq, and the main lessons from our design.
+We formalize the calculus \lang in \autoref{sec:typing}.
+In \autoref{sec:algorithm}, we present a size inference algorithm from CIC terms to sized \lang terms that details how we annotate the types of \cofixpoints, how we deal with the lack of polarities, and how definitions are supported, and termination and productivity checking.
+% In \autoref{sec:examples}, we provide a few examples of programs that pass sized typing but not guard checking and vice versa, discuss some categories of terminating programs that cannot be typed in \lang, and step through the size inference algorithm for an example program.
+\autoref{sec:metatheory} states some of the metatheoretical properties of \lang that have been proven or remain to be proven.
+Finally, we briefly compare with the past work on sized types for CIC and related languages in \autoref{sec:related}.

@@ -1,0 +1,86 @@
+\begin{figure}
+\begin{flushleft}
+\fbox{$\gg \vdash T \reduce_{\beta\zeta\delta\Delta\iota\mu\nu} T$}
+\end{flushleft}
+
+\vspace{-3ex}
+
+\begin{mathpar}
+  \inferrule*[right=\defnamerule{beta}{$\beta$}]{~}
+    {\gg \vdash (\abs{x}{t}{e_1}) ~ e_2 \reduce_\beta \subst{e_1}{x}{e_2}}
+  \and
+  \inferrule*[right=\defnamerule{zeta}{$\zeta$}]{~}
+    {\gg \vdash \letin{x}{t}{e_1}{e_2} \reduce_\zeta \subst{e_2}{x}{e_1}}
+  \and
+  \inferrule*[right=\defnamerule{delta}{$\delta$}]
+    {(x : t \coloneqq e) \in \Gamma}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\delta |e|^\infty \overline{[\infty_i \coloneqq s_i]}}
+  \and
+  \inferrule*[right=\defnamerule{Delta}{$\Delta$}]
+    {(\Def{x}{t}{e}) \in \Gamma_G}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\Delta e \overline{[\infty_i \coloneqq s_i]}}
+  \and
+  \inferrule*[right=\defnamerule{iota}{$\iota$}]{~}
+    {\gg \vdash \caseof{\wp}{(c_\ell ~ \vec{p} ~ \vec{a})}{c_j}{e_j} \reduce_\iota e_\ell ~ \vec{a}}
+  \and
+  \inferrule*[right=\defnamerule{mu}{$\mu$}]
+    {\|\vec{b}\| = n_m - 1 \and q_i = \fix{\seq{n_k}, i}{f_k}{t_k}{e_k}}
+    {\gg \vdash q_m ~ \vec{b} ~ (c ~ \vec{p} ~ \vec{a})
+      \reduce_\mu \substvec{e_m}{f_k}{q_k} ~ \vec{b} ~ (c ~ \vec{p} ~ \vec{a})}
+  \and
+  \inferrule*[right=\defnamerule{nu}{$\nu$}]
+    {q_i = \cofix{i}{f_k}{t_k}{e_k}}
+    {\gg \vdash \caseof{\wp}{(q_m ~ \vec{b})}{c_j}{a_j}
+      \reduce_\nu \caseof{\wp}{(\substvec{e_m}{f_k}{q_k} ~ \vec{b})}{c_j}{a_j}}
+\end{mathpar}
+\caption{Reduction rules}
+\label{fig:reduction-full}
+\end{figure}
+
+\begin{figure}
+\begin{flushleft}
+\fbox{$\gg \vdash T \reduce_{\beta\zeta\delta\Delta\iota\mu\nu'} T$}
+\end{flushleft}
+
+\vspace{-6ex}
+
+\begin{mathpar}
+  \vdots
+  \\
+  \inferrule*[right=\defnamerule{nupr}{$\nu'$}]
+    {q_i = \cofix{i}{f_k}{t_k}{e_k}}
+    {\gg \vdash q_m
+      \reduce_{\nu'} \substvec{e_m}{f_k}{q_k}}
+\end{mathpar}
+\caption{Reduction rules (with unrestricted cofixpoint reduction)}
+\label{fig:reduction-full-unrestricted}
+\end{figure}
+
+\begin{figure}
+\begin{flushleft}
+\fbox{$\gg \vdash T \conv T$}
+\end{flushleft}
+
+\vspace{-3ex}
+
+\begin{mathpar}
+  \inferrule*[right=\defnamerule{conv-red}{$\approx$-$\reduce^*$}]
+    {\gg \vdash e_1 \reduce^* e \\\\
+      \gg \vdash e_2 \reduce^* e}
+    {\gg \vdash e_1 \conv e_2}
+  \and
+  \inferrule*[right=\defnamerule{conv-eta-r}{$\approx$-$\eta$-l}]
+    {\gg \vdash e_1 \reduce^* \abs{x}{t}{e} \\\\
+      \gg \vdash e_2 \reduce^* e'_2 \\\\
+      \gg (x:t) \vdash e \conv e'_2 ~ x}
+    {\gg \vdash e_1 \conv e_2}
+  \and
+  \inferrule*[right=\defnamerule{conv-eta-1}{$\approx$-$\eta$-r}]
+    {\gg \vdash e_1 \reduce^* e'_1 \\\\
+      \gg \vdash e_2 \reduce^* \abs{x}{t}{e} \\\\
+      \gg (x:t) \vdash e'_1 ~ x \conv e}
+    {\gg \vdash e_1 \conv e_2}
+\end{mathpar}
+\caption{Convertibility rules}
+\label{fig:conversion}
+\end{figure}

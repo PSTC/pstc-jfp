@@ -1,0 +1,35 @@
+\begin{figure}
+\begin{mathpar}
+  \inferrule*{~}
+    {\Prop \leq \Set \leq \Type{1}}
+  \quad
+  \inferrule*[right=\defrule{st-cumul}]{~}
+    {\Type{i} \leq \Type{i+1}}
+  \and
+  \inferrule*[right=\defrule{st-conv}]
+    {t \approx u}
+    {t \leq u}
+  \\
+  \inferrule*[right=\defrule{st-trans}]
+    {t \leq u \and u \leq v}
+    {t \leq v}
+  \and
+  \inferrule*[right=\defrule{st-prod}]
+    {t_1 \approx t_2 \and u_1 \leq u_2} % t_2 \leq t_1
+    {\prod{x}{t_1}{u_1} \leq \prod{y}{t_2}{u_2}}
+  \and
+  \inferrule*[right=\defrule{st-app}]
+    {t_1 \leq t_2 \and u_1 \approx u_2} % \u_2 \leq u_1
+    {t_1 ~ u_1 \leq t_2 ~ u_2}
+  \\
+  \inferrule*[right = \defrule{st-ind}]
+  { I \textrm{ inductive } \and s \sqsubseteq s' }
+  { I^s \leq I^{s'} }
+  \and
+  \inferrule*[right = \defrule{st-coind}]
+  { I \textrm{ coinductive } \and s' \sqsubseteq s }
+  { I^s \leq I^{s'} }
+\end{mathpar}
+\caption{Subtyping rules}
+\label{fig:subtyping}
+\end{figure}

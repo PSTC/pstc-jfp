@@ -1,0 +1,96 @@
+\begin{figure*}[p]
+\centering
+\small
+
+\begin{flushleft}
+\fbox{$\sgg \vdash T : T$}
+\end{flushleft}
+
+\vspace{-2ex}
+
+\begin{mathpar}
+  \inferrule*[right=\defrule{var-assum}]
+    {\WF{\sgg} \and (x:t) \in \Gamma}
+    {\sgg \vdash x:t}
+
+  \inferrule*[right=\defrule{const-assum}]
+    {\WF{\sgg} \and (\Assum{x}{t}) \in \Gamma_G}
+    {\sgg \vdash x:t}
+
+  \inferrule*[right=\defrule{var-def}]
+    {\WF{\sgg} \and
+      (x:t \coloneqq e) \in \Gamma \and
+      \SV(e, t) = \vec{\upsilon_i} \and
+      \sgg \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
+    {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
+
+  \inferrule*[right=\defrule{const-def}]
+    {\WF{\sgg} \and
+      (\Def{x}{t}{e}) \in \Gamma_G \and
+      \SV(e, t) = \vec{\upsilon_i} \and
+      \Sigma, \Gamma_G, \square \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
+    {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
+
+  \inferrule*[right=\defrule{univ}]
+    {\WF{\sgg} \and (\varw_1, \varw_2) \in \Axioms}
+    {\sgg \vdash \varw_1 : \varw_2}
+
+  \inferrule*[right=\defrule{conv}]
+    {\sgg \vdash e:t \and \sgg \vdash u:\varw \and t \leq u}
+    {\sgg \vdash e:u}
+
+  \inferrule*[right=\defrule{prod}]
+    {\sgg \vdash t : \varw_1 \and
+      \sgg (x:t) \vdash u : \varw_2 \and
+      (\varw_1, \varw_2, \varw_3) \in \Rules}
+    {\sgg \vdash \prod{x}{t}{u} : \varw_3}
+
+  \inferrule*[right=\defrule{abs}]
+    {\sgg \vdash t : \varw \and \sgg (x:t) \vdash e:u}
+    {\sgg \vdash \abs{x}{|t|}{e} : \prod{x}{t}{u}}
+
+  \inferrule*[right=\defrule{app}]
+    {\sgg \vdash e_1 : \prod{x}{t}{u} \and \sgg \vdash e_2 : t}
+    {\sgg \vdash e_1 ~ e_2 : u[x \coloneqq e_2]}
+
+  \inferrule*[right=\defrule{let-in}]
+    {\sgg \vdash e_1:t \and \sgg (x:t \coloneqq e_1) \vdash e_2:u}
+    {\sgg \vdash \letin{x}{|t|}{e_1}{e_2} : u[x \coloneqq e_1]}
+  \\
+  \inferrule*[right=\defrule{ind}]
+    {\WF{\sgg}}
+    {\sgg \vdash I^s : \indtype{\Sigma}{I}}
+
+  \inferrule*[right=\defrule{constr}]
+    {\WF{\sgg}}
+    {\sgg \vdash c : \constrtype{\Sigma}{c}{s}}
+
+  \inferrule*[right=\defrule{case}]
+    {\sgg \vdash e : I_k^{\hat{s}} ~ \overline{p} ~ \overline{a} \and
+      \indtype{\Sigma}{I_k} = \prodctx{\_}{\prodctx{\_}{\varw_k}} \and
+      (\varw_k, \varw, I_k) \in \Elims \\
+      \sgg \vdash \wp : \motivetype{\Sigma}{\overline{p}}{\varw}{I_k^{\hat{s}}} \and
+      \sgg \vdash e_j : \branchtype{\Sigma}{\overline{p}}{c_j}{s}{\wp}}
+    {\sgg \vdash \caseof{|\wp|}{e}{c_j}{e_j} : \wp ~ \overline{a} ~ e}
+
+  \inferrule*[right=\defrule{fix}]
+    {t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{I_k^{\upsilon_k} ~ \overline{a}_k}{u_k}} \and
+      \|\Delta_{k}\| = n_m - 1 \and
+      \upsilon_k \pos u_k \\
+      \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
+      \sgg \vdash t_k : \varw_k \and
+      \sgg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
+    {\sgg \vdash \fix{\seq{n_k}, m}{f_k}{|t_k|^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
+
+  \inferrule*[right=\defrule{cofix}]
+    {t_k \approx \prodctx{\Delta_k}{I_k^{\upsilon_k} ~ \overline{a}_k} \and
+      \upsilon_k \neg \Delta_k \\
+      \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
+      \sgg \vdash t_k : \varw_k \and
+      \sgg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
+    {\sgg \vdash \cofix{m}{f_k}{|t_k|^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
+\end{mathpar}
+
+\caption{Typing rules}
+\label{fig:typing}
+\end{figure*}

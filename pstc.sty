@@ -1,0 +1,170 @@
+\ProvidesPackage{pstc}
+
+% long (\iftrue) or short (\iffalse) version of paper
+\newcommand{\iflong}{\iffalse}
+% blinded (true) or unblinded (false) version of paper
+\newcommand{\blinding}[2]{\ifthenelse{\boolean{false}}{#1}{#2}}
+\newcommand{\blindimpl}{\blinding{available in the anonymous supplementary material}{~\cite{impl}}}
+
+% rule hyperlinks
+\newcommand{\defrule}[1]{\phantomsection\label{#1}#1}
+\newcommand{\defnamerule}[2]{\phantomsection\label{#1}#2}
+\newcommand{\refrule}[1]{\hyperref[#1]{Rule~\textsc{#1}}}
+\newcommand{\refnamerule}[2]{\hyperref[#1]{Rule~\textsc{#2}}}
+\newcommand{\refnorule}[1]{\hyperref[#1]{\textsc{#1}}}
+
+% langs
+\newcommand{\lang}{CIC$\widehat{\ast}$\xspace}
+\newcommand{\titlelang}{\texorpdfstring{\lang}{CIC\^{}*}\xspace}
+\newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
+\newcommand{\CIChatminus}{CIC$\widehat{_-}$\xspace}
+\newcommand{\Fhat}{F$\widehat{~}$\xspace}
+\newcommand{\CIChatl}{CIC$\widehat{_l}$\xspace}
+\newcommand{\CChatomega}{CC$\widehat{\omega}$\xspace}
+\newcommand{\CIChatsub}{CIC$\widehat{_\sqsubseteq}$\xspace}
+
+% named sets
+\newcommand{\textset}[1]{\text{#1}}
+\newcommand{\Axioms}{\textset{Axioms}\xspace}
+\newcommand{\Rules}{\textset{Rules}\xspace}
+\newcommand{\Elims}{\textset{Elims}\xspace}
+
+% metafunctions (for math envs)
+\newcounter{funargs}
+\newcommand{\commaseplist}[1]{
+  #1
+  \setcounter{funargs}{\thefunargs - 1}
+  \ifthenelse{\equal{\thefunargs}{0}}{)}{
+    \@ifnextchar\bgroup
+      {, \commaseplist}
+      {)}}
+}
+\newcommand{\metafun}[2][0]{%
+  \setcounter{funargs}{#1}%
+  \textsf{#2}%
+    \ifthenelse{\equal{\thefunargs}{0}}
+      {\xspace}
+      {\@ifnextchar\bgroup
+        {(\commaseplist}
+        {\xspace}}}
+
+\newcommand{\dom}{\metafun[1]{dom}}
+\newcommand{\codom}{\metafun[1]{codom}}
+\newcommand{\SV}{\metafun[1]{SV}}
+\newcommand{\PV}{\metafun[1]{PV}}
+\newcommand{\FV}{\metafun[1]{FV}}
+\newcommand{\WF}{\metafun[1]{WF}}
+\newcommand{\whnf}{\metafun[1]{whnf}}
+\newcommand{\fresh}{\metafun[1]{fresh}}
+\newcommand{\axiom}{\metafun[1]{axiom}}
+\newcommand{\rules}{\metafun[2]{rule}}
+\newcommand{\elim}{\metafun[3]{elim}}
+\newcommand{\indtype}{\metafun[2]{indType}}
+\newcommand{\constrtype}{\metafun[3]{constrType}}
+\newcommand{\motivetype}{\metafun[4]{motiveType}}
+\newcommand{\branchtype}{\metafun[5]{branchType}}
+\newcommand{\indsig}{\metafun[1]{indSig}}
+\newcommand{\constrsig}{\metafun[1]{constrSig}}
+\newcommand{\casesize}{\metafun[2]{caseSize}}
+\newcommand{\decompose}{\metafun[2]{decompose}}
+\newcommand{\shift}{\metafun[1]{shift}}
+\newcommand{\setrecstars}{\metafun[2]{setRecStars}}
+\newcommand{\setcorecstars}{\metafun[1]{setCorecStars}}
+\newcommand{\getrecvar}{\metafun[2]{getRecVar}}
+\newcommand{\getcorecvar}{\metafun[1]{getCorecVar}}
+\newcommand{\erasetoglobal}{\metafun[2]{eraseToGlobal}}
+\newcommand{\solve}{\metafun[1]{solve}}
+\newcommand{\solvecomp}{\metafun[1]{solveComponent}}
+\newcommand{\RecCheck}{\metafun[4]{RecCheck}}
+\newcommand{\RecCheckFail}{\metafun[-1]{RecCheckFail}}
+\newcommand{\RecCheckLoop}{\metafun[5]{RecCheckLoop}}
+
+% terms and expressions (for math envs)
+\newcommand{\Prop}{\text{Prop}}
+\newcommand{\Set}{\text{Set}}
+\newcommand{\Type}[1]{\text{Type}_{#1}}
+\newcommand{\abs}[3]{\lambda #1 : #2 \mathpunct{.} #3}
+\renewcommand{\prod}[3]{\Pi #1 : #2 \mathpunct{.} #3} % originally Π but really big
+\newcommand{\prodctx}[2]{\Pi #1 \mathpunct{.} #2}
+\newcommand{\letin}[4]{\text{let}\ #1 : #2 \coloneqq #3\ \text{in}\ #4}
+\newcommand{\caseof}[4]{\text{case}_{#1}\ #2\ \text{of}\ \langle #3 \Rightarrow #4 \rangle}
+\newcommand{\Def}[3]{\text{Def}\ #1 : #2 \coloneqq #3.}
+\newcommand{\Assum}[2]{\text{Assum}\ #1 : #2.}
+\renewcommand{\succ}[1]{\widehat{#1}} % originally ≻
+\def\fix{\@ifstar{\@@fix}{\@fix}}
+\def\cofix{\@ifstar{\@@cofix}{\@cofix}}
+\newcommand{\@fix}[4]{\text{fix}_{#1}\ \langle #2 : #3 \coloneqq #4 \rangle}
+\newcommand{\@cofix}[4]{\text{cofix}_{#1}\ \langle #2 : #3 \coloneqq #4 \rangle}
+\newcommand{\@@fix}[4]{\text{fix}_{#1}\ #2 : #3 \coloneqq #4}
+\newcommand{\@@cofix}[4]{\text{cofix}_{#1}\ #2 : #3 \coloneqq #4}
+\newcommand{\Size}{\text{Size}}
+\newcommand{\SizeLt}{\text{Size<}}
+\newcommand{\SizeUniv}{\text{SizeUniv}}
+
+% contexts (for math envs)
+\newcommand{\sgg}{\Sigma, \Gamma_G, \Gamma}
+\newcommand{\sg}{\Sigma, \Gamma_G, \square}
+\renewcommand{\gg}{\Gamma_G, \Gamma} % originally ≫
+\newcommand{\cgg}{C, \Gamma_G, \Gamma}
+\newcommand{\cgp}{C, \Gamma_G, \Psi}
+
+% relations (for math envs)
+\newcommand{\conv}{\mathrel{\approx}}
+\newcommand{\reduce}{\mathrel{\rhd}}
+\newcommand{\expand}{\mathrel{\lhd}}
+\newcommand{\pos}{\mathrel{\text{pos}}}
+\renewcommand{\neg}{\mathrel{\text{neg}}} % originally ¬
+\newcommand{\POS}{\mathrel{\oplus}}
+\newcommand{\nPOS}{\stackMath\mathbin{\stackinset{c}{0ex}{c}{0.03ex}{\oplus}{\bigcirc}}} % or rotate ⨷?
+
+% substitutions (for math envs)
+\newcommand{\subst}[3]{#1 [#2 \coloneqq #3]}
+\newcommand{\substvec}[3]{#1 \vec{[#2 \coloneqq #3]}}
+\newcommand{\substseq}[5]{#1 [#2 \coloneqq #3] \dots [#4 \coloneqq #5]}
+
+% other (for math envs)
+\newcommand{\N}{\mathbb{N}}
+\renewcommand{\P}{\mathbb{P}} % originally ¶
+\renewcommand{\vec}[1]{\overline{#1}} % originally \overline
+
+% other
+\def\varw{w} % redefine \varw regardless
+\providecommand{\napprox}{\not\approx}
+
+% hyphenation rules
+\newcommand{\coinductive}{(co)\-inductive\xspace}
+\newcommand{\corecursive}{(co)\-recursive\xspace}
+\newcommand{\cofixpoint}{(co)\-fix\-point\xspace}
+\newcommand{\cofixpoints}{(co)\-fix\-points\xspace}
+\newcommand{\Coinductive}{(Co)\-Inductive\xspace}
+\newcommand{\reduction}{$\beta\zeta\delta\Delta\iota\mu\nu$\=/reduction\xspace}
+\newcommand{\deltaDeltareduction}{$\delta$\=//$\Delta$\=/reduction\xspace}
+\newcommand{\deltaDeltareductions}{$\delta$\=//$\Delta$\=/reductions\xspace}
+\newcommand{\guardedbydestructors}{guarded\=/by\=/destructors\xspace}
+\newcommand{\guardedbyconstructors}{guarded\=/by\=/constructors\xspace}
+
+% Latin abbreviations
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\etc}{\emph{etc.}\xspace}
+
+% delimiters
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\seq}{\langle}{\rangle}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\br}{(}{)}
+\DeclarePairedDelimiter{\sqbr}{[\![}{]\!]}
+
+% editing
+\definecolor{newhighlight}{gray}{0.85}
+\setlength{\fboxsep}{1pt}
+\newcommand{\new}[1]{\mathchoice%
+  {\colorbox{newhighlight}{$\displaystyle#1$}}%
+  {\colorbox{newhighlight}{$\textstyle#1$}}%
+  {\colorbox{newhighlight}{$\scriptstyle#1$}}%
+  {\colorbox{newhighlight}{$\scriptscriptstyle#1$}}}%
+\newcommand{\JC}[1]{\textcolor{magenta}{#1}}
+\newcommand{\ML}[1]{\textcolor{blue}{#1}}
+\newcommand{\anotherpdf}{the supplementary material\xspace}

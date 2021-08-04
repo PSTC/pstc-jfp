@@ -1,0 +1,38 @@
+\begin{figure}
+  \begin{mathpar}
+    \mprset{sep=0em}
+    \inferrule*
+      {t \approx \Prop \and u \approx \Set}
+      {t \leq^* u}
+    \quad
+    \inferrule*
+      {t \approx \Prop, \Set \and u \approx \Type{i}}
+      {t \leq^* u}
+    \quad
+    \inferrule*[right=\defrule{st*-cumul}]
+      {t \approx \Type{i} \and u \approx \Type{j} \and i \leq j}
+      {t \leq^* u}
+    \and
+    \inferrule*[right=\defrule{st*-conv}]
+      {t \approx u}
+      {t \leq^* u}
+    \and
+    \inferrule*[right=\defrule{st*-prod}]
+      {t \approx \prodctx{x:t_1}{u_1} \and u \approx \prodctx{x:t_2}{u_2} \\\\ t_1 \approx t_2 \and u_1 \leq^* u_2}
+      {t \leq^* u}
+    \and
+    \inferrule*[right=\defrule{st*-app}]
+      {t \approx t_1 ~ u_1 \and u \approx t_2 ~ u_2 \\\\ t_1 \leq^* t_2 \and u_1 \approx u_2}
+      {t \leq^* u}
+    \and
+    \inferrule*[right = \defrule{st*-ind}]
+    {t \approx I^s \and u \approx I^{s'} \\\\ I \textrm{ inductive } \and s \sqsubseteq s'}
+    {t \leq^* u}
+    \and
+    \inferrule*[right = \defrule{st*-coind}]
+    {t \approx I^s \and u \approx I^{s'} \\\\ I \textrm{ coinductive } \and s' \sqsubseteq s}
+    {t \leq^* u}
+  \end{mathpar}
+  \caption{Subtyping rules without a transitivity rule}
+    \label{fig:subtyping-no-trans}
+  \end{figure}

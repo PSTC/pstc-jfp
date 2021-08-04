@@ -1,0 +1,239 @@
+\section{Size Inference}\label{sec:algorithm}
+
+In this section, we present a size inference algorithm, whose goal is to take unannotated programs in $T^\circ$ (corresponding to terms in CIC), simultaneously assign annotations to them while collecting a set of subsizing constraints based on the typing rules, check the constraints to ensure well-typedness, and produce well-typed programs that are stored in the global environment and can be used in the inference of future programs.
+Constraints are generated when comparing two types $t, u$ to ensure that the subtyping relation $t \leq u$ holds.
+Therefore, this algorithm is also a type checking algorithm, since it could be that $t$ fails to subtype $u$, in which case the algorithm fails.
+
+Our algorithm is an extension to the size inference algorithm of \CIChat, and \citet{cic-hat} presents soundness and completeness of their algorithm with respect to \CIChat's typing rules.
+We discuss soundness and completeness theorems of our algorithm with respect to \lang's typing rules in \autoref{sec:metatheory}.
+
+\subsection{Notation}
+
+\input{figures/contexts-gen.tex}
+
+First, we use $C : \P(S \times S)$ to represent subsizing constraints: if $(s_1, s_2) \in C$, then we must enforce $s_1 \sqsubseteq s_2$.
+These constraint sets are generated at every step of the algorithm.
+Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that may enforce subsizing relations between the size variables in the body.
+To this end, we introduce \emph{generic} declarations and environments, presented in \autoref{fig:contexts-gen}.
+Generic declarations can contain definitions together with the constraints associated with them.
+As usual, we will use $\Psi$ as shorthand for sized generic environments and $\Psi^\circ$ for bare generic environments.
+By abuse of notation, we treat $\Psi(\cdot)$ as a lookup function for $\Psi$, where $\Psi(x) = t$ if $(x : t) \in \Psi$ and $\Psi(x) = (C, e : t)$ if $(C, x : t \coloneqq e) \in \Psi$, and similarly for $\Gamma_G$.
+
+We now define three judgements to represent \emph{checking}, \emph{inference}, and \emph{well-formed\-ness}.
+They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs on the right.
+\begin{itemize}
+  \item Checking, $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$, takes a set of constraints $C$, environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a new set of constraints $C'$ that ensures that the type of $e$ subtypes $t$.
+  \item Inference, $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$, takes a set of constraints $C$, environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a new set of constraints $C'$.
+  \item Well-formedness, $\Gamma_G^\circ \rightsquigarrow \Gamma_G$, takes a global environment with bare declarations and produces a global environment where each declaration has been properly annotated via size inference.
+\end{itemize}
+
+The algorithm is implicitly parameterized over a fixed signature $\Sigma$, as well as two mutable sets of size variables $\mathcal{V}, \mathcal{V}^*$, such that $\mathcal{V}^* \subseteq \mathcal{V}$.
+Their assignment is denoted with $\coloneqq$ and they are initialized as empty.
+The set $\mathcal{V}^*$ contains \textit{position} size variables, which mark size-preserving types, and we use $\tau$ for these position size variables.
+We define two additional metafunctions: \PV returns all position size variables in a given term, while $|\cdot|^*$ erases position size variables to position annotations and all other annotations to bare.
+Finally, on the right-hand size of inference judgements, we use $e \Rightarrow^* t$ to mean $e \Rightarrow t' \wedge t = \whnf{t'}$.
+
+We define a number of metafunctions to translate the side conditions from the typing rules into procedural form.
+They are introduced as needed, but are also summarized in \autoref{fig:inference-metafunctions} in \autoref{sec:supplementary}.
+
+\subsection{Inference Algorithm}
+
+\input{figures/algorithm-check.tex}
+\input{figures/algorithm.tex}
+
+Size inference begins with a bare term; even type annotations of \cofixpoints are bare, \ie
+  $$T^\circ \Coloneqq \dots
+    \mid \fix{\seq{n_k}, m}{\mathcal{X}}{T^\circ}{T^\circ}
+    \mid \cofix{m}{\mathcal{X}}{T^\circ}{T^\circ}$$
+Notice that fixpoints still have a vector of indices, with $n_k$ being the index of the recursive argument of the $k$th mutual fixpoint, whereas Coq programs have no indices.
+To produce these indices, we do what Coq currently does: brute-force search.
+We attempt type checking on every combination of indices from left to right (even if the type of the argument at that index is not inductive).
+This continues until one combination works, or fails if none do.
+
+\autoref{fig:algorithm-check}, \autoref{fig:algorithm}, and \autoref{fig:algorithm-wf} present the size inference algorithm, which uses the same indexing conventions as the typing rules.
+We go over parts of the algorithm in detail shortly.
+
+\refrule{a-check} is the checking component of the algorithm.
+To ensure that the inferred type subtypes the given type, we use the metafunction $\preceq$ that takes two sized terms and attempts to produce a set of subsizing constraints based on the subtyping rules of \autoref{fig:subtyping}.
+$\preceq$ may reduce terms to check convertibility and will fail if two terms are incompatible.
+
+Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
+Note that after type annotations pass through inference to become sized types, they must be erased to bare types again.
+These rules use the metafunctions \axiom, \rules, and \elim, which correspond to the sets \Axioms, \Rules, and \Elims, defined in \autoref{fig:axruel}.
+The metafunction \axiom produces the type of a universe; \rules produces the type of a function type given the universes of its argument and return types; and \elim directly checks membership in \Elims and can fail.
+
+\refrule{a-let-in} is also straightforward.
+After checking the bound term against the inferred type, we add the generated constraint to the generic local environment before inferring the type of the body.
+If size variables appear in the bound term or its type, then the relations among them are maintained by these constraints.
+Note that there may be relations between the size variables in the term and the type, which is why, as we will see, when using variables with definitions, we need to simultaneously replace the size variables in both the term \textit{and} the type.
+For instance, consider the following inductive type and bare let expression:
+\begin{align*}
+  (A : \Type{}) \vdash \text{Box} ~ A: A \to \Type{} &\coloneqq
+    \langle \text{MkBox} : (a : A) \to \text{Box} ~ A ~ a\rangle.\\
+  \letin{b}{\text{Box} ~ \Type{} ~ \text{Nat}&}{\text{MkBox} ~ \text{Nat}}{\dots}
+\end{align*}
+
+If we annotate the type as $\text{Box}^{\upsilon_1} ~ \Type{} ~ \text{Nat}^{\upsilon_2}$ and size-infer the bound term as $\text{MkBox} ~ \text{Nat}^{\upsilon_3} : \text{Box}^{\upsilon_4} ~ \Type{} ~ \text{Nat}^{\upsilon_3}$, then we will have the constraint set $\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}$.
+
+In Rules \refnorule{a-var-def} and \refnorule{a-const-def}, we annotate variables and constants using a vector of annotations from \fresh, which generates the given number of fresh size variables and adds them to $\mathcal{V}$.
+The length of the vector corresponds to the number of size annotations found in the body and the type of the definitions.
+Reusing the above example, if $(\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}, b : \text{Box}^{\upsilon_1} ~ \Type{} ~ \text{Nat}^{\upsilon_2} \coloneqq \text{MkBox} ~ \text{Nat}^{\upsilon_3}) \in \Psi$, then a use of $b$ would be annotated as $x^{\seq{\upsilon_5, \upsilon_6, \upsilon_7}}$.
+Furthermore, the constraint set we return will include $\set{\upsilon_4 \sqsubseteq \upsilon_5, \upsilon_6 = \upsilon_7}$.
+If $b$ is $\delta$\=/reduced during inference, such as in a fixpoint type, then it is replaced by $\text{MkBox} ~ \text{Nat}^{\upsilon_7}$.
+
+A position-annotated type from a \cofixpoint can be passed into the algorithm, so we deal with the possibilities separately in Rules \refnorule{a-ind} and \refnorule{a-ind-star}.
+In both rules, a bare \coinductive type is annotated with a size variable; in \refrule{a-ind-star}, it is also added to the set of position size variables $\mathcal{V}^*$.
+
+In \refrule{a-constr}, we generate a single fresh size variable, which gets annotated on the constructor's \coinductive type in the argument types of the constructor type, as well as the return type, which has the successor of that size variable.
+All other \coinductive types which are not the constructor's \coinductive type continue to have $\infty$ annotations.
+
+The key constraint in \refrule{a-case} is generated by \casesize.
+Similar to \refrule{a-constr}, we generate a single fresh size variable $\upsilon$ to annotate on $I_k$ in the branches' argument types, which correspond to the constructor arguments of the target.
+Then, given the unapplied target type $I_k^s$, \casesize returns $\set{s \sqsubseteq \hat{\upsilon}}$ if $I_k$ is inductive and $\set{\hat{\upsilon} \sqsubseteq s}$ if $I_k$ is coinductive.
+This ensures that the target type satisfies $I_k^s ~ \overline{p} ~ \overline{a} \leq I_k^{\hat{\upsilon}_k} ~ \overline{p} ~ \overline{a}$, so that \refrule{case} is satisfied.
+
+The rest of the rule proceeds as we would expect: we infer the sized type of the target and the motive, we check that the motive and the branches have the types we expect given the target type, and we infer that the sized type of the case expression is the annotated motive applied to the target type's annotated indices and the annotated target itself.
+We also ensure that the elimination universes are valid using \elim on the motive type's return universe and the target type's universe.
+To obtain the motive type's return universe, we use \decompose.
+Given a type $t$ and a natural $n$, this metafunction reduces $t$ to a function type $\prodctx{\Delta}{u}$ where $\norm{\Delta} = n$, reduces $u$ to a universe $\varw$, and returns $\varw$.
+It can fail if $t$ cannot be reduced to a function type, if $\norm{\Delta} < n$, or if $u$ cannot be reduced to a universe.
+
+Finally, we come to size inference and termination/productivity checking for \cofixpoints.
+It uses the following metafunctions:
+\begin{itemize}
+  \item \setrecstars, given a function type $t$ and an index $n$, decomposes $t$ into arguments and a return type, reduces the $n$th argument type to an inductive type, annotates that inductive type with position annotation $*$, annotates the return type with $*$ if it has the same inductive type, and rebuilds the function type.
+    This is how fixpoint types obtain their position annotations without being user-provided; the algorithm will remove other position annotations if size-preservation fails.
+    
+    Similarly, \setcorecstars annotates the coinductive return type first, then the argument types with the same coinductive type.
+    Both of these can fail if the $n$th argument type or the return type respectively are not \coinductive types.
+    Note that the decomposition of $t$ may perform reductions using \whnf.
+  \item \getrecvar, given a function type $t$ and an index $n$, returns the position size variable of the annotation on the $n$th inductive argument type, while \getcorecvar returns the position size variable of the annotation on the coinductive return type.
+    Essentially, they retrieve the position size variable of the annotation on the primary \corecursive type of a \cofixpoint type.
+  \item \shift replaces all position size annotations $s$ (\ie $\floor{s} \in \mathcal{V}^*$) by its successor $\hat{s}$.
+\end{itemize}
+
+Although the desired \cofixpoint is the $m$th one in the block of mutually-defined \cofixpoints, we must still size-infer and type-check the entire mutual definition.
+Rules \refnorule{a-fix} and \refnorule{a-cofix} first run the size inference algorithm on each of the \cofixpoint \emph{types}, ignoring the results, to ensure that any reduction on those types will terminate.
+Then we annotate the bare types with position annotations (using \setrecstars/\setcorecstars) and pass these position types through the algorithm to get sized types $\overline{t_k}$.
+Next, we check that the \cofixpoint bodies have the successor-sized types of $\overline{t_k}$ when the \cofixpoints have types $\overline{t_k}$ in the local environment.
+Lastly, we call \RecCheckLoop, and return the constraints it gives us, along with the $m$th \cofixpoint type.
+
+\input{figures/helpers.tex}
+
+Notice that \setrecstars and \setcorecstars optimistically annotate \textit{all} possible \coinductive types in the \cofixpoint type with position annotations, but not all \cofixpoints are size-preserving.
+\RecCheckLoop filters these annotations to generate the final constraint set.
+This is a recursive function that calls \RecCheck, which checks satisfiability of a given constraint set.
+If the set is unsatisfiable due to a bad position annotation, then \RecCheckLoop removes it and tries again.
+
+More specifically, \RecCheck can fail raising \RecCheckFail, which contains a set $V$ of position size variables that must be set to infinity; since position size variables always appear on size-preserved types, they cannot be infinite.
+\RecCheckLoop then removes $V$ from the set of position size variables, allowing them to be set to infinity, and recursively calls itself.
+The number of position size variables from the \cofixpoint type shrinks on every iteration until no more can be removed.
+If no satisfiable set is found even when no positions are considered size preserving, termination/productivity checking and thus type inference has failed.
+An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref{fig:helpers}.
+
+\subsection{RecCheck}
+
+As in previous work on \CChatomega with coinductive streams~\cite{cc-hat-omega} and in \CIChat, we use the same \RecCheck algorithm from \Fhat~\cite{f-hat}.
+This algorithm attempts to ensure that the subsizing rules in \autoref{fig:subsizing} can be satisfied within a given set of constraints.
+It does so by checking the set of constraints for invalid circular subsizing relations, setting the size variables involved in the cycles to $\infty$, and producing a new set of constraints without these problems or fails, which indicates nontermination or nonproductivity.
+It takes four arguments:
+
+\begin{itemize}
+  \item A set of subsizing constraints $C$.
+  \item The size variable $\tau$ of the annotation on the type of the recursive argument (for fixpoints) or on the return type (for cofixpoints). While other arguments (and the return type, for fixpoints) may optionally be marked as size-preserving, each \cofixpoint type requires at \textit{least} $\tau$ for the primary \corecursive type.
+  \item A set of size variables $V^*$ that must be set to some non-infinite size.
+    These are the size annotations in the \cofixpoint type that have position size variables.
+    Note that $\tau \in V^*$.
+  \item A set of size variables $V^\neq$ that must be set to $\infty$.
+    These are all other non-position size annotations, found in the \cofixpoint types and bodies.
+\end{itemize}
+
+Here, we begin to treat $C$ as a weighted, directed graph.
+Each size variable corresponds to a node, and each subsizing relation is an edge from the lower to the upper variable.
+A size expression consists of a size variable with an arbitrary finite nonnegative number of successor ``hats''; instead of using a perniculous tower of carets, we can write the number as a superscript, as in $\hat{\upsilon}^n$.
+Then given a subsizing relation $\hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2}$, the weight of the edge from $\upsilon_1$ to $\upsilon_2$ is $n_2 - n_1$.
+Subsizings to $\infty$ do not need to be added to $C$ since they are given by \refrule{ss-infty}; subsizings from $\infty$ are given an edge weight of $0$.
+
+Given a set of size variables $V$, its \emph{upward closure} $\bigsqcup V$ in $C$ is the set of size variables that can be reached from $V$ by travelling along the edges of $C$; that is, $\upsilon_1 \in V \wedge \hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2} \implies \upsilon_2 \in V$.
+Similarly, the \emph{downward closure} $\bigsqcap V$ in $C$ is the set of size variables that can reach $V$ by travelling along the edges of $C$, or $\upsilon_2 \in V \wedge \hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2} \implies \upsilon_1 \in V$.
+
+We use the notation $\upsilon \sqsubseteq V$ to denote the set of constraints from $\upsilon$ to each size variable in $V$ and similarly for $V \sqsubseteq \upsilon$.
+
+The algorithm proceeds as follows:
+
+\begin{enumerate}
+  \setcounter{enumi}{-1}
+  \item Add $V^* \sqsubseteq \tau$ to $C$. This ensures that all position size variables are size-preserving.
+  \item \label{alg:reccheck:smallest} Let $V^\iota = \bigsqcap V^*$, and add $\tau \sqsubseteq V^\iota$ to $C$.
+    This ensures that $\tau$ is the smallest size variable among all the noninfinite size variables.
+  \item \label{alg:reccheck:neg-cycles} Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
+  \item Remove all edges with size variables in $V^-$ from $C$, and add $\infty \sqsubseteq V^-$.
+    Since $\succ{\infty} \sqsubseteq \infty$, this is the only way to resolve negative cycles.
+  \item Add $\infty \sqsubseteq \left(\bigsqcup V^\neq \cap \bigsqcup V^\iota\right)$ to $C$.
+  \item Let $V^\bot = \left(\bigsqcup \set{\infty}\right) \cap V^\iota$.
+    This is the set of size variables that we have determined to both be infinite and noninfinite.
+    If $V^\bot$ is empty, then return $C$.
+  \item Otherwise, let $V = V^\bot \cap (V^* \setminus \set{\tau})$, and fail with $\RecCheckFail{V}$.
+    This is the set of contradictory position size variables excluding $\tau$, which we can remove from $\mathcal{V}^*$ in \RecCheckLoop.
+    If $V$ is empty, there are no position size variables left to remove, so the check and therefore the size inference algorithm fails.
+\end{enumerate}
+
+Disregarding closure operations and set operations like intersection and difference, the time complexity of a single pass is $O(\norm{V}\norm{C})$, where $V$ is the set of size variables appearing in $C$.
+This comes from the negative-cycle finding in (\ref{alg:reccheck:neg-cycles}) using, for instance, the Bellman--Ford algorithm.
+
+\input{figures/algorithm-wf.tex}
+
+\subsection{Well-Formedness}\label{subsec:algorithm:wf}
+
+A self-contained chunk of code, be it a file or a module, consists of a sequence of \coinductive definitions (signatures) and programs (global declarations).
+For our purposes, we assume that there is a singular well-formed signature defined independently.
+Then we need to perform size inference on each declaration of $\Gamma_G$ in order.
+This is given by Rules \refnorule{a-global-nil}, \refnorule{a-global-assum}, and \refnorule{a-global-def} in \autoref{fig:algorithm-wf}.
+
+In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_2$ and produces a metafunction on terms such that, when applied to the annotated term and type, ensure that they form a well-typed judgement. In otherwords, we are guaranteed that $\Sigma, \Gamma_G, \square \vdash \rho e : \rho t$ holds.
+
+Formally, we define the following:
+
+\begin{definition}[Size substitutions and constraint satisfaction]~\\[-3ex]
+  \begin{itemize}
+    \item A \textbf{size substitution} $\rho : \mathcal{V} \to S$ is a map from size variables to size expressions.
+      The notation $\set{\upsilon_1 \mapsto s_1, \dots, \upsilon_n \mapsto s_n}$ describes a concrete size substitution that maps $\upsilon_i$ to $s_i$ for each $i \in [1..n]$.
+      We write $\rho(\upsilon)$ to denote the size expression that $\upsilon$ is mapped to by $\rho$.
+
+      Additionally, we write $\rho e$ to denote the sized term $e$ with every size expression in $e$ replaced by its mapping and $\rho \Gamma$ to denote the environment $\Gamma$ with every size expression in the sized terms of its codomain replaced by its mapping.
+    \item A size substitution $\rho$ \textbf{satisfies the constraint system} $C$, denoted $\rho \vDash C$, if for every constraint $(s_1, s_2) \in C$, $\rho(s_1) \sqsubseteq \rho(s_2)$ holds.
+      We also call $\rho$ a \emph{solution} of $C$.
+  \end{itemize}
+\end{definition}
+
+Recall that we can treat a constraint set as a weighted, directed graph, where an edge of weight $n$ from $\upsilon_1$ to $\upsilon_2$ would correspond to a constraint of the form $\upsilon_1 \sqsubseteq \upsilon_2^n$.
+Assuming for now that this graph has no negative cycles, for every connected component, we want to assign each size variable the same common size variable but with a different size.
+For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilon}_2, \hat{\upsilon_1} \sqsubseteq \upsilon_3}$, a possible solution would be the mapping $\set{\upsilon_1 \mapsto \tau, \upsilon_2 \mapsto \upsilon^*, \upsilon_3 \mapsto \hat{\tau}}$.
+
+This kind of problem is a \emph{difference constraint} problem \citep{clrs}.
+Generally a solution involves finding a mapping from variables to integers, whereas our solution will map from size variables to size expressions with the same base, but the technique using a single-source shortest-path algorithm still applies.
+Given a connected component $C_c$ with no negative cycles, our algorithm $\solvecomp$ for finding a solution proceeds as follows:
+
+\begin{enumerate}
+  \setcounter{enumi}{-1}
+  \item Generate a fresh size variable $\tau$.
+  \item For every size variable $\upsilon_i$ in $C_c$, add an edge $\tau \sqsubseteq \upsilon_i$ of weight $0$.
+  \item \label{alg:solvecomp:shortest-path} Find the weights $w_i$ of the shortest paths from $\tau$ to every other size variable $\upsilon_i$ in $C_c$.
+    This yields the constraint $\tau \sqsubseteq \upsilon_i^{w_i}$.
+  \item Na\"ively, we would map each $\upsilon_i$ to the size expression $\tau^{-w_i}$.
+    However, $-w_i$ may be negative, which would make no sense as the size of a size variable.
+    Therefore, we find the largest weight $w_{\max} \coloneqq \max_i w_i$, and shift all the sizes up by $w_{\max}$.
+    In other words, we return the map $\rho \coloneqq \set{\upsilon_i \mapsto \tau^{w_{\max} - w_i}}$.
+\end{enumerate}
+
+Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ due to finding the single-source shortest paths in (\ref{alg:solvecomp:shortest-path}) using, for instance, the Bellman--Ford algorithm. The total $\solve$ algorithm, given some constraint set $C$, is then as follows:
+
+\begin{enumerate}
+  \setcounter{enumi}{-1}
+  \item Initialize an empty size substitution $\rho$.
+  \item Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
+  \item Remove all edges with size variables in $V^-$ from $C$, and for every $\upsilon_i \in V^-$, add $\upsilon_i \mapsto \infty$ to $\rho$.
+  \item For every connected component $C_c$ of $C$, add the mappings $\solvecomp{C_c}$ to $\rho$.
+\end{enumerate}
+
+The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$ so that $\Sigma, \Gamma_G, \square \vdash \rho e : \rho t$ holds.
