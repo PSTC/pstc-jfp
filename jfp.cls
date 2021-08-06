@@ -3249,7 +3249,7 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
    \markboth{\contentsname}{\contentsname}%
    \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
    \@starttoc{toc}%
-\UnicodeCharacter{13}{ \ignorespaces}}%
+\UnicodeCharacter{13}{\ignorespaces}}%
 %% LIST OF FIGURES%
 \newcommand\listoffigures{%
    \setlength\overfullrule{\z@}%
@@ -4192,7 +4192,7 @@ breaklinks=true}
    \markboth{\contentsname}{\contentsname}%
    \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
    \@starttoc{toc}%
-\UnicodeCharacter{13}{ \ignorespaces}}%
+\UnicodeCharacter{13}{\ignorespaces}}%
 
 \def\chapcontentfont{\fontsize{10}{12}\selectfont}%
 \def\chapcontentpagefont{\fontsize{10}{12}\bfseries\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
