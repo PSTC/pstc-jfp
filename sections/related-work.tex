@@ -1,17 +1,17 @@
 \section{Related Work}\label{sec:related}
 
-This work is based on \CIChat~\cite{cic-hat}, which describes CIC with sized types and a size inference algorithm.
+This work is based on \CIChat~\citep{cic-hat}, which describes CIC with sized types and a size inference algorithm.
 It assumes that position annotations are given by the user, requires each parameter of \coinductive types to be assigned polarities, and deals only with terms.
 We have added on top of it global declarations, local definitions, constants and variables annotated by a vector of size expressions, their \deltaDeltareductions, an explicit treatment of mutually-defined \coinductive types and \cofixpoints, and an intermediate procedure \RecCheckLoop to handle missing position annotations, while removing parameter polarities and subtyping rules based on these polarities.
 
-The language \CIChatminus~\cite{cic-hat-minus} is similar to \CIChat, described in greater detail, but with one major difference: \CIChatminus disallows size variables in the bodies of abstractions, in the arguments of applications, and in case expression branches, making \CIChatminus a strict subset of \CIChat.
+The language \CIChatminus~\citep{cic-hat-minus} is similar to \CIChat, described in greater detail, but with one major difference: \CIChatminus disallows size variables in the bodies of abstractions, in the arguments of applications, and in case expression branches, making \CIChatminus a strict subset of \CIChat.
 Any size expressions found in these locations must be set to $\infty$.
 This ``solves'' the problem discussed in \autoref{sec:sponge-cake} of how to handle defined variables used in \cofixpoints by disallowing it entirely.
 In practice, such as in Coq's standard library, aliases are often defined for \coinductive types, so we designed \lang to accommodate \cofixpoints defined over aliases and other type-level computations.
 
-The implementation of \RecCheck comes from \Fhat~\cite{f-hat}, an extension of System F with type-based termination using sized types.
-Rules relating to coinductive constructions and cofixpoints come from the natural extension of \CChatomega~\cite{cc-hat-omega}, which describes only infinite streams.
-The size inference algorithm is based on those of \CIChat, \CChatomega, and \CIChatl~\cite{cic-hat-l}.
+The implementation of \RecCheck comes from \Fhat~\citep{f-hat}, an extension of System F with type-based termination using sized types.
+Rules relating to coinductive constructions and cofixpoints come from the natural extension of \CChatomega~\citep{cc-hat-omega}, which describes only infinite streams.
+The size inference algorithm is based on those of \CIChat, \CChatomega, and \CIChatl~\citep{cic-hat-l}.
 
 Whereas our size algebra supports only a successor operation, \emph{linear} sized types in \CIChatl extends the algebra by including size expressions of the form $n \cdot S$, so that all annotations are of the form $n \cdot \upsilon + m$, where $m$ is the number of ``hats''.
 Unfortunately, this causes the time complexity of its \RecCheck procedure to be worst-case doubly exponential in the number of size variables.
@@ -19,7 +19,7 @@ However, the set of typeable (and therefore terminating or productive) functions
 If successor sized types prove practical, augmenting the type system to linear sized types would be worth investigating, depending on whether common programs would cause worst-case behaviour.
 The most significant change required would be in \RecCheck, which must then solve a set of constraints in Presburger arithmetic.
 
-Well-founded sized types in \CIChatsub~\cite{wellfounded} are yet another extension of successor sized types.
+Well-founded sized types in \CIChatsub~\citep{wellfounded} are yet another extension of successor sized types.
 The unpublished manuscript contains a type system, some metatheoretical results, and a size inference algorithm.
 In essence, it preserves subject reduction for coinductive constructions, and also expands the set of typeable functions.
 

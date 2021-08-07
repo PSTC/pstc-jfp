@@ -2,12 +2,12 @@
 \label{sec:metatheory}
 
 In this section, we describe the metatheory of \lang.
-Some of the metatheory is inherited or essentially similar to past work~\cite{cic-hat-minus,cc-hat-omega,cic-hat}, although we must adapt key proofs to account for differences in subtyping and definitions.
+Some of the metatheory is inherited or essentially similar to past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat}, although we must adapt key proofs to account for differences in subtyping and definitions.
 Complete proofs for a language like \lang are too involved to present in full, so we provide key lemmas and proof sketches; full proofs can be found in \anotherpdf.
 
 In short, \lang satisfies confluence and subject reduction (with the same caveats as in CIC for cofixpoints).
 Proofs of strong normalization and logical consistency for \lang, and soundness and completeness of the size inference algorithm with respect to the typing rules, remain future work.
-We conjecture how the proofs of strong normalization and consistency should proceed based on past work~\cite{cic-hat-minus,cc-hat-omega,cic-hat}.
+We conjecture how the proofs of strong normalization and consistency should proceed based on past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat}.
 
 The metatheoretical investigations provide many interesting questions, so we discuss future work in context as these questions arise.
 
@@ -171,7 +171,7 @@ We can show $\Sigma,\square,\square \vdash e_{\textrm{O}} = \textrm{O} : \textrm
   : \text{Eq}^\infty ~ \text{N}^s ~ n ~ n
 \end{displaymath}
 %
-by \refrule{case} and \refrule{abs} and because $s = \upsilon+2$ by choice.
+by \refrule{case} and \refrule{lam} and because $s = \upsilon+2$ by choice.
 %
 Since seq returns its second argument, which is O in $e_{\textrm{S}}$,
 it follows that
@@ -237,11 +237,11 @@ $t_i \leq t_i'$ for $i = 1,2$.
 % This is not the case in \lang, because as mentioned in
 % \autoref{subsec:typing:subtyping}, we require the
 % parameters to be convertible in order to stay faithful to the
-% implementation~\cite{impl}.
+% implementation~\citep{impl}.
 %
 However, since \lang allows both universe subtyping and size subtyping,
 and the universe subtyping rules in the Coq
-manual~\cite{coq} require arguments and parameters to be convertible,
+manual~\citep{coq} require arguments and parameters to be convertible,
 this straightforward solution may cause unforeseen
 problems with universe subtyping.
 % the solution to this subtyping problem will be more
@@ -321,18 +321,18 @@ We can now state soundness and completeness of the checking, inference, and well
 
 \begin{theorem}[Soundness (check/infer)]
   Let $\Sigma$ be a fixed, well-formed signature.
-  Suppose $\WF(\Sigma, \Gamma_G, \square)$ holds.
+  Suppose $\WF{\Sigma, \Gamma_G, \square}$ holds.
   \begin{enumerate}
     \item If for every $\rho$ such that $\rho \vDash C$ the following hold:
       \begin{itemize}
-        \item $\WF(\Sigma, \Gamma_G, \rho\Gamma_\Psi)$
+        \item $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
         \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
         \item $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$
       \end{itemize}
       Then for every $\rho$ such that $\rho \vDash C'$, $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$ holds.
     \item If for every $\rho$ such that $\rho \vDash C$ the following hold:
       \begin{itemize}
-        \item $\WF(\Sigma, \Gamma_G, \rho\Gamma_\Psi)$
+        \item $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
         \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
         \item $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$
       \end{itemize}
@@ -352,7 +352,7 @@ However, well-typedness under a malformed environment is meaningless, so we must
 
 \begin{theorem}[Soundness (well-formedness)]
   Let $\Sigma$ be a fixed, well-formed signature. \\
-  If $\Gamma^\circ_G \rightsquigarrow \Gamma_G$, then $\WF(\Sigma, \Gamma_G, \square)$ holds.
+  If $\Gamma^\circ_G \rightsquigarrow \Gamma_G$, then $\WF{\Sigma, \Gamma_G, \square}$ holds.
 \end{theorem}
 
 \begin{proof}[Proof Sketch]

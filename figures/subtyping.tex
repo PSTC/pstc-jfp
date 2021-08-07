@@ -1,34 +1,37 @@
 \begin{figure}
+\begin{flushleft}
+  \fbox{$\gg \vdash t \leq t$}
+\end{flushleft}
 \begin{mathpar}
-  \inferrule*{~}
-    {\Prop \leq \Set \leq \Type{1}}
+  \inferrule[\defrule{st-cumul}]{~}
+    {\gg \vdash \Prop \leq \Set \leq \Type{1}}
   \quad
-  \inferrule*[right=\defrule{st-cumul}]{~}
-    {\Type{i} \leq \Type{i+1}}
+  \inferrule{~}
+    {\gg \vdash \Type{i} \leq \Type{i+1}}
   \and
-  \inferrule*[right=\defrule{st-conv}]
-    {t \approx u}
-    {t \leq u}
-  \\
-  \inferrule*[right=\defrule{st-trans}]
-    {t \leq u \and u \leq v}
-    {t \leq v}
+  \inferrule[\defrule{st-conv}]
+    {\gg \vdash t \approx u}
+    {\gg \vdash t \leq u}
   \and
-  \inferrule*[right=\defrule{st-prod}]
-    {t_1 \approx t_2 \and u_1 \leq u_2} % t_2 \leq t_1
-    {\prod{x}{t_1}{u_1} \leq \prod{y}{t_2}{u_2}}
+  \inferrule[\defrule{st-trans}]
+    {\gg \vdash t \leq u \\\\ \gg \vdash u \leq v}
+    {\gg \vdash t \leq v}
   \and
-  \inferrule*[right=\defrule{st-app}]
-    {t_1 \leq t_2 \and u_1 \approx u_2} % \u_2 \leq u_1
-    {t_1 ~ u_1 \leq t_2 ~ u_2}
-  \\
-  \inferrule*[right = \defrule{st-ind}]
-  { I \textrm{ inductive } \and s \sqsubseteq s' }
-  { I^s \leq I^{s'} }
+  \inferrule[\defrule{st-prod}]
+    {\gg \vdash t_1 \approx t_2 \\\\ \gg(\assm{y}{t_2}) \vdash \subst{u_1}{x}{y} \leq u_2} % t_2 \leq t_1
+    {\gg \vdash \prod{x}{t_1}{u_1} \leq \prod{y}{t_2}{u_2}}
   \and
-  \inferrule*[right = \defrule{st-coind}]
-  { I \textrm{ coinductive } \and s' \sqsubseteq s }
-  { I^s \leq I^{s'} }
+  \inferrule[\defrule{st-app}]
+    {\gg \vdash t_1 \leq t_2 \\\\ \gg \vdash u_1 \approx u_2} % \u_2 \leq u_1
+    {\gg \vdash t_1 ~ u_1 \leq t_2 ~ u_2}
+  \and
+  \inferrule[\defrule{st-ind}]
+    {I \textrm{ inductive } \and s \sqsubseteq s'}
+    {\gg \vdash I^s \leq I^{s'}}
+  \and
+  \inferrule[\defrule{st-coind}]
+    {I \textrm{ coinductive } \and s' \sqsubseteq s}
+    {\gg \vdash I^s \leq I^{s'}}
 \end{mathpar}
 \caption{Subtyping rules}
 \label{fig:subtyping}

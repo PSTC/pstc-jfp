@@ -1,6 +1,6 @@
 \section{Size Inference}\label{sec:algorithm}
 
-In this section, we present a size inference algorithm, whose goal is to take unannotated programs in $T^\circ$ (corresponding to terms in CIC), simultaneously assign annotations to them while collecting a set of subsizing constraints based on the typing rules, check the constraints to ensure well-typedness, and produce well-typed programs that are stored in the global environment and can be used in the inference of future programs.
+In this section, we present a size inference algorithm, whose goal is to take unannotated programs $e^\circ$ (corresponding to terms in CIC), simultaneously assign annotations to them while collecting a set of subsizing constraints based on the typing rules, check the constraints to ensure well-typedness, and produce well-typed programs that are stored in the global environment and can be used in the inference of future programs.
 Constraints are generated when comparing two types $t, u$ to ensure that the subtyping relation $t \leq u$ holds.
 Therefore, this algorithm is also a type checking algorithm, since it could be that $t$ fails to subtype $u$, in which case the algorithm fails.
 
@@ -133,7 +133,7 @@ An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref
 
 \subsection{RecCheck}
 
-As in previous work on \CChatomega with coinductive streams~\cite{cc-hat-omega} and in \CIChat, we use the same \RecCheck algorithm from \Fhat~\cite{f-hat}.
+As in previous work on \CChatomega with coinductive streams~\citep{cc-hat-omega} and in \CIChat, we use the same \RecCheck algorithm from \Fhat~\citep{f-hat}.
 This algorithm attempts to ensure that the subsizing rules in \autoref{fig:subsizing} can be satisfied within a given set of constraints.
 It does so by checking the set of constraints for invalid circular subsizing relations, setting the size variables involved in the cycles to $\infty$, and producing a new set of constraints without these problems or fails, which indicates nontermination or nonproductivity.
 It takes four arguments:

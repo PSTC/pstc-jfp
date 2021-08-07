@@ -1,10 +1,19 @@
 \ProvidesPackage{pstc}
 
+% colours
+\usepackage{xcolor}
+\definecolor{kwcolour}{RGB}{0,128,0}
+\definecolor{constcolour}{RGB}{176,0,64}
+\definecolor{metacolour}{RGB}{64,128,128}
+\newcommand{\kw}[1]{\mathtt{\textcolor{kwcolour}{#1}}}
+\newcommand{\const}[1]{\mathtt{\textcolor{constcolour}{#1}}}
+\newcommand{\meta}[1]{\texttt{\textcolor{metacolour}{#1}}}
+
 % long (\iftrue) or short (\iffalse) version of paper
 \newcommand{\iflong}{\iffalse}
 % blinded (true) or unblinded (false) version of paper
 \newcommand{\blinding}[2]{\ifthenelse{\boolean{false}}{#1}{#2}}
-\newcommand{\blindimpl}{\blinding{available in the anonymous supplementary material}{~\cite{impl}}}
+\newcommand{\blindimpl}{\blinding{available in the anonymous supplementary material}{~\citep{impl}}}
 
 % rule hyperlinks
 \newcommand{\defrule}[1]{\phantomsection\label{#1}#1}
@@ -24,7 +33,7 @@
 \newcommand{\CIChatsub}{CIC$\widehat{_\sqsubseteq}$\xspace}
 
 % named sets
-\newcommand{\textset}[1]{\text{#1}}
+\newcommand{\textset}[1]{\meta{#1}}
 \newcommand{\Axioms}{\textset{Axioms}\xspace}
 \newcommand{\Rules}{\textset{Rules}\xspace}
 \newcommand{\Elims}{\textset{Elims}\xspace}
@@ -41,19 +50,24 @@
 }
 \newcommand{\metafun}[2][0]{%
   \setcounter{funargs}{#1}%
-  \textsf{#2}%
+  \meta{#2}%
     \ifthenelse{\equal{\thefunargs}{0}}
       {\xspace}
       {\@ifnextchar\bgroup
         {(\commaseplist}
         {\xspace}}}
+\newcommand{\apps}[1]{%
+  #1%
+  \@ifnextchar\bgroup
+    {\: \apps}
+    {\xspace}
+}
 
 \newcommand{\dom}{\metafun[1]{dom}}
 \newcommand{\codom}{\metafun[1]{codom}}
 \newcommand{\SV}{\metafun[1]{SV}}
 \newcommand{\PV}{\metafun[1]{PV}}
 \newcommand{\FV}{\metafun[1]{FV}}
-\newcommand{\WF}{\metafun[1]{WF}}
 \newcommand{\whnf}{\metafun[1]{whnf}}
 \newcommand{\fresh}{\metafun[1]{fresh}}
 \newcommand{\axiom}{\metafun[1]{axiom}}
@@ -78,32 +92,49 @@
 \newcommand{\RecCheck}{\metafun[4]{RecCheck}}
 \newcommand{\RecCheckFail}{\metafun[-1]{RecCheckFail}}
 \newcommand{\RecCheckLoop}{\metafun[5]{RecCheckLoop}}
+\newcommand{\WF}[1]{\textrm{WF}(#1)} % wellformedness isn't really a metafunction
 
 % terms and expressions (for math envs)
-\newcommand{\Prop}{\text{Prop}}
-\newcommand{\Set}{\text{Set}}
-\newcommand{\Type}[1]{\text{Type}_{#1}}
+\newcommand{\Prop}{\const{Prop}}
+\newcommand{\Set}{\const{Set}}
+\newcommand{\Type}[1]{\const{Type}_{#1}}
 \newcommand{\abs}[3]{\lambda #1 : #2 \mathpunct{.} #3}
-\renewcommand{\prod}[3]{\Pi #1 : #2 \mathpunct{.} #3} % originally Π but really big
+\newcommand{\app}{\apps}
+\renewcommand{\prod}[3]{\Pi #1 \mathbin{:} #2 \mathpunct{.} #3} % originally Π but really big
 \newcommand{\prodctx}[2]{\Pi #1 \mathpunct{.} #2}
-\newcommand{\letin}[4]{\text{let}\ #1 : #2 \coloneqq #3\ \text{in}\ #4}
-\newcommand{\caseof}[4]{\text{case}_{#1}\ #2\ \text{of}\ \langle #3 \Rightarrow #4 \rangle}
-\newcommand{\Def}[3]{\text{Def}\ #1 : #2 \coloneqq #3.}
-\newcommand{\Assum}[2]{\text{Assum}\ #1 : #2.}
+\newcommand{\letin}[4]{\kw{let}\ #1 \mathbin{:} #2 \coloneqq #3\ \kw{in}\ #4}
+\newcommand{\caseof}[4]{\kw{case}_{#1}\ #2\ \text{of}\ \seq{#3 \Rightarrow #4}}
+\newcommand{\defn}[3]{#1 \mathbin{:} #2 \mathbin{\coloneqq} #3}
+\newcommand{\assm}[2]{#1 \mathbin{:} #2}
+\newcommand{\Defn}[3]{\kw{Defn}\ #1 \mathbin{:} #2 \mathbin{\coloneqq} #3.}
+\newcommand{\Assm}[2]{\kw{Assm}\ #1 \mathbin{:} #2.}
 \renewcommand{\succ}[1]{\widehat{#1}} % originally ≻
 \def\fix{\@ifstar{\@@fix}{\@fix}}
 \def\cofix{\@ifstar{\@@cofix}{\@cofix}}
-\newcommand{\@fix}[4]{\text{fix}_{#1}\ \langle #2 : #3 \coloneqq #4 \rangle}
-\newcommand{\@cofix}[4]{\text{cofix}_{#1}\ \langle #2 : #3 \coloneqq #4 \rangle}
-\newcommand{\@@fix}[4]{\text{fix}_{#1}\ #2 : #3 \coloneqq #4}
-\newcommand{\@@cofix}[4]{\text{cofix}_{#1}\ #2 : #3 \coloneqq #4}
-\newcommand{\Size}{\text{Size}}
-\newcommand{\SizeLt}{\text{Size<}}
-\newcommand{\SizeUniv}{\text{SizeUniv}}
+\newcommand{\@fix}[4]{\kw{fix}_{#1}\ \seq{#2 : #3 \mathbin{\coloneqq} #4}}
+\newcommand{\@cofix}[4]{\kw{cofix}_{#1}\ \seq{#2 \mathbin{:} #3 \mathbin{\coloneqq} #4}}
+\newcommand{\@@fix}[4]{\kw{fix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
+\newcommand{\@@cofix}[4]{\kw{cofix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
+\newcommand{\Size}{\const{Size}}
+\newcommand{\SizeLt}{\const{Size<}}
+\newcommand{\SizeUniv}{\const{SizeUniv}}
+
+% concrete (co)inductive examples
+\newcommand{\Nat}{\const{Nat}}
+\newcommand{\Zero}{\const{O}}
+\newcommand{\Succ}{\const{S}}
+\newcommand{\List}{\const{List}}
+\newcommand{\Nil}{\const{Nil}}
+\newcommand{\Cons}{\const{Cons}}
+\newcommand{\Vector}{\const{Vector}}
+\newcommand{\VNil}{\const{VNil}}
+\newcommand{\VCons}{\const{VCons}}
+\newcommand{\Stream}{\const{Stream}}
 
 % contexts (for math envs)
+\newcommand{\mt}{\textcolor{metacolour}{\bullet}}
 \newcommand{\sgg}{\Sigma, \Gamma_G, \Gamma}
-\newcommand{\sg}{\Sigma, \Gamma_G, \square}
+\newcommand{\sg}{\Sigma, \Gamma_G, \mt}
 \renewcommand{\gg}{\Gamma_G, \Gamma} % originally ≫
 \newcommand{\cgg}{C, \Gamma_G, \Gamma}
 \newcommand{\cgp}{C, \Gamma_G, \Psi}
@@ -122,14 +153,14 @@
 \newcommand{\substvec}[3]{#1 \vec{[#2 \coloneqq #3]}}
 \newcommand{\substseq}[5]{#1 [#2 \coloneqq #3] \dots [#4 \coloneqq #5]}
 
-% other (for math envs)
+% other
+\newcommand{\ph}{\textcolor{metacolour}{\cdot}}
+\newcommand{\any}{\meta{\_}}
 \newcommand{\N}{\mathbb{N}}
 \renewcommand{\P}{\mathbb{P}} % originally ¶
 \renewcommand{\vec}[1]{\overline{#1}} % originally \overline
-
-% other
-\def\varw{w} % redefine \varw regardless
 \providecommand{\napprox}{\not\approx}
+\def\varw{w} % redefine \varw regardless
 
 % hyphenation rules
 \newcommand{\coinductive}{(co)\-inductive\xspace}
@@ -154,6 +185,7 @@
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 \DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\erase}{|}{|}
 \DeclarePairedDelimiter{\br}{(}{)}
 \DeclarePairedDelimiter{\sqbr}{[\![}{]\!]}
 

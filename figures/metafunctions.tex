@@ -3,18 +3,18 @@
 
 \begin{align*}
     \indtype{\Sigma}{I_k} &=
-        \prodctx{\Delta_p}{\prodctx{\Delta_k}{\varw_k}} \\
+        \prodctx{\Delta_p}{\prodctx{\Delta_k}{U_k}} \\
     \constrtype{\Sigma}{c_\ell}{s} &=
         \prodctx{\Delta_p}{\prodctx{\Delta_\ell [I_\ell^\infty \coloneqq I_\ell^s]}{I_{\ell}^{\hat{s}} ~ \dom{\Delta_p} ~ \overline{t}_\ell}} \\
-    \motivetype{\Sigma}{\overline{p}}{\varw}{I_k^s} &=
-        \prodctx{\Delta_k[\dom{\Delta_p} \coloneqq \overline{p}]}{\prod{\_}{I_k^s ~ \overline{p} ~ \dom{\Delta_k}}{\varw}} \\
+    \motivetype{\Sigma}{\overline{p}}{U}{I_k^s} &=
+        \prodctx{\Delta_k[\dom{\Delta_p} \coloneqq \overline{p}]}{\prod{\any}{I_k^s ~ \overline{p} ~ \dom{\Delta_k}}{U}} \\
     \branchtype{\Sigma}{\overline{p}}{c_\ell}{s}{\wp} &=
         \prodctx{\Delta_\ell [I_\ell^\infty \coloneqq I_\ell^s][\dom{\Delta_p} \coloneqq \overline{p}]}{\wp ~ \overline{t}_\ell[\dom{\Delta_p}\coloneqq\overline{p}] ~ (c_\ell ~ \overline{p} ~ \dom{\Delta_\ell})}
 \end{align*}
 \begin{displaymath}
     \textit{where}\;\:
     k \in \overline{\imath}, \ell \in \overline{\jmath},
-    \big(\Delta_p \vdash \langle I_i ~ \_ : \prodctx{\Delta_i}{\varw_i} \rangle \coloneqq \langle c_j : \prodctx{\Delta_j}{I_j ~ \_ ~ \overline{t}_j} \rangle \big) \in \Sigma
+    \big(\Delta_p \vdash \langle I_i ~ \_ : \prodctx{\Delta_i}{U_i} \rangle \coloneqq \langle c_j : \prodctx{\Delta_j}{I_j ~ \_ ~ \overline{t}_j} \rangle \big) \in \Sigma
 \end{displaymath}
 
 \caption{Metafunctions for typing rules}
