@@ -2,17 +2,17 @@
 \centering
 
 \begin{minted}[escapeinside=<>,mathescape=true]{ocaml}
-let rec RecCheckLoop <$C_2$> <$\Psi$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$> =
-  try let <$C_3$> = <$\{\}$> in
+let rec RecCheckLoop <$C$> <$\Psi$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$> =
+  try let <$C'$> = <$\set{}$> in
       let for i = 1 to k do
-          let pv<$_i$> = <$\textsf{PV}$> <${t_i}$> in
-          let sv<$_i$> = (<$\textsf{SV}$> <$\Psi$> <$\cup$> <$\textsf{SV}$> <$t_i$> <$\cup$> <$\textsf{SV}$> <$e_i$>) <$\setminus$> pv<$_i$> in
-          <$C_3$> := <$C_3$> <$\cup$> RecCheck <$C_2$> <$\tau_i$> pv<$_i$> sv<$_i$>
-      done in <$C_3$>
+          let pv<$_i$> = <$\PV$> <${t_i}$> in
+          let sv<$_i$> = (<$\SV$> <$\Psi$> <$\cup$> <$\SV$> <$t_i$> <$\cup$> <$\SV$> <$e_i$>) <$\setminus$> pv<$_i$> in
+          <$C'$> := <$C'$> <$\cup$> RecCheck <$C$> <$\tau_i$> pv<$_i$> sv<$_i$>
+      done in <$C'$>
   with RecCheckFail <$V$> ->
       if (empty? <$V$>)
       then raise RecCheckLoopFail
-      else <$\mathcal{V}^*$> := <$\mathcal{V}^* \setminus V$>; RecCheckLoop <$C_2$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$>
+      else <$\mathcal{V}^*$> := <$\mathcal{V}^* \setminus V$>; RecCheckLoop <$C$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$>
 \end{minted}
 
 \caption{Pseudocode implementation of \textsc{RecCheckLoop}}
