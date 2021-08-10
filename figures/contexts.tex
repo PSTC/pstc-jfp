@@ -1,18 +1,10 @@
 \begin{figure}
 \centering
 \begin{align*}
-D[\alpha] &\Coloneqq                                            &\text{local declarations} \\
-    &\mid \mathcal{X}: T[\alpha]                                &\textit{local assumption} \\
-    &\mid \mathcal{X}: T[\alpha] \coloneqq T[\alpha]            &\textit{local definition} \\
-D_G[\alpha] &\Coloneqq                                          &\text{global declarations} \\
-    &\mid \Assum{\mathcal{X}}{T[\alpha]}                        &\textit{global assumption} \\
-    &\mid \Def{\mathcal{X}}{T[\alpha]}{T[\alpha]}               &\textit{global definition}
+\Delta &\Coloneqq \mt \mid \Delta(\assm{x}{e}) &\text{local assumption environments} \\
+\Gamma &\Coloneqq \mt \mid \Gamma(\assm{x}{e}) \mid \Gamma(\defn{x}{t}{t}) &\text{local environments} \\
+\Gamma_G &\Coloneqq \mt \mid \Gamma_G(\Assm{x}{e}) \mid \Gamma_G(\Defn{x}{t}{t}) &\text{global environments}
 \end{align*}
-\begin{align*}
-\Gamma[\alpha]   &\Coloneqq \square \mid \Gamma[\alpha] (D[\alpha])              &\text{local environments} \\
-\Gamma_G[\alpha] &\Coloneqq \square \mid \Gamma_G[\alpha] (D_G[\alpha])          &\text{global environment} \\
-\Delta[\alpha]   &\Coloneqq \square \mid \Delta[\alpha] (\mathcal{X}: T[\alpha]) &\text{assumption environments}
-\end{align*}
-\caption{Declarations and environments}
+\caption{Environments}
 \label{fig:contexts}
 \end{figure}

@@ -1,11 +1,9 @@
 \begin{figure}
 \centering
 \begin{align*}
-D^*[\alpha] &\Coloneqq                                          &\text{local generic declarations} \\
-    &\mid \mathcal{X}: T[\alpha]                                &\textit{local assumption} \\
-    &\mid C, \mathcal{X}: T[\alpha] \coloneqq T[\alpha]         &\textit{local definition with constraint set} \\
-\Psi[\alpha] &\Coloneqq \square \mid \Psi[\alpha] (D^*[\alpha]) &\text{local generic environments} \\
+\Psi &\Coloneqq \mt \mid \Psi(\assm{x}{t}) &\text{local assumptions} \\
+    &\mid \Psi(C, \defn{x}{t}{e}) &\text{local definitions with constraint sets}
 \end{align*}
-\caption{Generic declarations and environments}
+\caption{Generic environments}
 \label{fig:contexts-gen}
 \end{figure}

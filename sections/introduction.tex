@@ -27,24 +27,21 @@ This has a few disadvantages: firstly, the bodies of these functions are require
 
 Furthermore, changes in the structural form of functions used in \cofixpoints can cause the guard predicate to reject the program even if the functions still behave the same.
 The following simple example, while artificial, illustrates this structural fragility.
-
-\begin{multicols}{2}
 \begin{minted}{coq}
-  Fixpoint minus n m :=
-    match n, m with
-    | O, _ => n
-    | _, O => n
-    | S n', S m' => minus n' m'
-    end.
-  \end{minted}
-  \begin{minted}{coq}
-  Fixpoint div n m :=
-    match n with
-    | O => O
-    | S n' => S (div (minus n' m) m)
-    end.
-  \end{minted}
-\end{multicols}
+Fixpoint minus n m :=
+  match n, m with
+  | O, _ => n
+  | _, O => n
+  | S n', S m' => minus n' m'
+  end.
+\end{minted}
+\begin{minted}{coq}
+Fixpoint div n m :=
+  match n with
+  | O => O
+  | S n' => S (div (minus n' m) m)
+  end.
+\end{minted}
 
 If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour does not change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
 The acceptance of \coqinline{div} then depends on a function external to it, which can lead to difficulty in debugging for larger programs.
@@ -53,17 +50,17 @@ Furthermore, the guard predicate is unaware of the obvious fact that \coqinline{
 An alternative to guard predicates for termination and productivity enforcement uses \emph{sized types}. In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
 In this paper, we follow a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
 If the argument to a constructor has size $s$, then the fully-applied constructor would have a successor size $\hat{s}$.
-For instance, the \coqinline{nat} constructors follow the below rules:
+For instance, the constructors for the naturals follow the below rules:
 
 \vspace{-2ex}
 \begin{mathpar}
   \inferrule*
     {~}
-    {\Gamma \vdash \text{O} : \text{Nat}^{\hat{s}}}
+    {\Gamma \vdash \Zero : \Nat^{\hat{s}}}
   \and
   \inferrule*
-    {\Gamma \vdash n : \text{Nat}^s}
-    {\Gamma \vdash \text{S} ~ n : \text{Nat}^{\hat{s}}}
+    {\Gamma \vdash n : \Nat^s}
+    {\Gamma \vdash \app{\Succ}{n} : \Nat^{\hat{s}}}
 \end{mathpar}
 
 Termination and productivity checking is then simply a type checking rule that uses size information. For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
@@ -73,8 +70,8 @@ In short, they both follow the following (simplified) typing rule, where $\upsil
 \vspace{-2ex}
 \begin{mathpar}
   \inferrule*[]
-    {\Gamma (f:t^\upsilon) \vdash e: t^{\hat{\upsilon}}}
-    {\Gamma \vdash \text{(co)fix} ~ f : t := e : t^s}
+    {\Gamma (\assm{f}{t^\upsilon}) \vdash e: t^{\hat{\upsilon}}}
+    {\Gamma \vdash \kw{(co)fix}\ f \mathbin{:} t \mathbin{\coloneqq} e : t^s}
 \end{mathpar}
 
 We can then assign \coqinline{minus} the type $\text{Nat}^\iota \to \text{Nat} \to \text{Nat}^\iota$.
@@ -82,7 +79,7 @@ The fact that we can assign it a type indicates that it will terminate, and the 
 Then \coqinline{div} uses only the type of \coqinline{minus} to successfully type check, not requiring its body.
 Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O} does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}. Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving, expanding the set of terminating and productive functions that can be accepted.
 
-Unfortunately, past work on sized types~\cite{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
+Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
 
 \begin{itemize}
     \item They require nontrivial backwards-incompatible additions to the surface language.
@@ -94,7 +91,7 @@ Unfortunately, past work on sized types~\cite{cic-hat, cic-hat-minus} in the Cal
 \end{itemize}
 
 In this paper, we present \lang (``\emph{CIC-star-hat}''), a calculus for representing the core of Coq with sized types, and an inference algorithm from CIC to \lang.
-It is an extension of \CIChat~\cite{cic-hat} and \CIChatminus~\cite{cic-hat-minus} that resolves the issues above.
+It is an extension of \CIChat~\citep{cic-hat} and \CIChatminus~\citep{cic-hat-minus} that resolves the issues above.
 We also have a fork of Coq\blindimpl\xspace that implements the size inference algorithm and size-based termination and productivity checking of \lang.
 To maximize backward compatibility, the surface language is completely unchanged, and the existing guard condition and sized types can be enabled or disabled independently, or used in conjunction.
 Sized typing can be turned on with a flag that is off by default for safe and gradual testing of the new kernel.

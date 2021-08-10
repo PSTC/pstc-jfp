@@ -1,15 +1,15 @@
 \begin{figure}
 \begin{mathpar}
-  \inferrule*[Right=\defrule{ss-infty}]{~}
+  \inferrule[\defrule{ss-infty}]{~}
     {s \sqsubseteq \infty}
   \and
-  \inferrule*[Right=\defrule{ss-refl}]{~}
+  \inferrule[\defrule{ss-refl}]{~}
     {s \sqsubseteq s}
   \and
-  \inferrule*[Right=\defrule{ss-succ}]{~}
+  \inferrule[\defrule{ss-succ}]{~}
     {s \sqsubseteq \hat{s}}
   \and
-  \inferrule*[Right=\defrule{ss-trans}]
+  \inferrule[\defrule{ss-trans}]
     {s_1 \sqsubseteq s_2 \and s_2 \sqsubseteq s_3}
     {s_1 \sqsubseteq s_3}
 \end{mathpar}

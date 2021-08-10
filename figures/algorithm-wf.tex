@@ -9,23 +9,23 @@
 
 \begin{mathpar}
 \inferrule*[right=\defrule{a-global-nil}]{~}{
-    \square \rightsquigarrow \square
+    \mt \rightsquigarrow \mt
 }
 \and
 \inferrule*[right=\defrule{a-global-assum}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \emptyset, \Gamma_G, \square \vdash t^\circ \rightsquigarrow \_, t \Rightarrow^* \varw
+    \emptyset, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow \_, t \Rightarrow^* \varw
 }{
-    \Gamma_G^\circ(\Assum{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assum{x}{|t|^\infty\!\!})
+    \Gamma_G^\circ(\Assm{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assm{x}{|t|^\infty\!\!})
 }
 \and
 \inferrule*[right=\defrule{a-global-def}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \emptyset, \Gamma_G, \square \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
-    C_1, \Gamma_G, \square \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
+    \emptyset, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+    C_1, \Gamma_G, \mt \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
     \rho = \solve{C_2}
 }{
-    \Gamma_G^\circ(\Def{x}{t^\circ}{e^\circ\!\!}) \rightsquigarrow \Gamma_G(\Def{x}{\rho t}{\rho e})
+    \Gamma_G^\circ(\Defn{x}{t^\circ}{e^\circ\!\!}) \rightsquigarrow \Gamma_G(\Defn{x}{\rho t}{\rho e})
 }
 \end{mathpar}
     

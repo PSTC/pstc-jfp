@@ -17,27 +17,27 @@ Note that although we prove subject reduction for \lang without nested inductive
 
   \begin{itemize}
     \item $t \conv I_k^\infty ~ \vec{p} ~ \vec{a}$ where
-      $\langle \Delta_p \vdash I_i ~ \_ : \_ \rangle \coloneqq \langle c_j : \prodctx{\Delta_j}{I_j ~ \dom{\Delta_p} ~ \vec{t}_j} \rangle \in \Sigma$
+      $\defn{\langle \app{I_i}{\Delta_p}}{\any \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\dom{\Delta_p}}{\vec{t}_j}}}}} \in \Sigma$
       for some $k \in \vec{\imath}$ and all of the following hold:
       \begin{itemize}
         \item $\norm{\vec{p}} = \norm{\Delta_p}$
         \item $x \notin \FV(\vec{a})$
-        \item For every $j$, if $I_j = I_k$, then $x \nPOS_{I_k} \subst{(\prodctx{\Delta_j}{I_j ~ \vec{p} ~ \vec{t}_j})}{\dom{\Delta_p}}{\vec{p}}$
+        \item For every $j$, if $I_j = I_k$, then $x \nPOS_{I_k} \subst{(\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}})}{\dom{\Delta_p}}{\vec{p}}$
       \end{itemize}
   \end{itemize}
 \end{definition}
 
 \begin{definition}[Nested Positivity]
   Given some existing signature $\Sigma$, the variable $x$ is \emph{nested positive} in $t$ of $I_k$, written $x \nPOS_{I_k} t$, if
-  $\langle \Delta_p \vdash I_i ~ \_ : \_ \rangle \coloneqq \_ \in \Sigma$ for some $k \in \vec{\imath}$
-  and any of the following holds:
+  $\defn{\langle \app{I_i}{\Delta_p}}{\any \rangle}{\any} \in \Sigma$
+  for some $k \in \vec{\imath}$ and any of the following holds:
 
   \begin{itemize}
-    \item $t \conv I_k^\infty ~ \vec{p} ~ \vec{a}$ and $\norm{\vec{p}} = \norm{\Delta_p}$ and $x \notin \FV(\vec{a})$
+    \item $t \conv \app{I_k^\infty}{\vec{p}}{\vec{a}}$ and $\norm{\vec{p}} = \norm{\Delta_p}$ and $x \notin \FV(\vec{a})$
     \item $t \conv \prod{x}{u}{v}$ and $x \POS u$ and $x \nPOS_{I_k} v$
   \end{itemize}
 
-  In short, $x \nPOS_I t$ if $t \conv \prodctx{\Delta}{I ~ \vec{p} ~ \vec{a}}$ and $x \POS \Delta$ and $x \notin \FV(\vec{a})$.
+  In short, $x \nPOS_I t$ if $t \conv \prodctx{\Delta}{\app{I}{\vec{p}}{\vec{a}}}$ and $x \POS \Delta$ and $x \notin \FV(\vec{a})$.
 \end{definition}
 
 \begin{definition}[Constructor Type]
@@ -55,14 +55,15 @@ Note that although we prove subject reduction for \lang without nested inductive
 
 \begin{definition}[Well-formedness of \Coinductive Definitions]
   Suppose we have some signature $\Sigma$ and some global environment $\Gamma_G$. Consider the following \coinductive definition, where $\vec{p} = \dom{\Delta_p}$.
-  $$\Delta_p \vdash \langle I_i ~ \vec{p} : \prodctx{\Delta_i}{\varw_i} \rangle \coloneqq \langle c_j : \prodctx{\Delta_j}{I_j ~ \vec{p} ~ \vec{t}_j} \rangle$$
-
+  \begin{displaymath}
+    \defn{\langle \app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i} \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}}}}
+  \end{displaymath}
   This \coinductive definition is \emph{well-formed} if the following all hold:
 
   \begin{enumerate}[label = \textbf{(I\arabic*)}.]
-    \item For every $i$, there is some $\varw'_i$ such that $\Sigma, \Gamma_G, \Delta_p \vdash \prodctx{\Delta_i}{\varw_i} : \varw'_i$ holds.
-    \item For every $j$, there is some $\varw_j$ such that $\Sigma, \Gamma_G, \Delta_p(I_j^\infty: \prodctx{\Delta_p}{\prodctx{\Delta_i}{\varw_i}}) \vdash \prodctx{\Delta_j}{I_j^\infty ~ \vec{p} ~ \vec{t}_j} : \varw_j$ holds.
-    \item For every $j$, $\prodctx{\Delta_j}{I_j ~ \vec{p} ~ \vec{t}_j}$ is a constructor type for $I_j$. Note that this implies $I_j \POS \codom{\Delta_j}$.
+    \item For every $i$, there is some $U'_i$ such that $\Sigma, \Gamma_G, \Delta_p \vdash \prodctx{\Delta_i}{U_i} : U'_i$ holds.
+    \item For every $j$, there is some $U_j$ such that $\Sigma, \Gamma_G, \Delta_p(I_j^\infty: \prodctx{\Delta_p}{\prodctx{\Delta_i}{U_i}}) \vdash \prodctx{\Delta_j}{I_j^\infty ~ \vec{p} ~ \vec{t}_j} : U_j$ holds.
+    \item For every $j$, $\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}$ is a constructor type for $I_j$. Note that this implies $I_j \POS \codom{\Delta_j}$.
     \item For every $i, j$, all \coinductive types in the terms $\codom{\Delta_p}, \codom{\Delta_i}, \codom{\Delta_j}$ are annotated with $\infty$.
   \end{enumerate}
 \end{definition}

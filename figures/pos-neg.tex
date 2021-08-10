@@ -1,29 +1,33 @@
 \begin{figure}
 \centering
+\begin{flushleft}
+  \fbox{$\upsilon \pos t$} \quad
+  \fbox{$\upsilon \neg t$}
+\end{flushleft}
 \begin{mathpar}
-  \inferrule*[Right=\defnamerule{pos-notin}{pos-$\notin$}]
+  \inferrule[\defnamerule{pos-notin}{pos-$\notin$}]
     {\upsilon \notin \SV{t}}
     {\upsilon \pos t}
   \and\quad
-  \inferrule*[Right=\defnamerule{neg-notin}{neg-$\notin$}]
+  \inferrule[\defnamerule{neg-notin}{neg-$\notin$}]
     {\upsilon \notin \SV{t}}
     {\upsilon \neg t}
   \and\qquad
-  \inferrule*[Right=\defnamerule{pos-prod}{pos-$\Pi$}]
+  \inferrule[\defnamerule{pos-prod}{pos-$\Pi$}]
     {\upsilon \notin \SV{t} \and \upsilon \pos u}
     {\upsilon \pos \prod{x}{t}{u}}
   \and\quad
-  \inferrule*[right=\defnamerule{neg-prod}{neg-$\Pi$}]
+  \inferrule[\defnamerule{neg-prod}{neg-$\Pi$}]
     {\upsilon \notin \SV{t} \and \upsilon \neg u}
     {\upsilon \neg \prod{x}{t}{u}}
 
-  \inferrule*[right=\defrule{pos-ind}]
+  \inferrule[\defrule{pos-ind}]
     {\upsilon \notin \SV{\overline{a}} \and I ~ \text{inductive}}
-    {\upsilon \pos I^s \overline{a}}
+    {\upsilon \pos \app{I^s}{\overline{a}}}
 
-  \inferrule*[right=\defrule{neg-coind}]
+  \inferrule[\defrule{neg-coind}]
     {\upsilon \notin \SV{\overline{a}} \and I ~ \text{coinductive}}
-    {\upsilon \neg I^s \overline{a}}
+    {\upsilon \neg \app{I^s}{\overline{a}}}
 \end{mathpar}
 \caption{Positivity/negativity of size variables in terms}
 \label{fig:posneg}
