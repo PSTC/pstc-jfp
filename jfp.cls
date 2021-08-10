@@ -1253,7 +1253,7 @@
 %  \thm@preskip0pt
 %  \thm@postskip0pt}
 
-\renewenvironment{proof}{\par\addvspace{6pt}\noindent\textbf{Proof}\hskip5.5pt}{\hfill$\blacksquare$\par\addvspace{6pt}}
+\renewenvironment{proof}[1][]{\par\addvspace{6pt}\noindent\textbf{Proof}\xspace#1\textbf{.}\hskip5.5pt}{\hfill$\blacksquare$\par\addvspace{6pt}}
 
 \def\doitext{doi:}
 \def\voltext{vol.}

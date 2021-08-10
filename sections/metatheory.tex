@@ -26,7 +26,7 @@ We define $\rhd$ as the least compatible closure of \reduction and $\rhd^*$ as t
   %
 \end{theorem}
 %
-\begin{proof}[Proof Sketch]
+\begin{proof}[{[sketch]}]
   %
   We use the Takahashi translation technique due to \citet{takahashitrans}, which is a simplification of the standard
   parallel reduction technique.
@@ -37,36 +37,43 @@ We define $\rhd$ as the least compatible closure of \reduction and $\rhd^*$ as t
 
 \subsection{Subject Reduction}
 \label{sec:meta:sub-red}
-Subject reduction does not hold in CIC, or in Coq, due to cofixpoints\footnote{Discussion and counterexample can be found here: \url{https://github.com/coq/coq/issues/5288/}}.
-In essence, the problem is that $\nu$\=/reduction can either be guarded to reduce under a case expression (dual to $\mu$-reduction which only reduces a fixpoint when applied to a constructor), enabling strong normalization but breaking subject reduction, or unrestricted, enabling subject reduction to hold but breaking strong normalization.
 
-\lang, following Coq, implements the guarded $\nu$\=/reduction, so cofixpoints do not satisfy subject reduction.
-Ongoing work in Coq seeks to change the semantics of cofixpoints to enable both subject reduction and strong normalization.
+Suject reduction does not hold in \lang or in Coq due to the way coinductives are presented.
+This is a well-known problem, discussed previously in a sized-types setting by \citet{cc-hat-omega},
+on which our presentation of coinductives is based,
+as well as by the Coq developers\footnote{The discussion of the problem and suggested solutions can be found here: \url{https://github.com/coq/coq/issues/5288/}.}.
 
-With unrestricted $\nu$\=/reduction, subject reduction and confluence hold for cofixpoints, but we conjecture strong normalization must fail.
-\citet{cc-hat-omega} provides a nice discussion of this in a similar context.
+In brief, the current presentation of coinductives requires that cofixpoint reduction be \textit{restricted},
+\ie occurring only when it is the target of a case expression.
+This allows for strong normalization of cofixpoints in much the same way restricting fixpoint reduction to when the recursive argument is syntactically a fully-applied constructor does.
+One way this can break subject reduction is by making the type of a case expression not be convertible before and after the cofixpoint reduction.
+As a concrete example, consider the following coinductive definition for conaturals.
+\begin{displaymath}
+  \defn{\Conat}{\Type{}}{\assm{\Succ}{\Conat \to \Conat}}
+\end{displaymath}
+For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
+\begin{align*}
+  &\caseof{\erase{P}}{\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}}}{\Succ}{e} \rhd_\nu \\
+  &\caseof{\erase{P}}{\app{\Succ}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})}}{\Succ}{e}
+\end{align*}
+Assuming both terms are well-typed, the former has type $\app{P}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
+
+On the other hand, if we do allow unrestricted reduction, subject reduction does hold.
 
 \begin{theorem}[Subject Reduction]
   \label{thm:metatheory:sr}
-  %
   Let $\Sigma$ be a well-formed signature.
-  %
-  Further, define $\nu$-reduction to allow unrestricted unfolding
-  of cofixpoints.
-  %
-  Then, $\sgg \vdash e : t$ and $e \rhd e'$ implies
-  $\sgg \vdash e' : t$.
-  %
+  Suppose that $\nu$-reduction to allows unrestricted reduction of cofixpoints.
+  Then $\sgg \vdash e : t$ and $e \rhd e'$ implies $\sgg \vdash e' : t$.
 \end{theorem}
-%
-\begin{proof}[Proof Sketch]
-  %
-  By induction on $\sgg \vdash e : t$. Most cases are straightforward.
 
-  The case for \refrule{case} where $e \rhd e'$ by $\iota$-reduction relies on the fact
-  if $x$ is the name of a \coinductive types and appears strictly positively in
-  $t$ then $x$ appears covariantly in $t$.
-  (This is only true without nested \coinductive type, which recall, \lang disallows in well-formed signatures.)
+\begin{proof}[{[sketch]}]
+  By induction on $\sgg \vdash e : t$.
+  Most cases are straightforward.
+  The case for \refrule{case} where $e \rhd e'$ by $\iota$-reduction relies on the fact that
+  if $x$ is the name of a \coinductive type and appears strictly positively in $t$,
+  then $x$ appears covariantly in $t$.
+  (This is only true without nested \coinductive types, which \lang disallows in well-formed signatures.)
 
   The case for \refrule{case} and $e$ (guarded) $\nu$-reduces to $e'$ requires an unrestricted $\nu$-reduction.
   After guarded $\nu$-reduction, the target (a cofixpoint) appears in the motive unguarded by a case expression, but must be unfolded to re-establish typing the type $t$.
@@ -83,7 +90,7 @@ is disallowed due to the appearance of $\nat$ as a parameter of $\Box$.
 \begin{align*}
   \defn{\nat}{\Type{}}{\seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}}
 \end{align*}
-This is because we have the subtyping relation $\nat^\upsilon \leq \nat^{\hat{\upsilon}}$,
+Notice that we have the subtyping relation $\nat^\upsilon \leq \nat^{\hat{\upsilon}}$,
 but by convertibility of parameters,
 we do \emph{not} have $\app{\Box^\infty}{\nat^\upsilon} \leq \app{\Box^\infty}{\nat^{\hat{\upsilon}}}$.
 This convertibility due to the removal of polarity annotations on \coinductive definitions is what allows us to retain backward compatibility.
@@ -185,7 +192,7 @@ We can now state soundness and completeness of the checking, inference, and well
 The third condition tells us our primary goal: if the checking or inference algorithm succeeds, then given a solution of the constraints it produces, the term is well-typed.
 However, well-typedness under a malformed environment is meaningless, so we must also require that the environments we provide to the algorithm are well-formed, and that the constraints of generic environments are valid.
 
-\begin{proof}[Proof Sketch]
+\begin{proof}[{[sketch]}]
   By simultaneous induction on the checking and inference judgements of the algorithm.
   We refer the reader to \anotherpdf for the bulk of the proof and to \citet{f-hat, cc-hat-omega} for further details.
   SRC is used in the cases of \refrule{a-fix} and \refrule{a-cofix}: if \RecCheckLoop succeeds, then there is some position annotation of the bare \cofixpoint type such that \RecCheck succeeds, and we can apply SRC.
@@ -197,7 +204,7 @@ However, well-typedness under a malformed environment is meaningless, so we must
   If $\Gamma^\circ_G \rightsquigarrow \Gamma_G$, then $\WF{\Sigma, \Gamma_G, \mt}$ holds.
 \end{theorem}
 
-\begin{proof}[Proof Sketch]
+\begin{proof}[{[sketch]}]
   By induction on the well-formedness judgements of the algorithm.
   Again, we refer the reader to \anotherpdf for the bulk of the proof, which relies on the soundness of the checking and inference judgements.
   It also requires a lemma stating $\solve{C} \vDash C$ to ensure that global definitions are well-typed.
@@ -212,7 +219,7 @@ However, well-typedness under a malformed environment is meaningless, so we must
   \end{enumerate}
 \end{conjecture}
 
-\begin{proof}[Proof Sketch]
+\begin{proof}[{[sketch]}]
   By induction on the typing judgement.
   We refer the reader to \citet{f-hat, cc-hat-omega} for the bulk of the proof details.
   We conjecture that if a \cofixpoint with position-annotated types $\overline{t_k}$ is well-typed, then \RecCheckLoop can find position annotations for $\overline{\erase{t_k}}$ that have at least the same position annotations as $\overline{t_k}$ such that \RecCheck succeeds, so that we can apply CRC.
