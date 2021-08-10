@@ -104,18 +104,17 @@
 \renewcommand{\prod}[3]{\Pi #1 \mathbin{:} #2 \mathpunct{.} #3} % originally Π but really big
 \newcommand{\prodctx}[2]{\Pi #1 \mathpunct{.} #2}
 \newcommand{\letin}[4]{\kw{let}\ #1 \mathbin{:} #2 \coloneqq #3\ \kw{in}\ #4}
-\newcommand{\caseof}[4]{\kw{case}_{#1}\ #2\ \text{of}\ \seq{#3 \Rightarrow #4}}
+\newcommand{\caseof}[4]{\kw{case}_{#1}\ #2\ \kw{of}\ \seq{#3 \Rightarrow #4}}
+\WithSuffix\newcommand\caseof*[3]{\kw{case}_{#1}\ #2 \ \kw{of}\ #3}
 \newcommand{\defn}[3]{#1 \mathbin{:} #2 \mathbin{\coloneqq} #3}
 \newcommand{\assm}[2]{#1 \mathbin{:} #2}
 \newcommand{\Defn}[3]{\kw{Defn}\ #1 \mathbin{:} #2 \mathbin{\coloneqq} #3.}
 \newcommand{\Assm}[2]{\kw{Assm}\ #1 \mathbin{:} #2.}
 \renewcommand{\succ}[1]{\widehat{#1}} % originally ≻
-\def\fix{\@ifstar{\@@fix}{\@fix}}
-\def\cofix{\@ifstar{\@@cofix}{\@cofix}}
-\newcommand{\@fix}[4]{\kw{fix}_{#1}\ \seq{#2 : #3 \mathbin{\coloneqq} #4}}
-\newcommand{\@cofix}[4]{\kw{cofix}_{#1}\ \seq{#2 \mathbin{:} #3 \mathbin{\coloneqq} #4}}
-\newcommand{\@@fix}[4]{\kw{fix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
-\newcommand{\@@cofix}[4]{\kw{cofix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
+\newcommand{\fix}[4]{\kw{fix}_{#1}\ \seq{#2 : #3 \mathbin{\coloneqq} #4}}
+\newcommand{\cofix}[4]{\kw{cofix}_{#1}\ \seq{#2 \mathbin{:} #3 \mathbin{\coloneqq} #4}}
+\WithSuffix\newcommand\fix*[4]{\kw{fix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
+\WithSuffix\newcommand\cofix*[4]{\kw{cofix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
 \newcommand{\Size}{\const{Size}}
 \newcommand{\SizeLt}{\const{Size<}}
 \newcommand{\SizeUniv}{\const{SizeUniv}}
@@ -133,6 +132,8 @@
 \newcommand{\Stream}{\const{Stream}}
 \renewcommand{\Box}{\const{Box}}
 \newcommand{\MkBox}{\const{MkBox}}
+\newcommand{\Eq}{\const{Eq}}
+\newcommand{\Refl}{\const{Refl}}
 
 % contexts (for math envs)
 \newcommand{\mt}{\textcolor{metacolour}{\bullet}}
@@ -167,6 +168,7 @@
 
 % hyphenation rules
 \newcommand{\coinductive}{(co)\-inductive\xspace}
+\newcommand{\coinductives}{(co)\-inductives\xspace}
 \newcommand{\corecursive}{(co)\-recursive\xspace}
 \newcommand{\cofixpoint}{(co)\-fix\-point\xspace}
 \newcommand{\cofixpoints}{(co)\-fix\-points\xspace}

@@ -210,7 +210,7 @@ Formally, we define the following:
   \end{itemize}
 \end{definition}
 
-Recall that we can treat a constraint set as a weighted, directed graph, where an edge of weight $n$ from $\upsilon_1$ to $\upsilon_2$ would correspond to a constraint of the form $\upsilon_1 \sqsubseteq \upsilon_2^n$.
+Recall that we can treat a constraint set as a weighted, directed graph, where an edge of weight $n$ from $\upsilon_1$ to $\upsilon_2$ would correspond to a constraint of the form $\upsilon_1 \sqsubseteq \hat{\upsilon}_2^n$.
 Assuming for now that this graph has no negative cycles, for every connected component, we want to assign each size variable the same common size variable but with a different size.
 For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilon}_2, \hat{\upsilon_1} \sqsubseteq \upsilon_3}$, a possible solution would be the mapping $\set{\upsilon_1 \mapsto \tau, \upsilon_2 \mapsto \upsilon^*, \upsilon_3 \mapsto \hat{\tau}}$.
 
@@ -223,11 +223,11 @@ Given a connected component $C_c$ with no negative cycles, our algorithm $\solve
   \item Generate a fresh size variable $\tau$.
   \item For every size variable $\upsilon_i$ in $C_c$, add an edge $\tau \sqsubseteq \upsilon_i$ of weight $0$.
   \item \label{alg:solvecomp:shortest-path} Find the weights $w_i$ of the shortest paths from $\tau$ to every other size variable $\upsilon_i$ in $C_c$.
-    This yields the constraint $\tau \sqsubseteq \upsilon_i^{w_i}$.
-  \item Na\"ively, we would map each $\upsilon_i$ to the size expression $\tau^{-w_i}$.
+    This yields the constraint $\tau \sqsubseteq \hat{\upsilon}_i^{w_i}$.
+  \item Na\"ively, we would map each $\upsilon_i$ to the size expression $\hat{\tau}^{-w_i}$.
     However, $-w_i$ may be negative, which would make no sense as the size of a size variable.
     Therefore, we find the largest weight $w_{\max} \coloneqq \max_i w_i$, and shift all the sizes up by $w_{\max}$.
-    In other words, we return the map $\rho \coloneqq \set{\upsilon_i \mapsto \tau^{w_{\max} - w_i}}$.
+    In other words, we return the map $\rho \coloneqq \set{\upsilon_i \mapsto \hat{\tau}^{w_{\max} - w_i}}$.
 \end{enumerate}
 
 Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ due to finding the single-source shortest paths in (\ref{alg:solvecomp:shortest-path}) using, for instance, the Bellman--Ford algorithm. The total $\solve$ algorithm, given some constraint set $C$, is then as follows:
