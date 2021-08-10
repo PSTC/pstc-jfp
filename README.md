@@ -32,6 +32,7 @@ In the class file, the `mathptmx` package has been replaced by `newtxmath` for n
       + Universe cumulativity
       - Polarities
       - Nested (co)inductives
+      - Fully-applied (co)inductives and constructors
    1. Metatheoretical properties
    1. Inference and implementation
 0. CIC*̂ (mostly unchanged, add examples)
@@ -41,11 +42,10 @@ In the class file, the `mathptmx` package has been replaced by `newtxmath` for n
       * Cofixpoints
       * Nested inductives
       * Size erasure (vs. explicit sizes)
-   1. Logical consistency
+   1. Attempts at logical consistency
       * Impredicativity and trace products
       * Logical relations
       * LRs with explicit sizes
-   1. Strong normalization (Michael's new work?)
 0. Prototype implementation in Coq
    1. Inference algorithm (mostly unchanged, add examples)
    1. Soundness and completeness
@@ -54,5 +54,13 @@ In the class file, the `mathptmx` package has been replaced by `newtxmath` for n
       * Kernel architecture
 0. Related work
    1. Frade → Barthe → Sacchini
-   1. Abel: STLC → Fω, semi-continuity → flationary fixpoints
+   1. Abel: STLC → Fω, semi-continuity → flationary iteration
    1. Agda and inconsistencies
+0. Future work
+   1. Sacrificing backward compatibility
+   1. Strong normalization
+   1. Styles of sized types
+      * Explicit vs. implicit
+      * Prenex vs. higher-order/-rank
+      * Constraint-solving vs. unification
+      * Flationary iteration and ∞
