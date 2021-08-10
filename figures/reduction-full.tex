@@ -7,31 +7,31 @@
 
 \begin{mathpar}
   \inferrule*[right=\defnamerule{beta}{$\beta$}]{~}
-    {\gg \vdash (\abs{x}{t}{e_1}) ~ e_2 \reduce_\beta \subst{e_1}{x}{e_2}}
+    {\gg \vdash \app{(\abs{x}{t^\circ}{e_1})}{e_2} \reduce_\beta \subst{e_1}{x}{e_2}}
   \and
   \inferrule*[right=\defnamerule{zeta}{$\zeta$}]{~}
-    {\gg \vdash \letin{x}{t}{e_1}{e_2} \reduce_\zeta \subst{e_2}{x}{e_1}}
+    {\gg \vdash \letin{x}{t^\circ}{e_1}{e_2} \reduce_\zeta \subst{e_2}{x}{e_1}}
   \and
-  \inferrule*[right=\defnamerule{delta}{$\delta$}]
-    {(x : t \coloneqq e) \in \Gamma}
-    {\gg \vdash x^{\seq{s_i}} \reduce_\delta |e|^\infty \overline{[\infty_i \coloneqq s_i]}}
+  \inferrule[\defnamerule{delta-local}{$\delta$-local}]
+    {(x : t \coloneqq e) \in \Gamma \and \SV(e, t) = \vec{\upsilon_i}}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\delta e \overline{[\upsilon_i \coloneqq s_i]}}
   \and
-  \inferrule*[right=\defnamerule{Delta}{$\Delta$}]
-    {(\Defn{x}{t}{e}) \in \Gamma_G}
-    {\gg \vdash x^{\seq{s_i}} \reduce_\Delta e \overline{[\infty_i \coloneqq s_i]}}
+  \inferrule[\defnamerule{Delta-global}{$\Delta$-global}]
+    {(\Defn{x}{t}{e}) \in \Gamma_G \and \SV(e, t) = \vec{\upsilon_i}}
+    {\gg \vdash x^{\seq{s_i}} \reduce_\Delta e \overline{[\upsilon_i \coloneqq s_i]}}
   \and
   \inferrule*[right=\defnamerule{iota}{$\iota$}]{~}
-    {\gg \vdash \caseof{\wp}{(c_\ell ~ \vec{p} ~ \vec{a})}{c_j}{e_j} \reduce_\iota e_\ell ~ \vec{a}}
+    {\gg \vdash \caseof{P^\circ}{(\app{c_\ell}{\vec{p}}{\vec{a}})}{c_j}{e_j} \reduce_\iota \app{e_\ell}{\vec{a}}}
   \and
   \inferrule*[right=\defnamerule{mu}{$\mu$}]
-    {\|\vec{b}\| = n_m - 1 \and q_i = \fix{\seq{n_k}, i}{f_k}{t_k}{e_k}}
-    {\gg \vdash q_m ~ \vec{b} ~ (c ~ \vec{p} ~ \vec{a})
-      \reduce_\mu \substvec{e_m}{f_k}{q_k} ~ \vec{b} ~ (c ~ \vec{p} ~ \vec{a})}
+    {q_i = \fix{\seq{n_k}, i}{f_k}{t_k}{e_k} \and \norm{\vec{b}} = n_m - 1}
+    {\gg \vdash \app{q_m}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
+      \reduce_\mu \app{\substvec{e_m}{f_k}{q_k}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}}
   \and
   \inferrule*[right=\defnamerule{nu}{$\nu$}]
     {q_i = \cofix{i}{f_k}{t_k}{e_k}}
-    {\gg \vdash \caseof{\wp}{(q_m ~ \vec{b})}{c_j}{a_j}
-      \reduce_\nu \caseof{\wp}{(\substvec{e_m}{f_k}{q_k} ~ \vec{b})}{c_j}{a_j}}
+    {\gg \vdash \caseof{P^\circ}{(\app{q_m}{\vec{b}})}{c_j}{a_j}
+      \reduce_\nu \caseof{P^\circ}{(\app{\substvec{e_m}{f_k}{q_k}}{\vec{b}})}{c_j}{a_j}}
 \end{mathpar}
 \caption{Reduction rules}
 \label{fig:reduction-full}
@@ -64,20 +64,20 @@
 \vspace{-3ex}
 
 \begin{mathpar}
-  \inferrule*[right=\defnamerule{conv-red}{$\approx$-$\reduce^*$}]
+  \inferrule[\defnamerule{conv-red}{conv-$\reduce^*$}]
     {\gg \vdash e_1 \reduce^* e \\\\
       \gg \vdash e_2 \reduce^* e}
     {\gg \vdash e_1 \conv e_2}
   \and
-  \inferrule*[right=\defnamerule{conv-eta-r}{$\approx$-$\eta$-l}]
-    {\gg \vdash e_1 \reduce^* \abs{x}{t}{e} \\\\
+  \inferrule[\defnamerule{conv-eta-r}{conv-$\eta$-l}]
+    {\gg \vdash e_1 \reduce^* \abs{x}{\erase{t}}{e} \\\\
       \gg \vdash e_2 \reduce^* e'_2 \\\\
       \gg (x:t) \vdash e \conv e'_2 ~ x}
     {\gg \vdash e_1 \conv e_2}
   \and
-  \inferrule*[right=\defnamerule{conv-eta-1}{$\approx$-$\eta$-r}]
+  \inferrule[\defnamerule{conv-eta-1}{conv-$\eta$-r}]
     {\gg \vdash e_1 \reduce^* e'_1 \\\\
-      \gg \vdash e_2 \reduce^* \abs{x}{t}{e} \\\\
+      \gg \vdash e_2 \reduce^* \abs{x}{\erase{t}}{e} \\\\
       \gg (x:t) \vdash e'_1 ~ x \conv e}
     {\gg \vdash e_1 \conv e_2}
 \end{mathpar}
