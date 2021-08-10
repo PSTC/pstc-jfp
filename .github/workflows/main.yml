@@ -16,7 +16,7 @@ jobs:
         uses: dante-ev/latex-action@2021-A
         with:
           root_file: main.tex
-          args: -interaction=nonstopmode -shell-escape
+          args: -interaction=nonstopmode -shell-escape -pdf
       - name: Upload PDF
         uses: actions/upload-artifact@v2
         with:
