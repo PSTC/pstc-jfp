@@ -98,7 +98,7 @@
 
 @software{coq,
   author       = {{The Coq Development Team}},
-  title        = {The Coq Proof Assistant, version 8.11.0},
+  title        = {{The Coq Proof Assistant, version 8.11.0}},
   month        = jan,
   year         = 2020,
   publisher    = {Zenodo},
@@ -142,7 +142,7 @@
    pages={14--28}
 }
 
-@article{miniagda2,
+@article{flationary,
    title={{Type-Based Termination, Inflationary Fixed-Points, and Mixed Inductive-Coinductive Types}},
    volume={77},
    ISSN={2075-2180},
@@ -177,6 +177,25 @@
   url          = {https://doi.org/10.5281/zenodo.3928999}
 }
 
+@software{cic-wf,
+  author       = {Sacchini, Jorge Luis},
+  title        = {jsacchini/cic-wf},
+  month        = may,
+  year         = 2015,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.5182857},
+  url          = {https://doi.org/10.5281/zenodo.5182857}
+}
+
+@online{coq-hat,
+  author = {Sacchini, Jorge Luis},
+  title = {{Coq$\widehat{~}$: Type-Based Termination in the Coq Proof Assistant}},
+  year = 2016,
+  month = may,
+  url = {https://web.archive.org/web/20160530175545/http://www.qatar.cmu.edu/~sacchini/coq.html},
+  urldate = {2021-08-11}
+}
+
 @article{takahashitrans,
   author = {Komori, Yuichi and Matsuda, Naosuke and Yamakawa, Fumika},
   title = {A Simplified Proof of the Church---Rosser Theorem},
@@ -196,7 +215,7 @@
   keywords = {Parallel reduction, Takahashi translation, Church---Rosser theorem, Confluence theorem, λ-Calculus}
 }
 
-@article{sizeirrelevance,
+@article{nbe,
   author = {Abel, Andreas and Vezzosi, Andrea and Winterhalter, Theo},
   title = {Normalization by Evaluation for Sized Dependent Types},
   year = {2017},
@@ -211,7 +230,6 @@
   month = aug,
   articleno = {33},
   numpages = {30},
-  keywords = {eta-equality, dependent types, universes, subtyping, sized types, proof irrelevance, normalization-by-evaluation}
 }
 
 @techreport{lambda-set-pts,
@@ -238,6 +256,15 @@
   YEAR = {1993},
   TYPE = {Theses},
   PDF = {https://www.cs.nott.ac.uk/~psztxa/publ/phd93.pdf}
+}
+
+@phdthesis{abel-diss,
+  title={Type-based termination: a polymorphic lambda-calculus with sized higher-order types},
+  author={Abel, Andreas},
+  year={2006},
+  url={http://www.cse.chalmers.se/~abela/diss.pdf},
+  TYPE = {Theses},
+  publisher={HARLAND media}
 }
 
 @article{rooster,
@@ -318,22 +345,22 @@
 }
 
 @inproceedings{not-so-simple-cc,
-author = {Miquel, Alexandre and Werner, Benjamin},
-year = {2002},
-month = {04},
-pages = {240-258},
-title = {The Not So Simple Proof-Irrelevant Model of CC},
-isbn = {978-3-540-14031-3},
-doi = {10.1007/3-540-39185-1_14}
+  author = {Miquel, Alexandre and Werner, Benjamin},
+  year = {2002},
+  month = {04},
+  pages = {240-258},
+  title = {The Not So Simple Proof-Irrelevant Model of CC},
+  isbn = {978-3-540-14031-3},
+  doi = {10.1007/3-540-39185-1_14}
 }
 
-@misc{chan2020practical,
-      title={Practical Sized Typing for Coq},
-      author={Jonathan Chan and William J. Bowman},
-      year={2020},
-      eprint={1912.05601},
-      archivePrefix={arXiv},
-      primaryClass={cs.PL}
+@incollection{chan2020practical,
+  title={Practical Sized Typing for Coq},
+  author={Jonathan Chan and William J. Bowman},
+  year={2020},
+  eprint={1912.05601},
+  archivePrefix={arXiv},
+  primaryClass={cs.PL}
 }
 
 @article{cac,
@@ -370,4 +397,136 @@ title = {A Proof of Strong Normalization For the Theory of Constructions Using a
 	month = oct,
 	year = {1991},
 	pages = {107--136},
+}
+
+@mastersthesis{lambda-hat-diss,
+	title = {{Type-Based Termination of Recursive Definitions and Constructor Subtyping in Typed Lambda Calculi}},
+	year = {2004},
+	month = {March},
+	school = {University of Minho},
+	type = {PhD Thesis},
+	address = {Braga, Portugal},
+	url = {https://haslab.uminho.pt/sites/default/files/mjf/files/thesis.pdf},
+	author = {Maria Jo{\~a}o Frade}
+}
+
+@article{lambda-hat,
+	title = {Type-based termination of recursive definitions},
+	volume = {14},
+	issn = {0960-1295, 1469-8072},
+	url = {http://www.journals.cambridge.org/abstract_S0960129503004122},
+	doi = {10.1017/S0960129503004122},
+	language = {en},
+	number = {1},
+	urldate = {2021-04-30},
+	journal = {Mathematical Structures in Computer Science},
+	author = {Barthe, G. and Frade, M. J. and Gim\'enez, E. and Pinto, L. and Uustalu, T.},
+	month = feb,
+	year = {2004},
+	pages = {97--141},
+}
+
+@incollection{ccr,
+	address = {Berlin, Heidelberg},
+	title = {Structural recursive definitions in type theory},
+	volume = {1443},
+	isbn = {978-3-540-64781-2 978-3-540-68681-1},
+	url = {http://link.springer.com/10.1007/BFb0055070},
+	booktitle = {Automata, {Languages} and {Programming}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Giménez, Eduardo},
+	editor = {Goos, Gerhard and Hartmanis, Juris and van Leeuwen, Jan and Larsen, Kim G. and Skyum, Sven and Winskel, Glynn},
+	year = {1998},
+	doi = {10.1007/BFb0055070},
+	note = {Series Title: Lecture Notes in Computer Science},
+	pages = {397--408},
+}
+
+@inproceedings{guard-condition,
+	address = {Berlin, Heidelberg},
+	title = {Codifying guarded definitions with recursive schemes},
+	isbn = {978-3-540-47770-9},
+	booktitle = {Types for {Proofs} and {Programs}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Giménez, Eduardo},
+	editor = {Dybjer, Peter and Nordström, Bengt and Smith, Jan},
+	year = {1995},
+	pages = {39--59},
+}
+
+
+@incollection{acg,
+	address = {Berlin, Heidelberg},
+	title = {Analysis of a guard condition in type theory},
+	volume = {1378},
+	isbn = {978-3-540-64300-5 978-3-540-69720-6},
+	url = {http://link.springer.com/10.1007/BFb0053541},
+	booktitle = {Foundations of {Software} {Science} and {Computation} {Structures}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Amadio, Roberto M. and Coupet-Grimal, Solange},
+	editor = {Goos, Gerhard and Hartmanis, Juris and van Leeuwen, Jan and Nivat, Maurice},
+	year = {1998},
+	doi = {10.1007/BFb0053541},
+	note = {Series Title: Lecture Notes in Computer Science},
+	pages = {48--62},
+}
+
+@inproceedings{hughes,
+	address = {New York, NY, USA},
+	series = {{POPL} '96},
+	title = {Proving the correctness of reactive systems using sized types},
+	isbn = {978-0-89791-769-8},
+	url = {https://doi.org/10.1145/237721.240882},
+	doi = {10.1145/237721.240882},
+	booktitle = {Proceedings of the 23rd {ACM} {SIGPLAN}-{SIGACT} symposium on {Principles} of programming languages},
+	publisher = {Association for Computing Machinery},
+	author = {Hughes, John and Pareto, Lars and Sabry, Amr},
+	month = jan,
+	year = {1996},
+	pages = {410--423},
+}
+
+@incollection{fx-hat,
+	address = {Berlin, Heidelberg},
+	title = {Type-{Based} {Termination} with {Sized} {Products}},
+	volume = {5213},
+	isbn = {978-3-540-87530-7 978-3-540-87531-4},
+	url = {http://link.springer.com/10.1007/978-3-540-87531-4_35},
+	language = {en},
+	urldate = {2021-06-13},
+	booktitle = {Computer {Science} {Logic}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Barthe, Gilles and Grégoire, Benjamin and Riba, Colin},
+	editor = {Kaminski, Michael and Martini, Simone},
+	year = {2008},
+	doi = {10.1007/978-3-540-87531-4_35},
+	pages = {493--507},
+}
+
+
+@incollection{cic-hat-minus-nat,
+	address = {Berlin, Heidelberg},
+	title = {On {Strong} {Normalization} of the {Calculus} of {Constructions} with {Type}-{Based} {Termination}},
+	volume = {6397},
+	isbn = {978-3-642-16241-1 978-3-642-16242-8},
+	url = {http://link.springer.com/10.1007/978-3-642-16242-8_24},
+	booktitle = {Logic for {Programming}, {Artificial} {Intelligence}, and {Reasoning}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Grégoire, Benjamin and Sacchini, Jorge Luis},
+	editor = {Fermüller, Christian G. and Voronkov, Andrei},
+	year = {2010},
+	doi = {10.1007/978-3-642-16242-8_24},
+	note = {Series Title: Lecture Notes in Computer Science},
+	pages = {333--347},
+}
+
+@article{f-omega-cop,
+	title = {Well-founded recursion with copatterns and sized types},
+	volume = {26},
+	issn = {0956-7968, 1469-7653},
+	url = {https://www.cambridge.org/core/product/identifier/S0956796816000022/type/journal_article},
+	doi = {10.1017/S0956796816000022},
+	journal = {Journal of Functional Programming},
+	author = {Abel, Andreas and Pientka, Brigitte},
+	year = {2016},
 }

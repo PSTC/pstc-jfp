@@ -1,32 +1,80 @@
 \section{Related Work}\label{sec:related}
 
-This work is based on \CIChat~\citep{cic-hat}, which describes CIC with sized types and a size inference algorithm.
-It assumes that position annotations are given by the user, requires each parameter of \coinductive types to be assigned polarities, and deals only with terms.
-We have added on top of it global declarations, local definitions, constants and variables annotated by a vector of size expressions, their \deltaDeltareductions, an explicit treatment of mutually-defined \coinductive types and \cofixpoints, and an intermediate procedure \RecCheckLoop to handle missing position annotations, while removing parameter polarities and subtyping rules based on these polarities.
+The history of sized types is vast and varied.
+Extensive prior accounts are given in dissertations by \citet{lambda-hat-diss} and \citet{abel-diss}.
+Here, we focus on two lineages towards sized dependent type theories: first, the more-or-less direct ancestry of \lang, and second, a contrasting line of work on type systems with explicit higher-order sized types.
 
-The language \CIChatminus~\citep{cic-hat-minus} is similar to \CIChat, described in greater detail, but with one major difference: \CIChatminus disallows size variables in the bodies of abstractions, in the arguments of applications, and in case expression branches, making \CIChatminus a strict subset of \CIChat.
-Any size expressions found in these locations must be set to $\infty$.
-This ``solves'' the problem discussed in \autoref{sec:sponge-cake} of how to handle defined variables used in \cofixpoints by disallowing it entirely.
-In practice, such as in Coq's standard library, aliases are often defined for \coinductive types, so we designed \lang to accommodate \cofixpoints defined over aliases and other type-level computations.
+\subsection{Ancestry of \titlelang}
 
-The implementation of \RecCheck comes from \Fhat~\citep{f-hat}, an extension of System F with type-based termination using sized types.
-Rules relating to coinductive constructions and cofixpoints come from the natural extension of \CChatomega~\citep{cc-hat-omega}, which describes only infinite streams.
-The size inference algorithm is based on those of \CIChat, \CChatomega, and \CIChatl~\citep{cic-hat-l}.
+Perhaps the most well-known work on sized types is by \citet{hughes},
+who introduce sized types for a Hindley--Milner type system with \coinductives and a size inference algorithm,
+as well as the term ``sized types''.
+Their size algebra is more expressive than ours, with size addition $s_1 + s_2$ and constant multiplication $n \times s$.
+Independently, \citet{ccr} introduces \CCR, a Calculus of Constructions (CoC) with \textit{guarded types},
+a type-based termination checking alternative to the earlier syntactic guard condition~\citep{guard-condition}.
+There, types are guarded with a type operator $\widehat{\ph}$,
+similar to the later modality $\rhd \ph$ in modern guarded type theories.
+Based on a semantic interpretation of \CCR,
+\citet{acg} introduce a simply-typed lambda calculus (STLC) with coinductives with \textit{type labels},
+corresponding roughly to size annotations with successor sizes.
 
-Whereas our size algebra supports only a successor operation, \emph{linear} sized types in \CIChatl extends the algebra by including size expressions of the form $n \cdot S$, so that all annotations are of the form $n \cdot \upsilon + m$, where $m$ is the number of ``hats''.
-Unfortunately, this causes the time complexity of its \RecCheck procedure to be worst-case doubly exponential in the number of size variables.
-However, the set of typeable (and therefore terminating or productive) functions is expanded compared to \lang; functions such as list-doubling could be typed as size-preserving in addition to being terminating.
-If successor sized types prove practical, augmenting the type system to linear sized types would be worth investigating, depending on whether common programs would cause worst-case behaviour.
-The most significant change required would be in \RecCheck, which must then solve a set of constraints in Presburger arithmetic.
+Following this, \citet{lambda-hat} and \citet{lambda-hat-diss} introduce \lambdahat,
+another STLC with inductives and size annotations with the same size algebra we use,
+although they are instead called \textit{stages}.
+It improves upon the work of \citet{acg} by adding an implicit form of size polymorphism:
+the position size variable of fixpoint types are substituted by an arbitrary size expression,
+just as in \refrule{fix}.
+\citet{f-hat} extend \lambdahat to System F with \Fhat, and introduce and prove correct a size inference algorithm.
+This includes the \RecCheck algorithm that we use.
+They continue on to extend \Fhat with \textit{sized products} (that is, pairs with size annotations) in \FXhat~\citep{fx-hat}, whose size expressions include size addition, and to CIC in \CIChat~\citep{cic-hat}.
+Our size inference algorithm is based directly on that of \CIChat.
+We add to it global and local definitions and explicitly treat mutually-defined \coinductives and \cofixpoints,
+while removing polarities and subtyping based on these polarities.
 
-Well-founded sized types in \CIChatsub~\citep{wellfounded} are yet another extension of successor sized types.
-The unpublished manuscript contains a type system, some metatheoretical results, and a size inference algorithm.
-In essence, it preserves subject reduction for coinductive constructions, and also expands the set of typeable functions.
+However, normalization of \CIChat is only a conjecture; it is later proven for the restricted language \CIChatminus by \citet{cic-hat-minus-nat} (with only naturals) and by \citet{cic-hat-minus} (with inductives in general).
+The restrictions include disallowing size variables in the bodies of functions, in the arguments of applications, in the branches of case expressions, and in the indices of inductives; erasing the parameters to constructors; and disallowing strong elimination to types with size variables.
+We remove these restrictions to allow using sized definitions and for backward compatibility with Coq.
 
-\input{figures/agda-size.tex}
+Our typing rules and inference algorithm for coinductives and cofixpoints are based off of \CChatomega~\citep{cc-hat-omega},
+which extends CoC with sized coinductive streams.
+Further extensions to the size algebra are linear sized types in \CIChatl~\citep{cic-hat-l},
+which adds constant multiplication to a sized CoC with naturals and streams;
+and well-founded sized types in \CIChatsub~\citep{wellfounded},
+which changes the premise type checking the \cofixpoint body in Rules \refnorule{fix} and \refnorule{cofix}
+to the recursive reference having \emph{any} smaller size according to the subsizing rules,
+rather than the direct predecessor.
+All three include size inference algorithms similar to that of \CIChat.
 
-The proof assistant Agda implements sized types as user-provided size parameters, similar to type parameters.
-Correspondingly, sizes have the type Size, while Size itself has the type SizeUniv, which is its own type. \autoref{fig:agda-size} presents the typing rules for Size; the operator $\uparrow \cdot$ corresponds to our $\hat{\cdot}$, while $\cdot \sqcup^s \cdot$ takes the maximum of two sizes.
-Additionally, Agda defines the size constructor Size<, which allows the user to specify a size constraint $r \sqsubseteq s$ with the annotation $r: \text{Size<} s$.
-Whereas CIC$\widehat{~}\,$'s philosophy is to hide all size annotations from the user with a focus on size inference, Agda opts for allowing users to explicitly write size annotations and treat them almost like terms, yielding greater flexibility in deciding how things should be typed.
-However, this approach is a non-starter if we wish to maintain backward compatibility with Coq.
+There are prototype implementations of \CIChatminus~\citep{cicminus} and \CIChatsub~\citep{cic-wf}.
+It appears that there were also plans to implement sized types in Coq by \citet{coq-hat}, but seem to be abandoned.
+
+\subsection{Higher-Order Sized Types}
+
+For the purposes of size inferrability from unannotated code,
+the type systems from \lambdahat up to \CIChat and its variations treat sizes as merely annotations
+and feature only what can be considered as prenex size polymorphism.
+On the other hand, \citet{abel-diss} introduces \Fomegahat, a sized type system for System F$_\omega$ that treats sizes as a kind,
+which therefore allows for higher-order size polymorphism via explicit quantification.
+While \Fomegahat subsumes \Fhat and uses the same size algebra,
+it uses recursive and corecursive type constructors ($\mu$- and $\nu$-types) rather than inductive (and coinductive) type definitions.
+
+Higher-order sized types of the same flavour are implemented in a dependently-typed setting in MiniAgda~\citep{miniagda}.
+To avoid inconsistencies introduced by the interplay between sized types and pattern matching,
+it also introduces bounded size patterns $\upsilon_1 < \upsilon_2$.
+\citet{flationary} expands upon the theoretical side with bounded size quantification $\forall \upsilon \mathrel{<} s\mathpunct{.} t$ and well-founded recursion on sizes,
+which are also implemented in MiniAgda.
+\citet{f-omega-cop} combine well-founded sized types and copatterns for System F$_\omega$ with \corecursive type constructors in \Fomegacop (which was cited as the inspiration for \CIChatsub).
+
+\cite{nbe} prove normalization of a higher-order sized dependent type theory with naturals, but without bounded size quantification.
+To our knowledge, this is the only formalization of higher-order sized dependent types in the literature.
+
+Sized types with higher-order bounded size quantification are implemented in Agda\footnote{For Agda's documentation on sized types, see \url{https://agda.readthedocs.io/en/latest/language/sized-types.html}.}.
+However, the implementation is known to be inconsistent\footnote{For a detailed discussion on the issue, see \url{https://github.com/agda/agda/issues/2820}.}.
+In short, it is possible to express the well-foundedness of sizes within Agda,
+but the infinite size $\infty$ itself is \emph{not} well-founded,
+as $\infty + 1 = \infty$ and $\infty < \infty$ hold,
+making it possible to derive a contradiction.
+
+% TODO: Something to consider is to describe the differences between past work and CIC*̂ in a separate subsection,
+% after all the past work has been introduced and named.
+% This'll allow us to go into more detail without detracting from the lineage.
