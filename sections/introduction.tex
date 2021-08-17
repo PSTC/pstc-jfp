@@ -47,8 +47,12 @@ If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline
 The acceptance of \coqinline{div} then depends on a function external to it, which can lead to difficulty in debugging for larger programs.
 Furthermore, the guard predicate is unaware of the obvious fact that \coqinline{minus} never returns a \coqinline{nat} larger than its first argument, which the user would have to prove in order for \coqinline{div} to be accepted with our alternate definition of \coqinline{minus}.
 
-An alternative to guard predicates for termination and productivity enforcement uses \emph{sized types}. In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
-In this paper, we follow a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
+In short, the syntactic guard condition long used by Coq is anti-modular, anti-compositional, has poor performance characteristics, and requires the programmer to either avoid certain algorithms to pay large cost in proof burden.
+
+This situation is particularly unfortunate, as the Agda programmer is aware, given that there exists a non-syntactic termination and productivity condition which solves essentially all of these problems, whose theory has existed for almost as long, perhaps longer, than the guard condition---\emph{sized types}!
+
+In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
+In this paper, we consider a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
 If the argument to a constructor has size $s$, then the fully-applied constructor would have a successor size $\hat{s}$.
 For instance, the constructors for the naturals follow the below rules:
 
@@ -63,7 +67,8 @@ For instance, the constructors for the naturals follow the below rules:
     {\Gamma \vdash \app{\Succ}{n} : \Nat^{\hat{s}}}
 \end{mathpar}
 
-Termination and productivity checking is then simply a type checking rule that uses size information. For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
+Termination and productivity checking is then \emph{just} a type checking rule that uses size information.
+For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
 For productivity, the returned object must have a larger size than that of the corecursive call, so the type of the body of the cofixpoint must be larger than the type of the reference to itself in the typing context.
 In short, they both follow the following (simplified) typing rule, where $\upsilon$ is an arbitrary fresh size variable annotated on the inductive types, and $s$ is an arbitrary size expression as needed.
 
@@ -77,7 +82,13 @@ In short, they both follow the following (simplified) typing rule, where $\upsil
 We can then assign \coqinline{minus} the type $\text{Nat}^\iota \to \text{Nat} \to \text{Nat}^\iota$.
 The fact that we can assign it a type indicates that it will terminate, and the $\iota$ annotations indicate that the function preserves the size of its first argument.
 Then \coqinline{div} uses only the type of \coqinline{minus} to successfully type check, not requiring its body.
-Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O} does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}. Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving, expanding the set of terminating and productive functions that can be accepted.
+Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O} does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
+Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving, expanding the set of terminating and productive functions that can be accepted.
+Finally, if additional expressivity is needed, rather than syntactic hacks like inlining, we can take the semantic approach of enriching the size algebra.
+
+It seems perfect; so why doesn't Coq \emph{just} use sized types?
+
+That is the question we seek to answer in this paper.
 
 Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
 
@@ -90,12 +101,31 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Ca
 %      In particular, size inference should be done locally, \ie confined to within a single global definition.
 \end{itemize}
 
-In this paper, we present \lang (``\emph{CIC-star-hat}''), a calculus for representing the core of Coq with sized types, and an inference algorithm from CIC to \lang.
+We start by solving these theoretical problems.
+We design \lang (``\emph{CIC-star-hat}''), a calculus for representing the core of Coq with sized types, and an inference algorithm from CIC to \lang.
 It is an extension of \CIChat~\citep{cic-hat} and \CIChatminus~\citep{cic-hat-minus} that resolves the issues above.
-We also have a fork of Coq\blindimpl\xspace that implements the size inference algorithm and size-based termination and productivity checking of \lang.
+We prove subject reduction, confluence, and strong normalization of a subset of \lang including W types.
+
+However, in attempting to recover backwards-compatibility and the entire feature set of Coq, we run into new theoretical problems.
+Proving strong normalization and consistency of the new language becomes difficult compared to pure CIC, for reasons that seem intrinsic.
+Some of the design goals of CIC---untyped reduction, orthogonality to classical axioms---seem at odds with set theoretical models that include sized types.
+Some of these might be solvable if we could sacrifice backwards compatibility.
+Even if they are solvable, the complexity of these models would at least sacrifice trust in the core of Coq.
+We discuss our models and the meta-theory of \lang in detail.
+
+We then ask a second question: even supposing we can solve the theoretical problems and finish the proof of strong normalization and consistency, is the implementation of this system practical?
+We have forked Coq\blindimpl\xspace and implemented the size inference algorithm and size-based termination and productivity checking of \lang.
 To maximize backward compatibility, the surface language is completely unchanged, and the existing guard condition and sized types can be enabled or disabled independently, or used in conjunction.
 Sized typing can be turned on with a flag that is off by default for safe and gradual testing of the new kernel.
 \blinding{We are currently working with the Coq development team to merge the work into Coq.}{A draft pull request in the Coq repository has been opened for this fork.\footnote{\url{https://github.com/coq/coq/pull/12426/}}}
+
+While the sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
+We measure at least 16x increase in compilation time in some standard libraries.
+The performance cost seems to be intrinsic to the size inference algorithm, and thus, intrinsic to attempting to maintain backwards compatibility.
+We analyze the performance of our size inference algorithm, and our implementation in detail.
+
+The short answer to our question, ``why doesn't Coq \emph{just} use sized types'', seems to be that Coq must either sacrifice backwards compatibility, some of its syntactic meta-theory, and/or compile time performance to do so.
+While this isn't possible, it seems wildly impractical.
 
 The remainder of this paper is organized as follows.
 We begin in \autoref{sec:sponge-cake} with a high-level overview of the design of \lang, its role in Coq, and the main lessons from our design.
