@@ -1,11 +1,29 @@
 \section{Size Inference}\label{sec:algorithm}
 
-In this section, we present a size inference algorithm, whose goal is to take unannotated programs $e^\circ$ (corresponding to terms in CIC), simultaneously assign annotations to them while collecting a set of subsizing constraints based on the typing rules, check the constraints to ensure well-typedness, and produce well-typed programs that are stored in the global environment and can be used in the inference of future programs.
-Constraints are generated when comparing two types $t, u$ to ensure that the subtyping relation $t \leq u$ holds.
-Therefore, this algorithm is also a type checking algorithm, since it could be that $t$ fails to subtype $u$, in which case the algorithm fails.
+In this section, we present a size inference algorithm, based on that of \CIChat~\citep{cic-hat}.
+Starting with completely bare terms, corresponding to terms in CIC,
+the algorithm assigns size annotations while collecting a set of subsizing constraints.
+Because the subsizing constraints that must be satisfied are based on the typing rules,
+this algorithm is also necessarily a type checking algorithm,
+ensuring well-typedness of the size-annotated term.
+Then given a program consisting of bare global declarations,
+the algorithm produces sized and well-typed declarations (or fails),
+along with a set of constraints on the size variables involved.
 
-Our algorithm is an extension to the size inference algorithm of \CIChat, and \citet{cic-hat} presents soundness and completeness of their algorithm with respect to \CIChat's typing rules.
-We discuss soundness and completeness theorems of our algorithm with respect to \lang's typing rules in \autoref{sec:metatheory}.
+Before we add the declarations back into a sized global environment,
+we find a solution for the constraints first.
+That is, we find an assignment from size variables to size expressions
+such that these size expressions satisfy all of the constraints.
+Then we perform the substitution of these assignments on the declarations,
+and lastly add them into the global environment.
+This lets us run the inference algorithm on each declaration independently,
+without needing to manipulate a constraint set every time a global declaration is used in a subsequent one.
+
+The most involved part of the algorithm is the size inference and type checking of \cofixpoints.
+This uses the \RecCheck algorithm from \Fhat~\citep{f-hat}.
+We restate the algorithm in this section for convenience, but not the associated proofs of soundness and completeness.
+Finally, we state soundness and completeness theorems for the algorithm as a whole,
+proving only soundness and leaving completeness as a conjecture.
 
 \subsection{Notation}
 
@@ -240,7 +258,7 @@ Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ due to fi
   \item For every connected component $C_c$ of $C$, add the mappings $\solvecomp{C_c}$ to $\rho$.
 \end{enumerate}
 
-The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$ so that $\Sigma, \Gamma_G, \square \vdash \rho e : \rho t$ holds.
+The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$ so that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
