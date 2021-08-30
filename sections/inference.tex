@@ -25,68 +25,81 @@ We restate the algorithm in this section for convenience, but not the associated
 Finally, we state soundness and completeness theorems for the algorithm as a whole,
 proving only soundness and leaving completeness as a conjecture.
 
-\subsection{Notation}
+\subsection{Preliminaries}
 
 \input{figures/contexts-gen.tex}
 
-First, we use $C$ to represent subsizing constraints: if $(s_1, s_2) \in C$, then we must enforce $s_1 \sqsubseteq s_2$.
-For clarity, we directly write $s_1 \sqsubseteq s_2 \in C$, as well as $s_1 = s_2 \in C$ for when both $(s_1, s_2)$ and $(s_2, s_1)$ are in $C$.
+First, we use $\C$ to represent a set of subsizing constraints: if $(s_1, s_2) \in \C$, then we must enforce $s_1 \sqsubseteq s_2$.
+For clarity, we directly write $s_1 \sqsubseteq s_2 \in \C$, as well as $s_1 = s_2 \in \C$ for when both $(s_1, s_2)$ and $(s_2, s_1)$ are in $\C$.
 
 These constraint sets are generated at every step of the algorithm.
-Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that may enforce subsizing relations between the size variables in the body.
+Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that enforce subsizing relations between those size variables.
 To this end, we introduce \emph{generic}%
 \footnote{This terminology is borrowed from \citet{universes}, who have similar environments in the context of universe level constraint collection in the presence of cumulativity.}
 environments, presented in \autoref{fig:contexts-gen}, where definitions are associated with a set of constraints.
-As usual, we will use $\Psi$ as shorthand for sized generic environments and $\Psi^\circ$ for bare generic environments.
-By abuse of notation, we treat $\Psi(\cdot)$ as a lookup function for $\Psi$, where $\Psi(x) = t$ if $(x : t) \in \Psi$ and $\Psi(x) = (C, e : t)$ if $(C, x : t \coloneqq e) \in \Psi$, and similarly for $\Gamma_G$.
+% [This isn't ever used?] As usual, we will use $\Psi$ as shorthand for sized generic environments and $\Psi^\circ$ for bare generic environments.
+By abuse of notation, we treat $\Psi(\ph)$ and $\Gamma_G(\ph)$ as lookup functions for $\Psi$ and $\Gamma_G$, where $\Psi(x) = t$ if $(x : t) \in \Psi$ and $\Psi(x) = (\C, e : t)$ if $(\C, x : t \coloneqq e) \in \Psi$, and similarly for $\Gamma_G$.
 
 We now define three judgements to represent \emph{checking}, \emph{inference}, and \emph{well-formed\-ness}.
 They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs on the right.
 \begin{itemize}
-  \item $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ (checking) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a new set of constraints $C'$ that ensures that the type of $e$ subtypes $t$.
-  \item $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ (inference) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a new set of constraints $C'$.
+  \item $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow \C', e$ (checking) takes a set of constraints $\C$, environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a new set of constraints $\C'$ that ensures that the type of $e$ subtypes $t$.
+  \item $\cgp \vdash e^\circ \rightsquigarrow \C', e \Rightarrow t$ (inference) takes a set of constraints $\C$, environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a new set of constraints $C'$.
   \item $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ (well-formedness) takes a global environment with bare declarations and produces a global environment where each declaration has been properly annotated via size inference.
 \end{itemize}
 
-The algorithm is implicitly parameterized over a fixed signature $\Sigma$, as well as two mutable sets of size variables $\mathcal{V}, \mathcal{V}^*$, such that $\mathcal{V}^* \subseteq \mathcal{V}$.
+The algorithm is implicitly parameterized over a fixed signature $\Sigma$,
+as well as two mutable sets of size variables $\V, \V^*$, such that $\V^* \subseteq \V$.
 Their assignment is denoted with $\coloneqq$ and they are initialized as empty.
-The set $\mathcal{V}^*$ contains \textit{position} size variables, which mark size-preserving types by replacing position annotations, and we use $\tau$ for these position size variables.
-We define two additional metafunctions: \PV returns all position size variables in a given term, while $|\cdot|^*$ erases position size variables to position annotations and all other annotations to bare.
+The set $\V^*$ contains \textit{position} size variables,
+which mark size-preserving types by replacing position annotations,
+and we use $\tau$ for these position size variables.
+We define two related metafunctions: \PV returns all position size variables in a given term,
+while $\erase{\ph}^*$ erases position size variables to position annotations and all other annotations to bare.
 Finally, on the right-hand size of inference judgements, we use $e \Rightarrow^* t$ to mean $e \Rightarrow t' \wedge t = \whnf{t'}$.
 
-We define a number of metafunctions to translate the side conditions from the typing rules into procedural form.
+We define a number of additional metafunctions to translate the side conditions from the typing rules into procedural form.
 They are introduced as needed, but are also summarized in \autoref{fig:inference-metafunctions} in \autoref{sec:supplementary}.
 
-\subsection{Inference Algorithm}
+\paragraph*{} The entry point of the algorithm is the well-formedness judgement,
+whose rules are defined in \autoref{fig:algorithm-wf} and use the mutually-defined rules of the checking and inference judgements,
+defined in \autoref{fig:algorithm-check} and \autoref{fig:algorithm} respectively.
+We begin with the latter two first in \autoref{subsec:algorithm:infer},
+followed by a detailed look at \RecCheck in \autoref{subsec:algorithm:reccheck}.
+Well-formedness is discussed in \autoref{subsec:algorithm:wf}.
+Finally, we make our way up to soundness and completeness with respect to the typing rules in \autoref{subsec:algorithm:metatheory}.
+
+\subsection{Inference Algorithm}\label{subsec:algorithm:infer}
+
+Size inference begins with either a bare term or a position term. For the bare terms, even type annotations of \cofixpoints are bare, \ie
+  $$e^\circ \Coloneqq \dots
+    \mid \fix{\seq{n_k}, m}{f}{t^\circ}{e^\circ}
+    \mid \cofix{m}{f}{t^\circ}{e^\circ}$$
+Notice that fixpoints still have a vector of indices, with $n_k$ being the index of the recursive argument of the $k$th mutual fixpoint, whereas surface Coq programs generally have no indices.
+To produce these indices, we do what Coq currently does: brute-force search.
+We try the algorithm on every combination of indices from left to right.
+This continues until one combination works, or fails if none do.
+Then the type annotations are initially position-annotated on as many types as possible,
+and this position term itself is passed into the algorithm.
+Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
+We discuss this and other implementational issues in the next section.
 
 \input{figures/algorithm-check.tex}
 \input{figures/algorithm.tex}
 
-Size inference begins with a bare term; even type annotations of \cofixpoints are bare, \ie
-  $$e^\circ \Coloneqq \dots
-    \mid \fix{\seq{n_k}, m}{f}{t^\circ}{e^\circ}
-    \mid \cofix{m}{f}{t^\circ}{e^\circ}$$
-Notice that fixpoints still have a vector of indices, with $n_k$ being the index of the recursive argument of the $k$th mutual fixpoint, whereas Coq programs have no indices.
-To produce these indices, we do what Coq currently does: brute-force search.
-We attempt type checking on every combination of indices from left to right (even if the type of the argument at that index is not inductive).
-This continues until one combination works, or fails if none do.
-
-\autoref{fig:algorithm-check}, \autoref{fig:algorithm}, and \autoref{fig:algorithm-wf} present the size inference algorithm, which uses the same indexing conventions as the typing rules.
-We go over parts of the algorithm in detail shortly.
-
-\refrule{a-check} is the checking component of the algorithm.
+\paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
 To ensure that the inferred type subtypes the given type, we use the metafunction $\constrain$ that takes two sized terms and attempts to produce a set of subsizing constraints based on the subtyping rules of \autoref{fig:subtyping}.
 $\constrain$ may reduce terms to check convertibility and will fail if two terms are incompatible.
 
-Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
+\autoref{fig:algorithm} is the inference component of the algorithm. Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
 Note that after type annotations pass through inference to become sized types, they must be erased to bare types again.
 These rules use the metafunctions \axiom, \rules, and \elim, which correspond to the sets \Axioms, \Rules, and \Elims, defined in \autoref{fig:axruel}.
 The metafunction \axiom produces the type of a universe; \rules produces the type of a function type given the universes of its argument and return types; and \elim directly checks membership in \Elims and can fail.
 
 \refrule{a-let-in} is also straightforward.
 After checking the bound term against the inferred type, we add the generated constraint to the generic local environment before inferring the type of the body.
-If size variables appear in the bound term or its type, then the relations among them are maintained by these constraints.
-Note that there may be relations between the size variables in the term and the type, which is why, as we will see, when using variables with definitions, we need to simultaneously replace the size variables in both the term \textit{and} the type.
+If size variables appear in the bound term or its type, then the subsizing relations among them are maintained by these constraints.
+Note that there may be relations between the size variables in the term and those in the type, which is why, when using variables with definitions, we need to simultaneously replace the size variables in both the term \textit{and} the type.
 For instance, consider the following inductive type and bare let expression:
 \begin{align*}
   \app{\Box}{(\assm{A}{\Type{}})} : A \to \Type{} &\coloneqq
@@ -94,17 +107,19 @@ For instance, consider the following inductive type and bare let expression:
   \letin{b}{\app{\Box}{\Type{}}{\Nat}&}{\app{\MkBox}{\Type{}}{\Nat}}{\dots}
 \end{align*}
 
-If we annotate the type as $\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}$ and size-infer the bound term as $\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}} : \app{\Box^{\upsilon_4}}{\Type{}}{\Nat^{\upsilon_3}}$, then we will have the constraint set $\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}$.
+If we annotate the type as $\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}$ and size-infer the bound term as $\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}} : \app{\Box^{\upsilon_4}}{\Type{}}{\Nat^{\upsilon_3}}$, then we will have the constraint set \mbox{$\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}$}.
 
-In Rules \refnorule{a-var-def} and \refnorule{a-const-def}, we annotate variables and constants using a vector of annotations from \fresh, which generates the given number of fresh size variables and adds them to $\mathcal{V}$.
+In Rules \refnorule{a-var-def} and \refnorule{a-const-def}, we annotate variables and constants using a vector of annotations from \fresh, which generates the given number of fresh size variables and adds them to $\V$.
 The length of the vector corresponds to the number of size annotations found in the body and the type of the definitions.
-Reusing the above example, if $(\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}, \defn{b}{\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}}{\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}}}) \in \Psi$, then a use of $b$ would be annotated with fresh size variables $\upsilon_5, \upsilon_6, \upsilon_7$ as $b^{\seq{\upsilon_5, \upsilon_6, \upsilon_7}}$.
+Reusing the above example, if
+$$(\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}, \defn{b}{\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}}{\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}}}) \in \Psi$$
+then a use of $b$ would be annotated with fresh size variables $\upsilon_5, \upsilon_6, \upsilon_7$ as $b^{\seq{\upsilon_5, \upsilon_6, \upsilon_7}}$.
 Furthermore, the constraint set we return will include $\set{\upsilon_4 \sqsubseteq \upsilon_5, \upsilon_6 = \upsilon_7}$.
-If $b$ is $\delta$\=/reduced during inference, such as in a fixpoint type, then it is replaced by $\app{\MkBox}{\Type{}}{\Nat^\upsilon_7}$.
+If $b$ is $\delta$\=/reduced during inference, such as in a fixpoint type, then it is replaced by $\app{\MkBox}{\Type{}}{\Nat^{\upsilon_7}}$.
 
-A position-annotated type from a \cofixpoint can be passed into the algorithm, so we deal with the possibilities separately in Rules \refnorule{a-ind} and \refnorule{a-ind-star}.
+A position term from a position-annotated \cofixpoint type can be passed into the algorithm, so we deal with the possibilities separately in Rules \refnorule{a-ind} and \refnorule{a-ind-star}.
 In both rules, a bare \coinductive type is annotated with a size variable; in \refrule{a-ind-star}, it is also added to the set of position size variables $\mathcal{V}^*$.
-Although we begin with bare terms, \coinductive types may be annotated with position annotations in \refrule{a-fix} or \refrule{a-cofix}.
+The position annotation of \coinductive types occurs in \refrule{a-fix} or \refrule{a-cofix}, which we discuss shortly.
 
 In \refrule{a-constr}, we generate a single fresh size variable, which gets annotated on the constructor's \coinductive type in the argument types of the constructor type, as well as the return type, which has the successor of that size variable.
 All other \coinductive types which are not the constructor's \coinductive type continue to have $\infty$ annotations.
@@ -120,7 +135,9 @@ To obtain the motive type's return universe, we use \decompose.
 Given a type $t$ and a natural $n$, this metafunction reduces $t$ to a function type $\prodctx{\Delta}{u}$ where $\norm{\Delta} = n$, reduces $u$ to a universe $U$, and returns $U$.
 It can fail if $t$ cannot be reduced to a function type, if $\norm{\Delta} < n$, or if $u$ cannot be reduced to a universe.
 
-Finally, we come to size inference and termination/productivity checking for \cofixpoints.
+% TODO: Review below.
+
+\paragraph*{} Finally, we come to size inference and termination/productivity checking for \cofixpoints.
 It uses the following metafunctions:
 \begin{itemize}
   \item \setrecstars, given a function type $t$ and an index $n$, decomposes $t$ into arguments and a return type, reduces the $n$th argument type to an inductive type, annotates that inductive type with position annotation $*$, annotates the return type with $*$ if it has the same inductive type, and rebuilds the function type.
@@ -153,7 +170,7 @@ The number of position size variables from the \cofixpoint type shrinks on every
 If no satisfiable set is found even when no positions are considered size preserving, termination/productivity checking and thus type inference has failed.
 An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref{fig:helpers}.
 
-\subsection{RecCheck}
+\subsection{RecCheck}\label{subsec:algorithm:reccheck}
 
 As in previous work on \CChatomega with coinductive streams~\citep{cc-hat-omega} and in \CIChat, we use the same \RecCheck algorithm from \Fhat~\citep{f-hat}.
 This algorithm attempts to ensure that the subsizing rules in \autoref{fig:subsizing} can be satisfied within a given set of constraints.
@@ -259,6 +276,8 @@ Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ due to fi
 \end{enumerate}
 
 The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$ so that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
+
+\subsection{Metatheory}\label{subsec:algorithm:metatheory}
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
