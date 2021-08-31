@@ -93,7 +93,7 @@
     \elim{U_k}{U}{I_k} \\
     \upsilon = \fresh{1} \\
     C_3 = \casesize{I_k^s}{\hat{\upsilon}} \\
-    C_4 = t_p \preceq \motivetype{\Sigma}{\overline{p}}{U}{I_k^{\hat{\upsilon}}} \\
+    C_4 = t_p \constrain \motivetype{\Sigma}{\overline{p}}{U}{I_k^{\hat{\upsilon}}} \\
     C_5 = C_2 \cup C_3 \cup C_4 \\
     \textrm{For each $j$:} \\
     C_5, \Gamma_G, \Psi \vdash e^\circ_j \Leftarrow \branchtype{\Sigma}{\overline{p}}{c_j}{\upsilon}{P} \rightsquigarrow C_{6j}, e_j \\
@@ -108,7 +108,7 @@
     \cgp \vdash \setrecstars{t_k^\circ}{n_k} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
     \prodctx{\Delta_k}{u_k} = \whnf{t_k} \and \prodctx{\Delta'_k}{u'_k} = \shift{\prodctx{\Delta_k}{u_k}} \and
     \textstyle\bigcup_k C_{1k}, \Gamma_G, \Psi\overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta'_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
-    C_2 = \textstyle\bigcup_k C_{2k} \cup u_k \preceq u'_k \and
+    C_2 = \textstyle\bigcup_k C_{2k} \cup u_k \constrain u'_k \and
     C_3 = \RecCheckLoop{C_2}{\overline{\getrecvar{t_k}{n_k}}}{\overline{t_k}}{\overline{e_k}}
 }{
     \cgp \vdash \fix{\seq{n_k}, m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_3, \fix{\seq{n_k}, m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m
@@ -120,7 +120,7 @@
     \cgp \vdash \setcorecstars{t_k^\circ} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
     \prodctx{\Delta_k}{u_k} = \whnf{t_k} \and \prodctx{\Delta'_k}{u'_k} = \shift{\prodctx{\Delta_k}{u_k}} \and
     \textstyle\bigcup_k C_{1k}, \Gamma_G, \Psi\overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta'_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
-    C_2 = \textstyle\bigcup_k C_{2k} \cup \Delta'_k \preceq \Delta_k \and
+    C_2 = \textstyle\bigcup_k C_{2k} \cup \Delta'_k \constrain \Delta_k \and
     C_3 = \RecCheckLoop{C_2}{\Psi}{\overline{\getcorecvar{t_k}}}{\overline{t_k}}{\overline{e_k}}
 }{
     \cgp \vdash \cofix{m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_3, \cofix{m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m

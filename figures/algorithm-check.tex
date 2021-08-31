@@ -12,7 +12,7 @@
 \inferrule[\defrule{a-check}]{
     \cgp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t
 }{
-    \cgp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup t \preceq u, e
+    \cgp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup t \constrain u, e
 }
 \end{mathpar}
 \caption{Size inference algorithm: Checking}

@@ -29,16 +29,74 @@ proving only soundness and leaving completeness as a conjecture.
 
 \subsection{Preliminaries}
 
+We first formally define the notions of constraints and solutions,
+as well as some additional notation.
+
+\begin{definition}
+A \textbf{subsizing constraint set} (or simply \textbf{constraint set}) $C$ is a set of pairs of size expressions $s_1 \sqsubseteq s_2$ (also referred to as a \textbf{constraint})
+representing a subsizing relation from $s_1$ to $s_2$ that must be enforced.
+(When ambiguous, we will explicitly distinguish between the \emph{constraint} $s_1 \sqsubseteq s_2$ and the \emph{judgement} $s_1 \sqsubseteq s_2$.)
+
+We write $s_1 = s_2$ to mean the two pairs $s_1 \sqsubseteq s_2$ and $s_2 \sqsubseteq s_1$.
+Given a set of size variables $V$, we also write $\upsilon \sqsubseteq V$ for the pointwise constraint set $\set{\upsilon \sqsubseteq \upsilon' \mid \upsilon' \in V}$,
+and similarly for $V \sqsubseteq \upsilon$.
+\end{definition}
+
+This is the natural representation of the constraints:
+the algorithm is based on the typing rules,
+and they produce constraints representing subsizing judgements that need to hold.
+However, in \RecCheck and in \solve we will need to view these constraints as a graph.
+We use $C$ to represent either the constraint set or the graph depending on the context.
+First, notice that any noninfinite size consists of a size variable and some concrete number $n$ of successor ``hats'';
+we will write this as $\succ{\upsilon}^n$ so that, for instance, $\succ{\succ{\succ{\upsilon}}}$ is instead $\succ{\upsilon}^3$.
+
+\begin{definition}
+A \textbf{subsizing constraint graph} (or simply \textbf{constraint graph}) $C$ of a constraint set is a weighted, directed graph whose vertices are size variables, edges are constraints, and weights are integers.
+
+Given a constraint \mbox{$\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$},
+the constraint graph contains an edge from $\upsilon_1$ to $\upsilon_2$ with weight $n_2 - n_1$.
+Constraints of the form $s \sqsubseteq \infty$ are trivially true and aren't added to the graph.
+Constraints of the form $\infty \sqsubseteq \succ{\upsilon}^n$ correspond to an edge from $\infty$ to $\upsilon$ with weight $0$.
+\end{definition}
+
+Given a constraint graph and some set of size variables $V$,
+it's useful to know which variables in the graph can be reached from $V$ or will reach $V$.
+
+\begin{definition}[Transitive closures]~\\[-4ex]
+\begin{itemize}
+  \item Given a set of size variables $V$, the \textbf{upward closure} $\bigsqcup V$ with respect to $C$ is the set of variables that can be reached from $V$ by travelling along the directed edges of $C$.
+  That is, $V \subseteq \bigsqcup V$, and if $\upsilon_1 \in \bigsqcup V$ and $\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$, then $\upsilon_2 \in \bigsqcup V$.
+  \item Given a set of size variables $V$, the \textbf{downward closure} $\bigsqcap V$ with respect to $C$ is the set of variables that can reach $V$ by travelling along the directed edges of $C$.
+  That is, $V \subseteq \bigsqcap V$, and if $\upsilon_2 \in \bigsqcap V$ and $\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$, then $\upsilon_1 \in \bigsqcap V$.
+\end{itemize}
+\end{definition}
+
+Finally, we can define what it means to be a solution of a constraint set,
+as well as some useful related notation.
+
+\begin{definition}[Size substitutions and constraint satisfaction]~\\[-4ex]
+\begin{itemize}
+  \item A \textbf{size substitution} $\rho$ is a map from size variables to size expressions.
+  A concrete size substitution is written as $\set{\upsilon_1 \mapsto s_1, \dots, \upsilon_n \mapsto s_n}$.
+
+  \item $\rho$ is implicitly a partial function on size variables, size expressions, and sets of size variables. $\rho(\upsilon)$ returns $s$ if $\upsilon \mapsto s$ is in $\rho$ and $\upsilon$ otherwise. If $s = \succ{\upsilon}^n$, then $\rho(s)$ substitutes $\upsilon$ with $\rho(\upsilon)$; otherwise $\rho(s) = \infty$. Finally, $\rho(V) = \set{\rho(\upsilon) \mid \upsilon \in V}$.
+
+  \item The composition of size substitutions $\rho_1$ and $\rho_2$ is defined as \mbox{$(\rho_1 \circ \rho_2)(\upsilon) \coloneqq \rho_1(\rho_2(\upsilon))$}.
+
+  \item We write $\rho e$ to denote the sized term $e$ with its size variables replaced by their mappings, and similarly for $\rho \Gamma$.
+
+  \item A size substitution $\rho$ \textbf{satisfies the constraint set} $C$ (or is a \textbf{solution} of $C$), written as $\rho \vDash C$, if for every constraint $s_1 \sqsubseteq s_2$ in $C$, the judgement $\rho(s_1) \sqsubseteq \rho(s_2)$ holds.
+\end{itemize}
+\end{definition}
+
 \input{figures/contexts-gen.tex}
 
-First, we use $C$ to represent a set of subsizing constraints: if $(s_1, s_2) \in C$, then we must enforce $s_1 \sqsubseteq s_2$.
-For clarity, we directly write $s_1 \sqsubseteq s_2 \in C$, as well as $s_1 = s_2 \in C$ for when both $(s_1, s_2)$ and $(s_2, s_1)$ are in $C$.
-
-These constraint sets are generated at every step of the algorithm.
+Solutions of constraint sets are used when inferring sizes of global declarations.
+The constraint sets are generated when inferring sizes of terms.
 Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that enforce subsizing relations between those size variables.
 To this end, we introduce \emph{generic}%
 \footnote{This terminology is borrowed from \citet{universes}, who have similar environments in the context of universe level constraint collection in the presence of cumulativity.}
-environments, presented in \autoref{fig:contexts-gen}, where definitions are associated with a set of constraints.
+environments in \autoref{fig:contexts-gen}, where definitions are associated with a set of constraints.
 % [This isn't ever used?] As usual, we will use $\Psi$ as shorthand for sized generic environments and $\Psi^\circ$ for bare generic environments.
 By abuse of notation, we treat $\Psi(\ph)$ and $\Gamma_G(\ph)$ as lookup functions for $\Psi$ and $\Gamma_G$, where $\Psi(x) = t$ if $(x : t) \in \Psi$ and $\Psi(x) = (C, e : t)$ if $(C, x : t \coloneqq e) \in \Psi$, and similarly for $\Gamma_G$.
 
@@ -178,7 +236,7 @@ It does so by checking the set of constraints for invalid circular subsizing rel
 It takes four arguments:
 
 \begin{itemize}
-  \item A set of subsizing constraints $C$.
+  \item A constraint set $C$, which we treat as a constraint graph.
   \item The size variable $\tau$ of the annotation on the type of the recursive argument (for fixpoints) or on the return type (for cofixpoints). While the return type (for fixpoints) or the types of other arguments (for cofixpoints) may optionally be marked as size-preserving, each \cofixpoint type requires at \textit{least} $\tau$ for the primary \corecursive type.
   \item A set of size variables $V^*$ that must be set to some non-infinite size.
     These are the size annotations in the \cofixpoint type that have position size variables.
@@ -187,17 +245,12 @@ It takes four arguments:
     These are all other non-position size annotations, found in the \cofixpoint types and bodies.
 \end{itemize}
 
-Here, we begin to treat $C$ as a weighted, directed graph.
-Each size variable corresponds to a node, and each subsizing relation is an edge from the lower to the upper variable.
-A size expression consists of a size variable with some finite nonnegative number of successor ``hats''; instead of using a perniculous tower of carets, we write the number as a superscript, as in $\hat{\upsilon}^n$.
-Then given a subsizing relation $\hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2}$, the weight of the edge from $\upsilon_1$ to $\upsilon_2$ is $n_2 - n_1$.
-Subsizings to $\infty$ do not need to be added to $C$ since they are given by \refrule{ss-infty}; subsizings from $\infty$ are given an edge weight of $0$.
-
-Given a set of size variables $V$, its \emph{upward closure} $\bigsqcup V$ in $C$ is the set of size variables that can be reached from $V$ by travelling along the edges of $C$; that is, $\upsilon_1 \in \bigsqcup V \wedge \hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2} \implies \upsilon_2 \in \bigsqcup V$.
-Similarly, the \emph{downward closure} $\bigsqcap V$ in $C$ is the set of size variables that can reach $V$ by travelling along the edges of $C$, or $\upsilon_2 \in \bigsqcap V \wedge \hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2} \implies \upsilon_1 \in \bigsqcap V$.
-
-We use the notation $\upsilon \sqsubseteq V$ to denote the set of constraints from $\upsilon$ to each size variable in $V$ and similarly for $V \sqsubseteq \upsilon$.
-
+The key idea of the algorithm is that if there is a negative cycle in $C$,
+then for any size variable $\upsilon$ in the cycle,
+supposing that the total weight going once around the cycle is $-n$,
+by transitivity we have the subsizing relation $\succ{\upsilon}^{n} \sqsubseteq \upsilon$,
+This relation can only hold if $\upsilon = \infty$,
+since $\succ{\infty} \sqsubseteq \infty$.
 The algorithm proceeds as follows:
 
 \begin{enumerate}
@@ -205,7 +258,6 @@ The algorithm proceeds as follows:
     This ensures that $\tau$ is the smallest size variable among all the noninfinite size variables.
   \item \label{alg:reccheck:neg-cycles} Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
   \item Remove all edges with size variables in $V^-$ from $C$, and add $\infty \sqsubseteq V^-$.
-    Since $\succ{\infty} \sqsubseteq \infty$, this is the only way to resolve negative cycles.
   \item Add $\infty \sqsubseteq \left(\bigsqcup V^\neq \cap \bigsqcup V^\iota\right)$ to $C$.
   \item Let $V^\bot = \left(\bigsqcup \set{\infty}\right) \cap V^\iota$.
     This is the set of size variables that we have determined to both be infinite and noninfinite.
@@ -220,8 +272,6 @@ This comes from the negative-cycle finding in (\ref{alg:reccheck:neg-cycles}) us
 
 \input{figures/algorithm-wf.tex}
 
-% TODO: Check the rest of this section.
-
 \subsection{Well-Formedness}\label{subsec:algorithm:wf}
 
 A self-contained chunk of code, be it a file or a module, consists of a sequence of \coinductive definitions (signatures) and programs (global declarations).
@@ -229,24 +279,9 @@ For our purposes, we assume that there is a singular well-formed signature defin
 Then we need to perform size inference on each declaration of $\Gamma_G$ in order.
 This is given by Rules \refnorule{a-global-nil}, \refnorule{a-global-assum}, and \refnorule{a-global-def} in \autoref{fig:algorithm-wf}.
 
-In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_2$ and produces a metafunction on terms such that, when applied to the annotated term and type, ensure that they form a well-typed judgement. In otherwords, we are guaranteed that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
+In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_2$ and produces a size substitution that, when applied to the annotated term and type, ensures that they form a well-typed judgement. In otherwords, we are guaranteed that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
-Formally, we define the following:
-
-\begin{definition}[Size substitutions and constraint satisfaction]~\\[-3ex]
-  \begin{itemize}
-    \item A \textbf{size substitution} $\rho$ is a map from size variables to size expressions.
-      The notation $\set{\upsilon_1 \mapsto s_1, \dots, \upsilon_n \mapsto s_n}$ describes a concrete size substitution that maps $\upsilon_i$ to $s_i$ for each $i \in [1..n]$.
-      We write $\rho(\upsilon)$ to denote the size expression that $\upsilon$ is mapped to by $\rho$.
-
-      Additionally, we write $\rho e$ to denote the sized term $e$ with every size expression in $e$ replaced by its mapping and $\rho \Gamma$ to denote the environment $\Gamma$ with every size expression in the sized terms of $\Gamma$ replaced by its mapping.
-    \item A size substitution $\rho$ \textbf{satisfies the constraint system} $C$, denoted $\rho \vDash C$, if for every constraint $(s_1, s_2) \in C$, $\rho(s_1) \sqsubseteq \rho(s_2)$ holds.
-      We also call $\rho$ a \emph{solution} of $C$.
-  \end{itemize}
-\end{definition}
-
-Recall that we can treat a constraint set as a weighted, directed graph, where an edge of weight $n$ from $\upsilon_1$ to $\upsilon_2$ would correspond to a constraint of the form $\upsilon_1 \sqsubseteq \hat{\upsilon}_2^n$.
-Assuming for now that this graph has no negative cycles, for every connected component, we want to assign each size variable the same common size variable but with a different size.
+Assuming for now that the corresponding constraint graph has no negative cycles, for every connected component, we want to assign each size variable the same common size variable but with a different size.
 For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilon}_2, \hat{\upsilon_1} \sqsubseteq \upsilon_3}$, a possible solution would be the mapping $\set{\upsilon_1 \mapsto \tau, \upsilon_2 \mapsto \upsilon^*, \upsilon_3 \mapsto \hat{\tau}}$.
 
 This kind of problem is a \emph{difference constraint} problem \citep{clrs}.
@@ -254,7 +289,6 @@ Generally a solution involves finding a mapping from variables to integers, wher
 Given a connected component $C_c$ with no negative cycles, our algorithm $\solvecomp$ for finding a solution proceeds as follows:
 
 \begin{enumerate}
-  \setcounter{enumi}{-1}
   \item Generate a fresh size variable $\tau$.
   \item For every size variable $\upsilon_i$ in $C_c$, add an edge $\tau \sqsubseteq \upsilon_i$ of weight $0$.
   \item \label{alg:solvecomp:shortest-path} Find the weights $w_i$ of the shortest paths from $\tau$ to every other size variable $\upsilon_i$ in $C_c$.
@@ -265,17 +299,28 @@ Given a connected component $C_c$ with no negative cycles, our algorithm $\solve
     In other words, we return the map $\rho \coloneqq \set{\upsilon_i \mapsto \hat{\tau}^{w_{\max} - w_i}}$.
 \end{enumerate}
 
-Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ due to finding the single-source shortest paths in (\ref{alg:solvecomp:shortest-path}) using, for instance, the Bellman--Ford algorithm. The total $\solve$ algorithm, given some constraint set $C$, is then as follows:
+Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ (where $V$ is the set of size variables in $C_c$)
+due to
+finding the single-source shortest paths in (\ref{alg:solvecomp:shortest-path}) using,
+for instance, the Bellman--Ford algorithm.
+The total $\solve$ algorithm, given some constraint graph $C$, is then as follows:
 
+% Is removing negative cycles necessary? Could we prove that there are *no* negative cycles?
 \begin{enumerate}
-  \setcounter{enumi}{-1}
   \item Initialize an empty size substitution $\rho$.
   \item Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
   \item Remove all edges with size variables in $V^-$ from $C$, and for every $\upsilon_i \in V^-$, add $\upsilon_i \mapsto \infty$ to $\rho$.
   \item For every connected component $C_c$ of $C$, add the mappings $\solvecomp{C_c}$ to $\rho$.
 \end{enumerate}
 
-The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$ so that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
+Since dividing the constraint graph into connected components partitions the size variables and constraints into disjoint sets,
+the time complexity of all executions of \solvecomp is $O(\norm{V}\norm{C})$.
+This is also the time complexity of negative-cycle finding.
+These two dominate the time complexity of finding the connected components, $O(\norm{V} + \norm{C})$.
+
+The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$.
+As we will see in the following subsection,
+with soundness this implies that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
 \subsection{Metatheory}\label{subsec:algorithm:metatheory}
 
