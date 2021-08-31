@@ -47,12 +47,13 @@ The proof environment has also been modified to take an optional argument.
       * Impredicativity and trace products
       * Logical relations
       * LRs with explicit sizes
-0. Prototype implementation in Coq
+0. Size inference
    1. Inference algorithm (mostly unchanged, add examples)
    1. Soundness and completeness
-   1. Implementation problems
-      * Performance issues (measure this!)
-      * Kernel architecture
+0. Prototype implementation
+   1. Description of existing Coq kernel architecture
+   1. Comparison of implementation to algorithm model
+   1. Performance measurements and analysis
 0. Related work
    1. Frade → Barthe → Sacchini
    1. Abel: STLC → Fω, semi-continuity → flationary iteration
