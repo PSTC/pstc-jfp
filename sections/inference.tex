@@ -401,6 +401,91 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
 \end{itemize}
 \end{proof}
 
+\RecCheck returns a constraint set for a single \cofixpoint definition with a fixed set of position variables;
+\RecCheckLoop, on the other hand, returns a constraint set for an entire mutual \cofixpoint definition, finding a suitable set of position variables.
+There are then two properties we want to ensure.
+
+\begin{theorem}[Correctness of RecCheckLoop]~\\[-4ex]
+\begin{enumerate}
+  \item \RecCheckLoop terminates on all inputs.
+  \item If $\RecCheckLoop{C', \Psi, \vec{\tau_k}, \vec{t_k}, \vec{e_k}} = C$ with an initial position variable set $\mathcal{V}^*$,
+  then for every $i \in \vec{k}$, $\RecCheck{C', \tau_i, \PV(t_i), \SV(\Psi, t_i, e_i) \setminus \PV(t_i)} \subseteq C$ with a final position variable set $\mathcal{V}^*_\subseteq \subseteq \mathcal{V}^*$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[{[Sketch]}]
+\begin{enumerate}
+  \item \RecCheckLoop does a recursive call only when \RecCheck fails with a size variable set $V$, which by definition is a subset of $\PV(t_i)$ for some $t_i$.
+  Since $V$ is removed from $\mathcal{V}^*$ every time, $\PV(\vec{t_k})$ is the decreasing measure of \RecCheckLoop.
+  \item Again, $\mathcal{V}^*$ is only removed from, not added to, so the final set must be a subset of the initial set.
+  By inspection, $C$ is a union of the constraints returned by \RecCheck when they all succeed.
+\end{enumerate}
+\end{proof}
+
+We also want to ensure that \solvecomp and \solve actually return solutions of the constraint sets they are solving.
+
+\begin{theorem}[Correctness of \solve and \solvecomp]~\\[-4ex]
+\begin{enumerate}
+  \item If the constraint set $C_c$ contains no negative cycles, then $\solvecomp{C_c} \vDash C_c$ and
+  \item $\solve{C} \vDash C$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[{[Sketch]}]
+\begin{enumerate}
+  \item By \citet{clrs}, any constant shift ($w_{\max}$, in our case) of a shortest-path solution is a valid solution to the difference constraint problem.
+  \item By the same reasoning for \RecCheck, any variables involved in negative cycles must be set to $\infty$ in a solution.
+  The remaining constraints are solved by \solvecomp.
+\end{enumerate}
+\end{proof}
+
+Before proceeding onto the main soundness theorems, we first need a few lemmas.
+
+\begin{lemma}
+Suppose that $\forall \upsilon \in V, \rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
+\begin{enumerate}
+  \item $\forall \upsilon \in V$, if $\upsilon \pos t$, then $\rho_1 t \leq \rho_2 t$.
+  \item $\forall \upsilon \in V$, if $\upsilon \neg t$, then $\rho_2 t \leq \rho_1 t$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}[{[Sketch]}]
+By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
+\end{proof}
+
+\begin{lemma}
+$\rho \vDash \subst{C}{\upsilon}{r}$ iff $\rho \circ \subst{}{\upsilon}{r} \vDash C$.
+\end{lemma}
+
+\begin{proof}
+\begin{align*}
+  \rho \vDash \subst{C}{\upsilon}{s}
+  &\Leftrightarrow \forall s_1 \sqsubseteq s_2 \in C, \rho (\subst{s_1}{\upsilon}{r})\sqsubseteq \rho (\subst{s_2}{\upsilon}{r}) \\
+  &\Leftrightarrow \forall s_1 \sqsubseteq s_2 \in C, (\rho \circ \set{\upsilon \mapsto r})(s_1) \sqsubseteq (\rho \circ \set{\upsilon \mapsto r})(s_2) \\
+  &\Leftrightarrow \rho \circ \set{\upsilon \mapsto r} \vDash C
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+  If $\Sigma, \Gamma_G, \Gamma \vdash e : t$, then $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho e : \rho t$.
+\end{lemma}
+
+\begin{proof}[{[Sketch]}]
+% TODO: Uses earlier lemma showing that $\Sigma, \Gamma_G, \subst{\Gamma}{\upsilon}{s} \vdash \subst{e}{\upsilon}{s} : \subst{t}{\upsilon}{s}.
+\end{proof}
+
+\begin{lemma}[Monotonicity of constraints]~\\[-4ex]
+\begin{enumerate}
+  \item If $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ and $\rho \vDash C'$, then $\rho \vDash C$.
+  \item If $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ and $\rho \vDash C'$, then $\rho \vDash C$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}[{[Sketch]}]
+By mutual induction on the checking and inference algorithms.
+% TODO: Mention a few special cases.
+\end{proof}
+
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
 %%% TeX-engine: default
