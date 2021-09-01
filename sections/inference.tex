@@ -254,21 +254,21 @@ since $\succ{\infty} \sqsubseteq \infty$.
 The algorithm proceeds as follows:
 
 \begin{enumerate}
-  \item \label{alg:reccheck:smallest} Let $V^\iota = \bigsqcap V^*$, and add $\tau \sqsubseteq V^\iota$ to $C$.
+  \item \label{item:reccheck:smallest} Let $V^\iota = \bigsqcap V^*$, and add $\tau \sqsubseteq V^\iota$ to $C$.
     This ensures that $\tau$ is the smallest size variable among all the noninfinite size variables.
-  \item \label{alg:reccheck:neg-cycles} Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
+  \item \label{item:reccheck:neg-cycles} Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
   \item Remove all edges with size variables in $V^-$ from $C$, and add $\infty \sqsubseteq V^-$.
-  \item \label{alg:reccheck:infty} Add $\infty \sqsubseteq \left(\bigsqcup V^\neq \cap \bigsqcup V^\iota\right)$ to $C$.
-  \item \label{alg:reccheck:bot} Let $V^\bot = \left(\bigsqcup \set{\infty}\right) \cap V^\iota$.
+  \item \label{item:reccheck:infty} Add $\infty \sqsubseteq \left(\bigsqcup V^\neq \cap \bigsqcup V^\iota\right)$ to $C$.
+  \item \label{item:reccheck:bot} Let $V^\bot = \left(\bigsqcup \set{\infty}\right) \cap V^\iota$.
     This is the set of size variables that we have determined to both be infinite and noninfinite.
     If $V^\bot$ is empty, then return $C$.
-  \item \label{alg:reccheck:fail} Otherwise, let $V = V^\bot \cap (V^* \setminus \set{\tau})$, and fail with $\RecCheckFail{V}$.
+  \item \label{item:reccheck:fail} Otherwise, let $V = V^\bot \cap (V^* \setminus \set{\tau})$, and fail with $\RecCheckFail{V}$.
     This is the set of contradictory position size variables excluding $\tau$, which we can remove from $\V^*$ in \RecCheckLoop.
     If $V$ is empty, there are no position size variables left to remove, so the check and therefore the size inference algorithm fails.
 \end{enumerate}
 
 Disregarding closure operations and set operations like intersection and difference, the time complexity of a single pass is $O(\norm{V}\norm{C})$, where $V$ is the set of size variables appearing in $C$.
-This comes from the negative-cycle finding in (\ref{alg:reccheck:neg-cycles}) using, for instance, the Bellman--Ford algorithm.
+This comes from the negative-cycle finding in (\ref{item:reccheck:neg-cycles}) using, for instance, the Bellman--Ford algorithm.
 
 \input{figures/algorithm-wf.tex}
 
@@ -291,7 +291,7 @@ Given a connected component $C_c$ with no negative cycles or an $\infty$ vertex,
 \begin{enumerate}
   \item Generate a fresh size variable $\tau$.
   \item For every size variable $\upsilon_i$ in $C_c$, add an edge $\tau \sqsubseteq \upsilon_i$ of weight $0$.
-  \item \label{alg:solvecomp:shortest-path} Find the weights $w_i$ of the shortest paths from $\tau$ to every other size variable $\upsilon_i$ in $C_c$.
+  \item \label{item:solvecomp:shortest-path} Find the weights $w_i$ of the shortest paths from $\tau$ to every other size variable $\upsilon_i$ in $C_c$.
     This yields the constraint $\tau \sqsubseteq \hat{\upsilon}_i^{w_i}$.
   \item Na\"ively, we would map each $\upsilon_i$ to the size expression $\hat{\tau}^{-w_i}$.
     However, $-w_i$ may be negative, which would make no sense as the size of a size variable.
@@ -301,7 +301,7 @@ Given a connected component $C_c$ with no negative cycles or an $\infty$ vertex,
 
 Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ (where $V$ is the set of size variables in $C_c$)
 due to
-finding the single-source shortest paths in (\ref{alg:solvecomp:shortest-path}) using,
+finding the single-source shortest paths in (\ref{item:solvecomp:shortest-path}) using,
 for instance, the Bellman--Ford algorithm.
 The total $\solve$ algorithm, given some constraint graph $C$, is then as follows:
 
@@ -347,7 +347,7 @@ given a fresh stage variable $\upsilon$, there exists a $\rho'$ such that the fo
 \end{enumerate}
 \end{theorem}
 
-\begin{proof}[{[Sketch]}]
+\begin{proof}[{[Partial]}]
 Let $C^\iota$ be $C$ with all vertices in $\bigsqcup \set{\infty}$ removed.
 By the definition of \RecCheck, since all negative cycles in $C'$ are removed and the only constraints that are added are of the form $\infty \sqsubseteq s$,
 $C^\iota$ has no negative cycles either.
@@ -389,13 +389,13 @@ Since $\rho \vDash C'$, this means we need to show that $\rho$ satisfies every c
 We handle them step by step.
 Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variables involved in some negative cycle in $C'$.
 \begin{itemize}
-  \item {[\autoref{alg:reccheck:smallest}]} $\tau \sqsubseteq V^\iota$: Since we have $\rho(\tau) = \upsilon$ and $\rho(V^*) = \succ{\upsilon}^{n}$ for some $n$ by assumption,
+  \item \autoref{item:reccheck:smallest}: $\tau \sqsubseteq V^\iota$. Since we have $\rho(\tau) = \upsilon$ and $\rho(V^*) = \succ{\upsilon}^{n}$ for some $n$ by assumption,
   $\rho(\tau) \sqsubseteq \rho(V^\iota)$ holds.
-  \item {[\autoref{alg:reccheck:neg-cycles}]} $\infty \sqsubseteq V^-$: For all size variables $\upsilon' \in V^-$,
+  \item \autoref{item:reccheck:neg-cycles}: $\infty \sqsubseteq V^-$. For all size variables $\upsilon' \in V^-$,
   since being in a negative cycle transitively implies a subsizing relation $\succ{\upsilon}'^{n} \sqsubseteq \upsilon'$ for some $n$,
   the only way for $\rho(\succ{\upsilon}'^{n}) \sqsubseteq \rho(\upsilon')$ to hold is if $\rho(\upsilon') = \infty$,
   which satisfies $\infty \sqsubseteq \rho(\upsilon')$.
-  \item {[\autoref{alg:reccheck:infty}]} $\infty \sqsubseteq (\bigsqcup V^\neq \cap \bigsqcup V^\iota)$: Since $\rho(V^\neq)$ and $\rho(V^\iota)$ have different size variables by assumption,
+  \item \autoref{item:reccheck:infty}: $\infty \sqsubseteq (\bigsqcup V^\neq \cap \bigsqcup V^\iota)$. Since $\rho(V^\neq)$ and $\rho(V^\iota)$ have different size variables by assumption,
   if a size variable $\upsilon'$ is in both $\bigsqcup V^\neq$ and $\bigsqcup V^\iota$,
   it must be set to $\infty$, which satisfies $\infty \sqsubseteq \upsilon'$.
 \end{itemize}
@@ -474,6 +474,7 @@ $\rho \vDash \subst{C}{\upsilon}{r}$ iff $\rho \circ \subst{}{\upsilon}{r} \vDas
 % TODO: Uses earlier lemma showing that $\Sigma, \Gamma_G, \subst{\Gamma}{\upsilon}{s} \vdash \subst{e}{\upsilon}{s} : \subst{t}{\upsilon}{s}.
 \end{proof}
 
+\iffalse
 \begin{lemma}[Monotonicity of constraints]~\\[-4ex]
 \begin{enumerate}
   \item If $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ and $\rho \vDash C'$, then $\rho \vDash C$.
@@ -483,7 +484,53 @@ $\rho \vDash \subst{C}{\upsilon}{r}$ iff $\rho \circ \subst{}{\upsilon}{r} \vDas
 
 \begin{proof}[{[Sketch]}]
 By mutual induction on the checking and inference algorithms.
-% TODO: Mention a few special cases.
+Most cases are directly by the induction hypotheses and the fact that $\rho \vDash C \cup C' \implies \rho \vDash C, \rho \vDash C'$.
+\begin{itemize}
+  \item Rules \refnorule{a-fix} and \refnorule{a-cofix}: 
+\end{itemize}
+\end{proof}
+\fi
+
+Now we are ready to tackle the main theorems.
+
+\begin{theorem}[Soundness (check/infer)]
+Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
+and suppose $\WF{\Sigma, \Gamma_G, \square}$ holds.
+\begin{enumerate}
+  \item Let $C$ be a constraint set, $\Psi$ a generic environment, $e^\circ$ a bare term, and $t$ a sized term.\\
+  If the following hold:
+    \begin{enumerate}
+      \item $\forall \rho \vDash C$, we have $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
+      \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
+      \item $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$
+    \end{enumerate}
+    Then for every $\rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  \item Let $C$ be a constraint set, $\Psi$ a generic environment, and $e^\circ$ a bare term.\\
+  If the following hold:
+    \begin{enumerate}
+      \item \label{item:sound:infer:wf} $\forall \rho \vDash C$, we have $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
+      \item \label{item:sound:infer:psi} If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have that $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
+      \item \label{item:sound:infer} $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$
+    \end{enumerate}
+    Then for every $\rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[{[Partial]}]
+By mutual induction on the checking and inference rules of the algorithm.
+\begin{enumerate}
+  \item % TODO
+  \item We will prove the cases for definitions, let expressions, case expressions, and fixpoints;
+  the case for cofixpoints are similar to that of fixpoints, and the remaining cases are straightforward.
+  Suppose that \ref{item:sound:infer:wf}, \ref{item:sound:infer:psi}, and \ref{item:sound:infer} hold, and let $\rho \vDash C'$.
+  \begin{itemize}
+    \item \refrule{a-var-def}.
+    \item \refrule{a-const-def}.
+    \item \refrule{a-let-in}.
+    \item \refrule{a-case}.
+    \item \refrule{a-fix}.
+  \end{itemize}
+\end{enumerate}
 \end{proof}
 
 %%% Local Variables:
