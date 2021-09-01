@@ -339,9 +339,9 @@ If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDa
 given a fresh stage variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
 \begin{enumerate}
   \item \label{src:1} $\rho' \vDash C'$;
-  \item \label{src:2} For all $\upsilon' \in V^\neq$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\upsilon') = \rho(\upsilon')$;
-  \item \label{src:3} For all $\tau' \in V^*$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\tau') \sqsubseteq \rho(\tau')$;
-  \item \label{src:4} $\rho(\tau) = \upsilon$;
+  \item \label{src:2} For all $\upsilon' \in V^\neq$, $(\set{\upsilon \mapsto \rho(\tau)} \circ \rho')(\upsilon') = \rho(\upsilon')$;
+  \item \label{src:3} For all $\tau' \in V^*$, $(\set{\upsilon \mapsto \rho(\tau)} \circ \rho')(\tau') \sqsubseteq \rho(\tau')$;
+  \item \label{src:4} $\rho'(\tau) = \upsilon$;
   \item \label{src:5} $\floor{\rho'(V^*)} = \upsilon$; and
   \item \label{src:6} $\floor{\rho'(V^\neq)} \neq \upsilon$.
 \end{enumerate}
@@ -359,9 +359,38 @@ Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \succ{\up
 
 \begin{enumerate}
   \item The proof is more involved; see \citet{f-hat}.
-  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho(\upsilon') = \infty$. Therefore, $\rho'(\upsilon') = \rho(\upsilon')$.
-  \item 
+  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho(\upsilon') = \infty$. Therefore, $(\set{\upsilon \mapsto \rho(\tau)} \circ \rho')(\upsilon') = (\set{\upsilon \mapsto \rho(\tau)} \circ \rho)(\upsilon') = \rho(\upsilon')$.
+  \item Let $\tau' \in V^*$. Note that $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$.
+  Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'(\tau') = \succ{\upsilon}^{w'}$, and $(\set{\upsilon \mapsto \rho(\tau)} \circ \rho')(\tau') = \succ{\rho(\tau)}^{w'}\!$.
+  Since $\rho \vDash C$ and there is a path of weight $w'$ from $\tau$ to $\tau'$ in $C$,
+  we have $\succ{\rho(\tau)}^{w'}\! \sqsubseteq \rho(\tau')$.
+  \item The shortest path from $\tau$ to itself is no path at all, so $\rho'(\tau) = \upsilon$.
+  \item Since $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$, for every $\upsilon_i \in V^*$, $\rho'(\upsilon_i) = \succ{\upsilon}^{w_i}$ where $w_i$ is the weight of the shortest path from $\upsilon$ to $\upsilon_i$, and its size variable is obviously $\upsilon$.
+  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then $\infty \sqsubseteq \upsilon'$ must be in $C$, and therefore $\rho(\upsilon') = \infty$, so $\rho'(\upsilon') = \rho(\upsilon')$. Otherwise, if $\upsilon' \notin \bigsqcup V^\iota$, we again have $\rho'(\upsilon') = \rho(\upsilon')$. Since $\upsilon$ is fresh, it could not be mapped to by $\rho$, so the size variable of $\rho(\upsilon')$ cannot be $\upsilon$.
 \end{enumerate}
+\end{proof}
+
+\begin{theorem}[Completeness of \RecCheck (CRC)]~\\
+Suppose the following all hold:
+\begin{itemize}
+  \item $\rho \vDash C'$;
+  \item $\rho(\tau) = \upsilon$;
+  \item $\floor{\rho(V^*)} = \upsilon$; and
+  \item $\floor{\rho(V^\neq)} \neq \upsilon$.
+\end{itemize}
+Then $\rho \vDash \RecCheck(C', \tau, V^*, V^\neq)$.
+\end{theorem}
+
+\begin{proof}[{[Sketch]}]
+Let $V^\iota = \bigsqcap V^*$.
+Since we add the constraints $\tau \sqsubseteq V^\iota$ and we have $\rho(\tau) = \upsilon$ and $\rho(V^*) = \succ{\upsilon}^{n}$ for some $n$,
+$\rho(\tau) \sqsubseteq \rho(V^\iota)$ holds.
+Next, for all size variables $\upsilon' \in V^-$ involved in a negative cycle, we add $\infty \sqsubseteq \upsilon'$;
+since being in a negative cycle transitively implies a subsizing relation $\succ{\upsilon}'^{n} \sqsubseteq \upsilon'$ for some $n$,
+and $\rho \vDash C'$, the only way for $\rho(\succ{\upsilon}'^{n}) \sqsubseteq \rho(\upsilon')$ to hold is if $\rho(\upsilon') = \infty$,
+which satisfies $\infty \sqsubseteq \rho(\upsilon')$.
+Finally, the constraints $\infty \sqsubseteq (\bigsqcup V^\neq \cap \bigsqcup V^\iota)$ are added.
+% TODO: Explain why these constraints are satisfied as well.
 \end{proof}
 
 %%% Local Variables:
