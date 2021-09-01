@@ -286,7 +286,7 @@ For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilo
 
 This kind of problem is a \emph{difference constraint} problem \citep{clrs}.
 Generally a solution involves finding a mapping from variables to integers, whereas our solution will map from size variables to size expressions with the same base, but the technique using a single-source shortest-path algorithm still applies.
-Given a connected component $C_c$ with no negative cycles, our algorithm $\solvecomp$ for finding a solution proceeds as follows:
+Given a connected component $C_c$ with no negative cycles or an $\infty$ vertex, our algorithm $\solvecomp$ for finding a solution proceeds as follows:
 
 \begin{enumerate}
   \item Generate a fresh size variable $\tau$.
@@ -308,9 +308,10 @@ The total $\solve$ algorithm, given some constraint graph $C$, is then as follow
 % Is removing negative cycles necessary? Could we prove that there are *no* negative cycles?
 \begin{enumerate}
   \item Initialize an empty size substitution $\rho$.
-  \item Find all negative cycles in $C$, and let $V^-$ be the set of all size variables in some negative cycle.
-  \item Remove all edges with size variables in $V^-$ from $C$, and for every $\upsilon_i \in V^-$, add $\upsilon_i \mapsto \infty$ to $\rho$.
-  \item For every connected component $C_c$ of $C$, add the mappings $\solvecomp{C_c}$ to $\rho$.
+  \item Find all negative cycles in $C$, and let $V^-$ be all size variables in some negative cycle.
+  \item Let $V^\infty = \bigsqcup \set{\infty}$.
+  \item Remove all edges with size variables in $V^- \cup V^\infty$ from $C$, and for every $\upsilon_i \in V^- \cup V^\infty$, add $\upsilon_i \mapsto \infty$ to $\rho$.
+  \item For every connected component $C_c$ of $C$, add mappings $\solvecomp{C_c}$ to $\rho$.
 \end{enumerate}
 
 Since dividing the constraint graph into connected components partitions the size variables and constraints into disjoint sets,
@@ -323,6 +324,45 @@ As we will see in the following subsection,
 with soundness this implies that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
 \subsection{Metatheory}\label{subsec:algorithm:metatheory}
+
+In this subsection, we focus on soundness and completeness theorems of various parts of the inference algorithm.
+We first need soundness and completeness of \RecCheck.
+We reproduce part of their proofs here,
+and refer the reader to \citet{f-hat} for further details.
+
+Intuitively, soundness says that if you have a solution to a constraint set returned by \RecCheck,
+then there must also be a solution to the original constraint set satisfying some important properties.
+Dually, completness says that if you have a solution to the original constraint set satisfying these properties, then it must also be a solution to the constraint set returned by \RecCheck.
+
+\begin{theorem}[Soundness of \RecCheck (SRC)]
+If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDash C$,
+given a fresh stage variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
+\begin{enumerate}
+  \item \label{src:1} $\rho' \vDash C'$;
+  \item \label{src:2} For all $\upsilon' \in V^\neq$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\upsilon') = \rho(\upsilon')$;
+  \item \label{src:3} For all $\tau' \in V^*$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\tau') \sqsubseteq \rho(\tau')$;
+  \item \label{src:4} $\rho(\tau) = \upsilon$;
+  \item \label{src:5} $\floor{\rho'(V^*)} = \upsilon$; and
+  \item \label{src:6} $\floor{\rho'(V^\neq)} \neq \upsilon$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[{[Sketch]}]
+Let $C^\iota$ be $C$ with all vertices in $\bigsqcup \set{\infty}$ removed.
+By the definition of \RecCheck, since all negative cycles in $C'$ are removed and the only constraints that are added are of the form $\infty \sqsubseteq s$,
+$C^\iota$ has no negative cycles either.
+Let $V^\iota = \bigsqcap V^*$.
+Note that the constraints $\tau \sqsubseteq V^\iota$ are in $C^\iota$.
+Then we are able to compute the weights $w_i$ of the shortest paths from $\tau$ to $\bigsqcup V^\iota$ with respect to $C^\iota$.
+According to \citet{f-hat}, these weights are nonnegative.
+Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \succ{\upsilon}^{w_i} \mid \upsilon_i \in \bigsqcup V^\iota, \rho(\upsilon_i) \neq \infty}$.
+
+\begin{enumerate}
+  \item The proof is more involved; see \citet{f-hat}.
+  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho(\upsilon') = \infty$. Therefore, $\rho'(\upsilon') = \rho(\upsilon')$.
+  \item 
+\end{enumerate}
+\end{proof}
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
