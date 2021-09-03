@@ -149,6 +149,7 @@ We discuss this and other implementational issues in the next section.
 
 \paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
 To ensure that the inferred type subtypes the given type, we use the metafunction $\constrain$ that takes two sized terms and attempts to produce a set of subsizing constraints based on the subtyping rules of \autoref{fig:subtyping}.
+It also implicitly takes a global environment and a local generic environment.
 $\constrain$ may reduce terms to check convertibility and will fail if two terms are incompatible.
 
 \autoref{fig:algorithm} is the inference component of the algorithm. Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
@@ -440,6 +441,14 @@ We also want to ensure that \solvecomp and \solve actually return solutions of t
 \end{proof}
 
 Before proceeding onto the main soundness theorems, we first need a few lemmas.
+Given a local generic environment $\Psi$, we use $\Gamma_\Psi$ to denote the corresponding local environment with the constraint sets removed.
+
+\iffalse
+\begin{lemma}
+If $\rho \vDash t \constrain u$ with global environment $\Gamma_G$ and local generic environment $\Psi$,
+then $\Gamma_G, \Gamma_\Psi \vdash \rho t \leq \rho u$ holds.
+\end{lemma}
+\fi
 
 \begin{lemma}
 Suppose that $\forall \upsilon \in V, \rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
@@ -494,35 +503,38 @@ Most cases are directly by the induction hypotheses and the fact that $\rho \vDa
 Now we are ready to tackle the main theorems.
 
 \begin{theorem}[Soundness (check/infer)]
-Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
-and suppose $\WF{\Sigma, \Gamma_G, \square}$ holds.
+Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, and $C$ a constraint set.
+Suppose we have the following:
+\begin{enumerate}[label=\roman*.]
+  \item \label{item:sound:wf:global} $\WF{\Sigma, \Gamma_G, \mt}$
+  \item \label{item:sound:wf:local} $\forall \rho \vDash C, \WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
+\end{enumerate}
+Then the following hold:
 \begin{enumerate}
-  \item Let $C$ be a constraint set, $\Psi$ a generic environment, $e^\circ$ a bare term, and $t$ a sized term.\\
-  If the following hold:
-    \begin{enumerate}
-      \item $\forall \rho \vDash C$, we have $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
-      \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
-      \item $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$
-    \end{enumerate}
-    Then for every $\rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
-  \item Let $C$ be a constraint set, $\Psi$ a generic environment, and $e^\circ$ a bare term.\\
-  If the following hold:
-    \begin{enumerate}
-      \item \label{item:sound:infer:wf} $\forall \rho \vDash C$, we have $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
-      \item \label{item:sound:infer:psi} If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have that $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
-      \item \label{item:sound:infer} $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$
-    \end{enumerate}
-    Then for every $\rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  \item If $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$,
+  then $\forall \rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  \item If $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$,
+  then $\forall \rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}[{[Partial]}]
 By mutual induction on the checking and inference rules of the algorithm.
+Suppose \ref{item:sound:wf:global} and \ref{item:sound:wf:local} hold.
 \begin{enumerate}
-  \item % TODO
+  \item By \refrule{a-check}, we have
+  \begin{displaymath}
+    \inferrule[]{
+        \cgp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t
+    }{
+        \cgp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup t \constrain u, e
+    }
+  \end{displaymath}
+  Let $\rho \vDash C_1$.
+  By the induction hypothesis on the premise, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  % TODO: Complete later.
   \item We will prove the cases for definitions, let expressions, case expressions, and fixpoints;
   the case for cofixpoints are similar to that of fixpoints, and the remaining cases are straightforward.
-  Suppose that \ref{item:sound:infer:wf}, \ref{item:sound:infer:psi}, and \ref{item:sound:infer} hold, and let $\rho \vDash C'$.
   \begin{itemize}
     \item \refrule{a-var-def}.
     \item \refrule{a-const-def}.
