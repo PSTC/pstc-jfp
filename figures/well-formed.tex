@@ -3,24 +3,24 @@
   \fbox{$\WF{\sgg}$}
 \end{flushleft}
 \begin{mathpar}
-  \inferrule[\defrule{wf-nil}]{\Sigma ~ \text{is well-formed}}
-    {\WF{\Sigma, \mt, \mt}}
+  \inferrule[\defrule{wf-nil}]{~}
+    {\WF{\mt, \mt}}
   \and
   \inferrule[\defrule{wf-local-assum}]
     {\sgg \vdash t: U \and x \notin \Gamma}
-    {\WF{\Sigma, \Gamma_G, \Gamma (x:t)}}
+    {\WF{\Gamma_G, \Gamma (x:t)}}
   \and
   \inferrule[\defrule{wf-local-def}]
     {\sgg \vdash e: t \and x \notin \Gamma}
-    {\WF{\Sigma, \Gamma_G, \Gamma (x:t \coloneqq e)}}
+    {\WF{\Gamma_G, \Gamma (x:t \coloneqq e)}}
   \and
   \inferrule[\defrule{wf-global-assum}]
     {\sg \vdash t: U \and x \notin \Gamma_G}
-    {\WF{\Sigma, \Gamma_G (\Assm{x}{|t|^\infty\!\!}), \mt}}
+    {\WF{\Gamma_G (\Assm{x}{|t|^\infty\!\!}), \mt}}
   \and
   \inferrule[\defrule{wf-global-def}]
     {\sg \vdash e: t \and x \notin \Gamma_G}
-    {\WF{\Sigma, \Gamma_G (\Defn{x}{t}{e}), \mt}}
+    {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
 \end{mathpar}
 \caption{Well-formedness of environments}
 \label{fig:wf}

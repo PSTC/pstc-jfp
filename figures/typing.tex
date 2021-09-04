@@ -15,9 +15,9 @@
 
   \inferrule[\defrule{var-def}]
     {\WF{\sgg} \and
-      (x:t \coloneqq e) \in \Gamma \\\\
-      \SV(e, t) = \vec{\upsilon_i} \and
-      \sgg \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
+      \Gamma \equiv \Gamma_1 (x:t \coloneqq e) \Gamma_2 \\\\
+      \SV(e, t) \setminus \SV(\Gamma_1) = \vec{\upsilon_i} \and
+      \Gamma_G, \Gamma_1 \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
     {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
 
   \inferrule[\defrule{const-assum}]
@@ -28,7 +28,7 @@
     {\WF{\sgg} \and
       (\Defn{x}{t}{e}) \in \Gamma_G \\\\
       \SV(e, t) = \vec{\upsilon_i} \and
-      \Sigma, \Gamma_G, \mt \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
+      \Gamma_G, \mt \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
     {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
 
   \inferrule[\defrule{univ}]
@@ -36,7 +36,7 @@
     {\sgg \vdash U_1 : U_2}
 
   \inferrule[\defrule{conv}]
-    {\sgg \vdash e:t \and \sgg \vdash u:U \and t \leq u}
+    {\sgg \vdash e:t \and \sgg \vdash u:U \and \sgg \vdash t \leq u}
     {\sgg \vdash e:u}
 
   \inferrule[\defrule{pi}]
@@ -59,24 +59,24 @@
   \\
   \inferrule[\defrule{ind}]
     {\WF{\sgg}}
-    {\sgg \vdash I^s : \indtype{\Sigma}{I}}
+    {\sgg \vdash I^s : \indtype{I}}
 
   \inferrule[\defrule{constr}]
     {\WF{\sgg}}
-    {\sgg \vdash c : \constrtype{\Sigma}{c}{s}}
+    {\sgg \vdash c : \constrtype{c}{s}}
 
   \inferrule[\defrule{case}]
     {\sgg \vdash e : \app{I_k^{\hat{s}}}{\overline{p}}{\overline{a}} \and
-      \indtype{\Sigma}{I_k} = \prodctx{\any}{\prodctx{\any}{U_k}} \\
+      \indtype{I_k} = \prodctx{\any}{\prodctx{\any}{U_k}} \\
       (U_k, U, I_k) \in \Elims \and
-      \sgg \vdash P : \motivetype{\Sigma}{\overline{p}}{U}{I_k^{\hat{s}}} \\
+      \sgg \vdash P : \motivetype{\overline{p}}{U}{I_k^{\hat{s}}} \\
       \text{For each $j$:} \and
-      \sgg \vdash e_j : \branchtype{\Sigma}{\overline{p}}{c_j}{s}{P}}
+      \sgg \vdash e_j : \branchtype{\overline{p}}{c_j}{s}{P}}
     {\sgg \vdash \caseof{\erase{P}}{e}{c_j}{e_j} : \app{P}{\overline{a}}{e}}
 
   \inferrule[\defrule{fix}]
     {\text{For each $k$:} \and
-      t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
+      \sgg \vdash t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
       \norm{\Delta_{k}} = n_k - 1 \and
       \upsilon_k \pos u_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
@@ -86,7 +86,7 @@
 
   \inferrule[\defrule{cofix}]
     {\text{For each $k$:} \and
-      t_k \approx \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
+      \sgg \vdash t_k \approx \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
       \upsilon_k \neg \Delta_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
       \sgg \vdash t_k : U_k \and

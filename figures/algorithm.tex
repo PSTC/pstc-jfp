@@ -13,21 +13,21 @@
     \cgp \vdash x \rightsquigarrow C, x \Rightarrow \Psi(x)
 }
 
-\inferrule[\defrule{a-const-assum}]{~}{
-    \cgp \vdash x \rightsquigarrow C, x \Rightarrow \Gamma_G(x)
-}
-
 \inferrule[\defrule{a-var-def}]{
-    (C_1, e : t) = \Psi(x) \and
-    \overline{\upsilon'_i} = \SV(e, t) \\\\
+    \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
+    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(\Psi_1) \\\\
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
     C_2 = C \cup \substvec{C_1}{\upsilon'_i}{\upsilon_i}
 }{
     \cgp \vdash x \rightsquigarrow C_2, x^{\seq{\upsilon_i}} \Rightarrow \substvec{t}{\upsilon'_i}{\upsilon_i}
 }
 
+\inferrule[\defrule{a-const-assum}]{~}{
+    \cgp \vdash x \rightsquigarrow C, x \Rightarrow \Gamma_G(x)
+}
+
 \inferrule[\defrule{a-const-def}]{
-    (e : t) = \Gamma_G(x) \\\\
+    (e : t) = \Gamma_G(x) \and
     \overline{\upsilon'_i} = \SV(e, t) \and
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
 }{

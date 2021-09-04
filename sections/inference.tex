@@ -448,6 +448,9 @@ Given a local generic environment $\Psi$, we use $\Gamma_\Psi$ to denote the cor
 If $\rho \vDash t \constrain u$ with global environment $\Gamma_G$ and local generic environment $\Psi$,
 then $\Gamma_G, \Gamma_\Psi \vdash \rho t \leq \rho u$ holds.
 \end{lemma}
+
+% TODO: Find correct statement for subtyping and prove;
+% May also need similar thing for whnf?
 \fi
 
 \begin{lemma}
@@ -462,7 +465,7 @@ Suppose that $\forall \upsilon \in V, \rho_1(\upsilon) \sqsubseteq \rho_2(\upsil
 By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lem:constraint-subst}
 $\rho \vDash \subst{C}{\upsilon}{r}$ iff $\rho \circ \subst{}{\upsilon}{r} \vDash C$.
 \end{lemma}
 
@@ -506,21 +509,22 @@ Now we are ready to tackle the main theorems.
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, and $C$ a constraint set.
 Suppose we have the following:
 \begin{enumerate}[label=\roman*.]
-  \item \label{item:sound:wf:global} $\WF{\Sigma, \Gamma_G, \mt}$
-  \item \label{item:sound:wf:local} $\forall \rho \vDash C, \WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
+  \item \label{item:sound:wf:global} $\WF{\Gamma_G, \mt}$ holds;
+  \item \label{item:sound:wf:local} $\forall \rho \vDash C, \WF{\Gamma_G, \rho\Gamma_\Psi}$ holds; and
+  \item \label{item:sound:psi} If $\Psi \equiv \Psi_1 (C, x : t \coloneqq e) \Psi_2$, $\forall \rho \vDash C$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds.
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}
   \item If $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$,
-  then $\forall \rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  then $\forall \rho \vDash C'$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
   \item If $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$,
-  then $\forall \rho \vDash C'$, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  then $\forall \rho \vDash C'$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}[{[Partial]}]
 By mutual induction on the checking and inference rules of the algorithm.
-Suppose \ref{item:sound:wf:global} and \ref{item:sound:wf:local} hold.
+Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sound:psi} hold.
 \begin{enumerate}
   \item By \refrule{a-check}, we have
   \begin{displaymath}
@@ -537,13 +541,34 @@ Suppose \ref{item:sound:wf:global} and \ref{item:sound:wf:local} hold.
   the case for cofixpoints are similar to that of fixpoints, and the remaining cases are straightforward.
   \begin{itemize}
     \item \refrule{a-var-def}.
-    \item \refrule{a-const-def}.
-    \item \refrule{a-let-in}.
-    \item \refrule{a-case}.
-    \item \refrule{a-fix}.
+    \begin{displaymath}
+      \inferrule[]{
+          \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
+          \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(\Psi_1) \\\\
+          \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
+          C_2 = C \cup \substvec{C_1}{\upsilon'_i}{\upsilon_i}
+      }{
+          \cgp \vdash x \rightsquigarrow C_2, x^{\seq{\upsilon_i}} \Rightarrow \substvec{t} {\upsilon'_i}{\upsilon_i}
+      }
+    \end{displaymath}
+    Let $\rho \vDash C_2$.
+    By \autoref{lem:constraint-subst}, we have $\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}} \vDash C_1$.
+    Then by \ref{item:sound:psi}, we have that $$\Gamma_G, (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) \Gamma_{\Psi_1} \vdash (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) e : (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) t$$
+    Since $\vec{\upsilon_i'}$ are not in $\Psi_1$, with some rearranging, we have
+    $$\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho (\substvec{e}{\upsilon_i'}{\upsilon_i}) : \rho (\substvec{t}{\upsilon_i'}{\upsilon_i})$$
+    Then by \refrule{var-def}, using \ref{item:sound:wf:local}, we have $\Gamma_G, \rho\Gamma \vdash \rho x^{\seq{\upsilon_i}} : \rho (\substvec{t}{\upsilon_i'}{\upsilon_i})$ as desired.
+    % TODO: This is wrong.
+    \item \refrule{a-const-def}. % TODO.
+    \item \refrule{a-let-in}. % TODO.
+    \item \refrule{a-case}. % TODO.
+    \item \refrule{a-fix}. % TODO.
   \end{itemize}
 \end{enumerate}
 \end{proof}
+
+% TODO: State completeness theorem either as a conjecture or speculate on why it might not hold.
+
+% TODO: State soundness and completeness theorems for well-foundedness of global environments.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
