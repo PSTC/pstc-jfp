@@ -1,3 +1,46 @@
+\section{Overview}\label{sec:overview} % Time for a facelift
+
+As mentioned, \lang is an extension of \CIChat and \CIChatminus.
+These add sized types to CIC with the explicit philosophy of requiring no size annotations:
+a user would write bare CIC code, and the type checker would have the simultaneous task of inferring all the size annotations.
+However, Coq's core calculus extends quite a bit beyond merely CIC,
+and the presentation of various analogous features differ subtly but nontrivially.
+The goal of \lang is to bring sized types in CIC a few steps closer to Coq,
+while keeping with the original philosphy.
+In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is viable --- for Coq's codebase itself is old, large, fragile, and intricate --- we must also discard some features from \CIChatminus.
+In this section, we discuss what \lang has added or removed relative to past work and to Coq,
+and their implications on the metatheory and the implementation.
+
+\subsection{Definitions}
+
+% global (Definition vernac), local (let expressions)
+% type aliases, so to speak, and necessity of size polymorphism
+% size variables need to appear in bodies
+% inference algorithm needs constraints and solving
+% mention performance implications
+
+\subsection{Polarities}
+
+% mention effects on nested inductives/subject reduction
+
+\subsection{Restrictions on Type Annotations}
+
+% why we can't have simple types
+% why constructors can't have erased parameters
+% why (co)fixpoint types need to be terms in general
+
+\subsection{Position Size Annotations}
+
+% these are the star annotations on (co)fixpoint types
+% this is why we need RecCheckLoop on top of RecCheck
+% it's okay though. it's just like how Coq finds the recursive arg by trying each one
+
+\subsection{Universes}
+
+% we add cumulativity but NOT polymorphism
+% we add impredicative Prop but NOT strict Prop
+% these have effects on the metatheory. ask Michael
+
 \section{Overview}\label{sec:sponge-cake}
 Our goal in the design of \lang is to balance backward compatibility with performance.
 We could achieve backward compatibility easily by \emph{just} using an extremely expressive size algebra, but we could never implement an efficient type checker.
