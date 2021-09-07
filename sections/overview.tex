@@ -22,7 +22,7 @@ and one for global bindings from vernacular declarations such as \coqinline{Defi
 with separate local and global environments,
 and definitions in the environments in the style of a PTS with definitions~\citep{ptsdef}.
 
-Gobal definitions and let expressions let us define aliases for types for concision and organization of code,
+Global definitions and let expressions let us define aliases for types for concision and organization of code,
 which necessitates a form of size polymorphism if we want the aliases to behave as we expect.
 For instance, if we globally define $\Defn{N}{\Type{}}{\Nat^\upsilon}$,
 and later want to define an addition function with type $N \rightarrow N \rightarrow N$,
@@ -65,6 +65,25 @@ We analyze the performance of our implementation and possible causes and solutio
 % TODO: Add an autoref to the right section once it exists.
 
 \subsection{Polarities}
+
+\Coinductive definitions in \CIChatminus are also annotated with polarities for each of its parameters, augmenting the subtyping relation.
+For example, if the type parameter of the usual $\List$ type has positive polarity,
+then $\app{\List^r}{\Nat^s} \leq \app{\List^r}{\Nat^{\succ{s}}}$ holds
+because $\Nat^s \leq \Nat^{\succ{s}}$ holds.
+It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
+so again in the name of backward compatibility, \lang does not have these annotations,
+and treats all parameters as invariant.
+This aligns with Coq's current behaviour, where \coqinline{list Set} is not a subtype of \coqinline{list Type}
+despite the presence of cumulativity where \coqinline{Set} is a subtype of \coqinline{Type}.
+
+Unfortunately, the invariance of parameters and subtyping of sized \coinductive types interferes with nested \coinductive types,
+where the type itself may appear as a parameter to another type in the type of its constructors.
+Subject reduction is violated quite severely: it becomes possible to have a well-typed term that becomes no longer well-typed after a reduction step.
+We give an example in \autoref{sec:metatheory} and discuss some solutions,
+but the approach \lang takes is to disallow nested \coinductives,
+removing them from \CIChatminus.
+However, the implementation has no such restriction on nested \coinductives,
+and it doesn't appear possible for size inference to produce the kind of annotations that break subject reduction.
 
 % mention effects on nested inductives/subject reduction
 
