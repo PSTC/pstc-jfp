@@ -70,7 +70,7 @@ For instance, the constructors for the naturals follow the below rules:
 Termination and productivity checking is then \emph{just} a type checking rule that uses size information.
 For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
 For productivity, the returned object must have a larger size than that of the corecursive call, so the type of the body of the cofixpoint must be larger than the type of the reference to itself in the typing context.
-In short, they both follow the following (simplified) typing rule, where $\upsilon$ is an arbitrary fresh size variable annotated on the inductive types, and $s$ is an arbitrary size expression as needed.
+In short, they both follow the following (simplified) typing rule, where $\upsilon$ is an arbitrary fresh size variable annotated on the \coinductive types, and $s$ is an arbitrary size expression as needed.
 
 \vspace{-2ex}
 \begin{mathpar}

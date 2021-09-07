@@ -13,11 +13,56 @@ and their implications on the metatheory and the implementation.
 
 \subsection{Definitions}
 
-% global (Definition vernac), local (let expressions)
-% type aliases, so to speak, and necessity of size polymorphism
-% size variables need to appear in bodies
-% inference algorithm needs constraints and solving
-% mention performance implications
+Coq's core calculus contains two types of variables:%
+\footnote{It also has a third type of variable for section-level bindings;
+this is beyond the scope of \lang.}
+one for local bindings from functions, function types, and let expressions,
+and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Parameter} (which we call \textit{constants}).
+\lang adds let expressions and global declarations to \CIChatminus,
+with separate local and global environments,
+and definitions in the environments in the style of a PTS with definitions~\citep{ptsdef}.
+
+Gobal definitions and let expressions let us define aliases for types for concision and organization of code,
+which necessitates a form of size polymorphism if we want the aliases to behave as we expect.
+For instance, if we globally define $\Defn{N}{\Type{}}{\Nat^\upsilon}$,
+and later want to define an addition function with type $N \rightarrow N \rightarrow N$,
+it would \emph{not} be correct to perform the na\"ive substitution to get $\Nat^\upsilon \rightarrow \Nat^\upsilon \rightarrow \Nat^\upsilon$:
+addition intuitively does not always return something of the same size.
+
+What we want instead is to allow a different size for each use of $N$,
+allowing the above type to reduce to $\Nat^{\upsilon_1} \rightarrow \Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
+This means $N$ must be polymorphic in the sizes involved in its definition,
+the same kind of rank-1 or prenex polymorphism in ML-style let polymorphism for type variables.
+To retain backward compatibility, there is no explicit size quantification ---
+every definition and let binding is implicitly quantified over \emph{all} size variables involved.
+The corresponding notion of size instantiation comes in the form of size annotations on variables and constants, so that $N^s$ for instance reduces to $\Nat^s$.
+These and all other size annotations are inferrable, as detailed in \autoref{sec:algorithm}.
+
+Having definitions and annotated variables and constants also means we need to allow sizes to appear
+not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
+in contrast to \CIChatminus.
+% TODO: Ask Michael about the consequences of this on normalization.
+
+\paragraph*{} While \CIChat's size inference algorithm takes a local environment and an unannotated term
+and returns a size-annotate term and its type along with a set of constraints on their size annotations,
+we need to handle inference of global declarations.
+Left with a constraint set after inference of a definition's body, we have two options:
+attach the constraints to the definition in the environment,
+or ``solve'' the constraints by reassigning size variables with sizes that satisfy those constraints.
+Global definitions in Coq are relatively independent in terms of type checking,
+so we choose the second option for its modularity:
+constraints derived from previous definitions should not interfere with the size inference of the current definition.
+On the other hand, to reduce the overhead of solving constraints,
+we choose the first option for local definitions.
+The way constraints are added to the environment is inspired by \citet{universes},
+which infers universe levels that are prenex polymorphic at definitions.
+
+Unfortunately, even when only solving constraints for global declarations,
+our implementation of the size inference algorithm in the Coq codebase takes a rather significant performance hit.
+This is in part due to the proliferation of sizes that definitions are polymorphic over,
+as the worst-case time complexity of solving is quadratic in the number of size variables.
+We analyze the performance of our implementation and possible causes and solutions in a subsequent section.
+% TODO: Add an autoref to the right section once it exists.
 
 \subsection{Polarities}
 
