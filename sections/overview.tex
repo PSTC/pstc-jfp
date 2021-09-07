@@ -85,25 +85,31 @@ removing them from \CIChatminus.
 However, the implementation has no such restriction on nested \coinductives,
 and it doesn't appear possible for size inference to produce the kind of annotations that break subject reduction.
 
-% mention effects on nested inductives/subject reduction
-
-\subsection{Restrictions on Type Annotations}
-
-% why we can't have simple types
-% why constructors can't have erased parameters
-% why (co)fixpoint types need to be terms in general
-
 \subsection{Position Size Annotations}
 
-% these are the star annotations on (co)fixpoint types
-% this is why we need RecCheckLoop on top of RecCheck
-% it's okay though. it's just like how Coq finds the recursive arg by trying each one
+Although users are not required to indicate the recursive argument when writing fixpoints in Coq,
+they are indicated in the core calculus because Coq's type checker will attempt determine which one it is when not explicitly indicated.
+Similarly, \lang has position annotations to indicate which argument is the recursive argument and whether the \cofixpoint preserves sizes or not,
+but they are entirely determined during size inference.
+This augments the inference algorithm for \CIChat,
+which assumes that the annotations are already present.
+
+Note that while inference begins with terms whose position annotations are absent,
+we do assume that the recursive arguments are already indicated,
+separating what Coq already does from what there is to do to obtain sized types.
+In terms of the implementation, one downside of this approach is that not as many programs that \emph{could} pass type checking \emph{do},
+due to the existing architecture of the Coq type checker.
+We discuss this further in a subsequent section.
+% TODO: Add an autoref to the right section once it exists.
 
 \subsection{Universes}
 
 % we add cumulativity but NOT polymorphism
 % we add impredicative Prop but NOT strict Prop
 % these have effects on the metatheory. ask Michael
+
+% TODO: Is it worth mentioning that we remove the restrict to simple types?
+% I don't know how to justify it or what its consequences are. (Michael might)
 
 \section{Overview}\label{sec:sponge-cake}
 Our goal in the design of \lang is to balance backward compatibility with performance.
