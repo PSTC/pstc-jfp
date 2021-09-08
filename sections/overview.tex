@@ -1,4 +1,5 @@
-\section{Overview}\label{sec:overview} % Time for a facelift
+\section{Overview}\label{sec:overview}
+% Maybe this is more of an in-depth "related work" than an overview?
 
 As mentioned, \lang is an extension of \CIChat and \CIChatminus.
 These add sized types to CIC with the explicit philosophy of requiring no size annotations:
@@ -11,6 +12,30 @@ In the process of conforming to Coq's calculus, to minimize the changes required
 In this section, we discuss what \lang has added or removed relative to past work and to Coq,
 and their implications on the metatheory and the implementation.
 
+\subsection{Commonalities and Minor Additions}
+
+\lang and \CIChatminus are both extensions of CIC, with dependent functions, a universe hierarchy, inductive definitions, case expressions, and fixpoints.
+\lang adds coinductive definitions and cofixpoints, as well as mutually-defined \coinductives and \cofixpoints.
+It also adds universe cumulativity and an impredicative $\Prop$ universe,
+but not universe polymorphism or a strict $\Prop$,
+which are beyond our scope;
+all four of these are existing features of Coq.
+Cumulativity and impredicativity complicate the set-theoretic model by \citet{cic-hat-minus}, but these issues are known: see, for instance, \citet{not-so-simple-cc}.
+
+In terms of sized types, \lang and \CIChatminus add to CIC size expressions as annotations to \coinductive types,
+and a \cofixpoint $f$ is well-typed if all \corecursive calls in its body occurs on an argument of a smaller size,
+as we have seen with the simplified typing rule in \autoref{sec:intro}.
+Constructors construct constructions of a larger size than their \corecursive arguments.
+Important to note is that size variables are not explicitly bound anywhere, and are effectively global.
+For instance, $\Nat^{\upsilon_1} \rightarrow \Nat^\infty \rightarrow \Nat^{\succ{\upsilon}_2}$ is a valid (and well-typed) term in an empty environment, with no relation between the sizes $\upsilon_1$ and $\succ{\upsilon}_2$.
+
+Sizes may be related to one another by a subsizing relation, which is a reflexive partial order on sizes,
+with $s \sqsubseteq \succ{s}$ and the $\infty$ size being greater than all sizes.
+The subsizing relation extends subtyping by inducing a covariant subtyping relation on inductive types and a contravariant one on coinductive types; that is,
+if $r \sqsubseteq s$ and $I$ is inductive, then $I^r \leq I^s$,
+and if $I$ is coinductive, then $I^s \leq I^r$.
+We examine the syntax and judgements of \lang in detail in \autoref{sec:typing}.
+
 \subsection{Definitions}
 
 Coq's core calculus contains two types of variables:%
@@ -20,7 +45,7 @@ one for local bindings from functions, function types, and let expressions,
 and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Parameter} (which we call \textit{constants}).
 \lang adds let expressions and global declarations to \CIChatminus,
 with separate local and global environments,
-and definitions in the environments in the style of a PTS with definitions~\citep{ptsdef}.
+and definitions in the environments in the style of a PTS with definitions~\citep[233--241]{pts}.
 
 Global definitions and let expressions let us define aliases for types for concision and organization of code,
 which necessitates a form of size polymorphism if we want the aliases to behave as we expect.
@@ -102,129 +127,8 @@ due to the existing architecture of the Coq type checker.
 We discuss this further in a subsequent section.
 % TODO: Add an autoref to the right section once it exists.
 
-\subsection{Universes}
-
-% we add cumulativity but NOT polymorphism
-% we add impredicative Prop but NOT strict Prop
-% these have effects on the metatheory. ask Michael
-
 % TODO: Is it worth mentioning that we remove the restrict to simple types?
 % I don't know how to justify it or what its consequences are. (Michael might)
-
-\section{Overview}\label{sec:sponge-cake}
-Our goal in the design of \lang is to balance backward compatibility with performance.
-We could achieve backward compatibility easily by \emph{just} using an extremely expressive size algebra, but we could never implement an efficient type checker.
-Similarly, we could easily add sized types to Coq with efficient checking if we \emph{just} make the users and the Coq developers rewrite all their code in our cool new annotated language.
-Both of these are impractical.
-Instead, we try to thread the needle.
-
-Our first design decision is complete backward compatibility: the Coq user must not be required to provide new annotations on existing code, and ideally should be able to get the advantages of sized typing in all new code.
-If we expect the user to reuse any standard library data types with sized types, this means that we need a \emph{size inference} algorithm, which takes ordinary Coq programs, infers size annotations as needed, uses sizes during type checking, and returns ordinary Coq programs.
-
-For performance, we want size inference to be local --- size variables and constraints should be independent from one global declaration to another.
-In theory, we have an infinite set of unique size variables that can be summoned at will, but in practice, each variable needs to be generated and tracked, consuming time and space.
-Similarly, we could add an unrestricted number of constraints, but as we discuss in \autoref{sec:algorithm}, the time complexity of size inference is proportional to the number of constraints.
-By keeping size inference local, the state of size information and size constraint sets can be kept smaller.
-
-Below is a high-level view of our type checking process.
-The pipeline is local, \ie each top-level definition in a Coq program is run through this pipeline in turn.
-\begin{equation*}
-  \text{CIC} \equiv \text{bare \lang} \xrightarrow{\text{inference}} \text{sized \lang} \xrightarrow{\text{erasure}} \text{limit \lang}
-\end{equation*}
-
-The first pass elaborates Coq code into a fully type-annotated CIC term.
-This is a standard pass for Coq which we will not discuss further.
-Naturally, the CIC term will have no size annotations; we also call this \emph{bare} \lang.
-
-Next, we perform size inference on bare \lang to obtain \emph{sized} \lang.
-There are three different tasks in size inference: (1) annotate all \coinductive types with fresh size variables; (2) during type checking, whenever two terms are compared, follow subtyping rules to generate a set of constraints between their size annotations; and (3) when type checking a \cofixpoint, check that the collected constraints are satisfiable.
-By representing the constraints as a weighted directed graph, this amounts to checking for negative cycles.
-
-The final step in the pipeline is to erase unnecessary size annotations from sized \lang to obtain \emph{limit} \lang by replacing size annotations with $\infty$.
-This is the same strategy adopted in a prototype implementation of \CIChatminus~\citep{cicminus}.
-
-However, not all size annotations are erased.
-We preserve annotations for each \emph{size-preserving} \corecursive function, which is a key feature of \lang that enables additional expressiveness in termination and productivity checking.
-Consider, for example, an inductive list of type $\text{List}^r ~ A$ and a coinductive stream of type $\text{Stream}^s ~ A$.
-The intuitive notion of the size $r$ is the length of the list.
-Since every list of $A$s is an inhabitant of $\text{List}^\infty ~ A$, we can imagine that the inhabitants of $\text{List}^r ~ A$ are lists of length $r$ or shorter.
-Dually, the inhabitants of $\text{Stream}^s ~ A$ are streams of ``length'' $s$ or ``longer''.
-From the perspective of productivity, these are streams that can produce at least $s$ elements.
-A recursive function on lists that is size-preserving, then, is one that returns a list of equal or smaller size, while a size-preserving corecursive function on streams is one that returns a stream of equal or larger size.
-For instance, a \texttt{map} function over lists or streams is size-preserving, since it does not modify their lengths.
-Whether a \corecursive function is size-preserving or not is determined during the size inference step, which annotates the types of \cofixpoints with position annotations $*$ to mark the \corecursive argument type as well as any size-preserving return types.
-These annotations are not erased.
-
-This alone is not enough to express size-preservation of global declarations.
-A globally-defined \cofixpoint is annotated with the \emph{definition}'s type, which doesn't expose the size-preservedness expressed by the \emph{\cofixpoint}'s type.
-Therefore, we also annotate the types of such definitions with global annotations $\iota$ to mark what would have been position annotations.
-
-The examples \coqinline{filter} and \coqinline{qsort} below demonstrate what limit \lang programs look like after erasure.
-During the inference step for \coqinline{qsort}, the global annotations on \coqinline{filter} are substituted by the \textit{same} size variable, which tells \coqinline{qsort} that \coqinline{filter} preserves the size of the recursive argument, allowing us to use it in the recursive call.
-Global annotations then are essentially a limited form of size polymorphism with one universal quantifier, which is sufficient to express size preservation.
-
-\begin{multicols}{2}
-\begin{minted}[escapeinside=<>,mathescape=true]{coq}
-Def filter: (Nat<$^\infty$> <$\rightarrow$> Bool<$^\infty$>) <$\rightarrow$>
-  List<$^\iota$> Nat<$^\infty$> <$\rightarrow$> List<$^\iota$> Nat<$^\infty$> <$\coloneqq$>
-  fix filter': (Nat <$\rightarrow$> Bool) <$\rightarrow$>
-    List<$^*$> Nat <$\rightarrow$> List<$^*$> Nat <$\coloneqq$>
-    <$\lambda$>p: Nat <$\rightarrow$> Bool. <$\lambda$>l: List Nat.
-    case l return List Nat of
-    | Nil <$\Rightarrow$> Nil
-    | Cons <$\Rightarrow$> <$\lambda$>hd: Nat. <$\lambda$>tl: List Nat.
-      if p hd
-      then Cons Nat hd (filter' p tl)
-      else (filter' p tl)
-    end.
-(* [append], [gtb], [leb] omitted *)
-Def qsort: List<$^\iota$> Nat<$^\infty$> <$\rightarrow$> List<$^\infty$> Nat<$^\infty$> <$\coloneqq$>
-  fix qsort': List<$^*$> Nat <$\rightarrow$>
-    List Nat <$\coloneqq$> <$\lambda$>l : List Nat.
-    case l return List Nat of
-    | Nil <$\Rightarrow$> Nil
-    | Cons <$\Rightarrow$> <$\lambda$>hd: Nat. <$\lambda$>tl: List Nat.
-      append
-      (qsort' (filter (gtb hd) tl))
-      (Cons Nat hd
-        (qsort' (filter (leb hd) tl)))
-    end.
-\end{minted}
-\end{multicols}
-
-There is a second problem with erasure.
-Consider the following \lang program.
-
-\begin{minted}[escapeinside=<>,mathescape=true]{coq}
-  Def N: Type <$\coloneqq$> Nat<$^\infty$>.
-  Def add: N<$^\iota$> <$\rightarrow$> N <$\rightarrow$> N <$\coloneqq$>
-    let id: N <$\rightarrow$> N <$\coloneqq$> <$\lambda$>n: N. n in
-    fix add': N<$^*$> <$\rightarrow$> N <$\rightarrow$> N <$\coloneqq$> <$\lambda$>n: N. <$\lambda$>m: N.
-      case n return N of
-      | O <$\Rightarrow$> m
-      | S <$\Rightarrow$> <$\lambda$>n': N. S (add' (id n') m)
-      end.
-\end{minted}
-
-\coqinline{N} will reduce to \coqinline{Nat} during type checking, but what size should \coqinline{Nat} then have?
-It cannot have the limit size $\infty$ left after erasure; this would disallow us from using \coqinline{id} in the recursive call to \coqinline{add'}, since termination checking requires that \coqinline{id} preserve the size of \coqinline{n'} and not return some \emph{larger} \coqinline{Nat<$^\infty$>}.
-However, we cannot \textit{not} erase, either, leaving \coqinline{Nat} with some arbitrary fixed size annotation, since this makes \coqinline{add}'s type size-preserving when \coqinline{add} is not.
-To handle this example, each instance of \coqinline{N} should have its own fresh size annotation; during reduction, this becomes a size-annotated \coqinline{Nat}.
-
-We support this kind of program in \lang by treating global definitions essentially as implicitly abstracting over size expressions.
-Each instance of a variable bound to a definition needs to be instantiated with the correct number of size expressions, and so carries a vector of size expressions whose length is the number of $\infty$ annotations in the body after erasure.
-Like size annotations, these new vector annotations are only found in sized \lang.
-
-A final design decision remains to enable backward compatibility.
-Our sized typing enables many new programs to type check easily, such as \coqinline{qsort} above, but our limited sized algebra means that there also exist programs that pass guard checking but not our sized typing pipeline.
-Guard checking unfolds definitions, which is bad for modularity and performance, but enables \texttt{gcd} as defined in the Coq standard library to type check using guard checking.
-On the other hand, \texttt{gcd} cannot be type checked using sized types with our size algebra\footnote{\url{https://github.com/coq/coq/wiki/CoqTerminationDiscussion\#sized}}.
-We could enrich the size algebra, but as we discuss in \autoref{sec:related}, this greatly increases the time complexity of size inference.
-To take advantage of both schemas, our implementation enables each to be used simultaneously, so the type checker accepts a program if it passes either sized typing \textit{or} guard checking:
-
-\begin{minted}{coq}
-Set Guard Checking. Set Sized Typing.
-\end{minted}
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
