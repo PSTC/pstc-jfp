@@ -14,22 +14,20 @@
     {\sgg \vdash x:t}
 
   \inferrule[\defrule{var-def}]
-    {\WF{\sgg} \and
-      \Gamma \equiv \Gamma_1 (x:t \coloneqq e) \Gamma_2 \\\\
-      \SV(e, t) \setminus \SV(\Gamma_1) = \vec{\upsilon_i} \and
-      \Gamma_G, \Gamma_1 \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
-    {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
+    {\WF{\sgg} \\\\
+      \Gamma \equiv \Gamma_1 (x:t \coloneqq e) \Gamma_2 \and
+      \Gamma_G, \Gamma_1 \vdash \rho e : \rho t}
+    {\sgg \vdash x^\rho : \rho t}
 
   \inferrule[\defrule{const-assum}]
     {\WF{\sgg} \and (\Assm{x}{t}) \in \Gamma_G}
     {\sgg \vdash x:t}
 
   \inferrule[\defrule{const-def}]
-    {\WF{\sgg} \and
-      (\Defn{x}{t}{e}) \in \Gamma_G \\\\
-      \SV(e, t) = \vec{\upsilon_i} \and
-      \Gamma_G, \mt \vdash e \overline{[\upsilon_i \coloneqq s_i]} : t \overline{[\upsilon_i \coloneqq s_i]}}
-    {\sgg \vdash x^{\seq{s_i}} : t \overline{[\upsilon_i \coloneqq s_i]}}
+    {\WF{\sgg} \\\\
+      \Gamma_G \equiv \Gamma_{G1}(\Defn{x}{t}{e})\Gamma_{G2} \and
+      \Gamma_{G1}, \mt \vdash \rho e : \rho t}
+    {\sgg \vdash x^\rho : \rho t}
 
   \inferrule[\defrule{univ}]
     {\WF{\sgg} \and (U_1, U_2) \in \Axioms}
@@ -82,7 +80,7 @@
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
       \sgg \vdash t_k : U_k \and
       \sgg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
-    {\sgg \vdash \fix{\seq{n_k}, m}{f_k}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
+    {\sgg \vdash \fix{m}{f_k^{n_k}}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
 
   \inferrule[\defrule{cofix}]
     {\text{For each $k$:} \and

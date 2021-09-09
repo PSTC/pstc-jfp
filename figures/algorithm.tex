@@ -9,29 +9,35 @@
 \vspace{-2ex}
 
 \begin{mathpar}
-\inferrule[\defrule{a-var-assum}]{~}{
-    \cgp \vdash x \rightsquigarrow C, x \Rightarrow \Psi(x)
+\inferrule[\defrule{a-var-assum}]{
+    (\assm{x}{t}) \in \Psi
+}{
+    \cgp \vdash x \rightsquigarrow C, x \Rightarrow t
 }
 
 \inferrule[\defrule{a-var-def}]{
     \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
-    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(\Psi_1) \\\\
+    \overline{\upsilon'_i} = \SV(e, t) \\\\
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-    C_2 = C \cup \substvec{C_1}{\upsilon'_i}{\upsilon_i}
+    \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
+    C_2 = C \cup \rho C_1
 }{
-    \cgp \vdash x \rightsquigarrow C_2, x^{\seq{\upsilon_i}} \Rightarrow \substvec{t}{\upsilon'_i}{\upsilon_i}
+    \cgp \vdash x \rightsquigarrow C_2, x^\rho \Rightarrow \rho t
 }
 
-\inferrule[\defrule{a-const-assum}]{~}{
-    \cgp \vdash x \rightsquigarrow C, x \Rightarrow \Gamma_G(x)
+\inferrule[\defrule{a-const-assum}]{
+    (\Assm{x}{t}) \in \Gamma_G
+}{
+    \cgp \vdash x \rightsquigarrow C, x \Rightarrow t
 }
 
 \inferrule[\defrule{a-const-def}]{
-    (e : t) = \Gamma_G(x) \and
-    \overline{\upsilon'_i} = \SV(e, t) \and
+    (\defn{x}{t}{e}) \in \Gamma_G \and
+    \overline{\upsilon'_i} = \SV(e, t) \\\\
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
+    \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
 }{
-    \cgp \vdash x \rightsquigarrow C, x^{\seq{\upsilon_i}} \Rightarrow \substvec{t}{\upsilon'_i}{\upsilon_i}
+    \cgp \vdash x \rightsquigarrow C, x^\rho \Rightarrow \rho t
 }
 
 \inferrule[\defrule{a-univ}]{~}{
@@ -111,7 +117,7 @@
     C_2 = \textstyle\bigcup_k C_{2k} \cup u_k \constrain u'_k \and
     C_3 = \RecCheckLoop{C_2}{\overline{\getrecvar{t_k}{n_k}}}{\overline{t_k}}{\overline{e_k}}
 }{
-    \cgp \vdash \fix{\seq{n_k}, m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_3, \fix{\seq{n_k}, m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m
+    \cgp \vdash \fix{m}{f_k^{n_k}}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_3, \fix{m}{f_k^{n_k}}{|t_k|^*}{e_k} \Rightarrow t_m
 }
 
 \inferrule[\defrule{a-cofix}]{

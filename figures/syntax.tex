@@ -5,10 +5,11 @@ f, g, h, x, y, z &\Coloneqq \meta{term variables} &
 \tau, \upsilon &\Coloneqq \meta{size variables} \\
 I &\Coloneqq \meta{(co)inductive type names} &
 c &\Coloneqq \meta{constructor names} \\
-r, s &\Coloneqq \upsilon \mid \upsilon^* \mid \succ{s} \mid \infty &
+r, s &\Coloneqq \upsilon \mid \succ{s} \mid \infty \qquad
+\rho \Coloneqq \set{\vec{\upsilon \mapsto s}} &
 U &\Coloneqq \Prop \mid \Set \mid \Type{n} \\
-e, a, b, p, q, t, u, v, P &\Coloneqq \mathrlap{x \mid x^{\seq{s}} \mid U \mid \prod{x}{t}{t} \mid \abs{x}{t^\circ}{e} \mid \app{e}{e} \mid \letin{x}{t^\circ}{e}{e} \mid I^s \mid c} \\
-&\mathrlap{\mid \caseof{P^\circ}{e}{c}{e} \mid \fix{\seq{n}, m}{f}{t^*}{e} \mid \cofix{m}{f}{t^*}{e}}
+e, a, b, p, q, t, u, v, P &\Coloneqq \mathrlap{x \mid x^{\rho} \mid U \mid \prod{x}{t}{t} \mid \abs{x}{t^\circ}{e} \mid \app{e}{e} \mid \letin{x}{t^\circ}{e}{e} \mid I^s \mid c} \\
+&\mathrlap{\mid \caseof{P^\circ}{e}{c}{e} \mid \fix{m}{f^n}{t^*}{e} \mid \cofix{m}{f}{t^*}{e}}
 \end{align*}
 \caption{Syntax of \lang terms with annotations $\alpha$}
 \label{fig:terms-general}

@@ -1,0 +1,53 @@
+\section{Prototype Implementation and Evaluation} \label{sec:impl}
+
+% TODO: Intro for the section
+
+\subsection{Architecture of the Coq Kernel}
+
+The core type checking algorithm is found in Coq's \emph{kernel}.
+Before reaching the kernel, terms go through a round of \emph{pretyping}
+where existential metavariables (essentially typed holes) are solved for
+and the recursive indices of fixpoints are determined.
+Size inference is implemented as an augmentation of the existing type inference algorithm.
+\autoref{fig:kernel} summarizes the relevant file/module structure.
+Most of the added code specifically for size inference is in the \texttt{Sized} and \texttt{Subsizing} modules.
+(\texttt{Subsizing} is only separate from \texttt{Sized} to break circular dependencies: it relies on the global environment, while the environment depends on \texttt{Sized}.)
+
+\begin{figure}
+\dirtree{%
+.1 coq.
+.2 lib.
+.3 WeightedDigraph\DTcomment{graph data structure and algorithms for constraints}.
+.2 pretyping.
+.2 kernel.
+.3 Constr\DTcomment{core AST and traversals}.
+.3 Environ\DTcomment{environments and lookups}.
+.3 Reduction\DTcomment{reduction and convertibility}.
+.3 Inductive\DTcomment{functions on (co)fixpoints (guard checking)}.
+.3 Typeops\DTcomment{entrypoint to type checker for terms}.
+.3 Term\_typing\DTcomment{entrypoint to type checker for declarations}.
+.3 Sized\DTcomment{constructs and functions for sized types}.
+.3 Subsizing\DTcomment{producing subsizing constraints}.
+}
+\caption{Selected excerpts of the Coq codebase structure}
+\label{fig:kernel}
+\end{figure}
+
+The \texttt{Sized} module contains several submodules, four of which are relevant to our performance discussion:
+\begin{itemize}
+  \item \texttt{State} keeps track of the (position) size variables that have been used;
+  \item \texttt{Constraints} defines the data structure for and operations on constraint sets;
+  \item \texttt{SMap} defines the data structure for and operations on size substitutions; and
+  \item \texttt{RecCheck} implements the \RecCheck and \solve algorithms.
+\end{itemize}
+
+Sized typing is implemented as a vernacular flag that can be set and unset, just like guard checking.
+By default, the flag is off; the commands
+$$\coqinline{Set Sized Typing. Unset Guard Checking.}$$
+will enable sized typing only.
+If both are set, then guard checking will only occur if sized typing fails.
+When sized typing is not set, size annotations are still added, but constraints are not collected,
+meaning that things like type aliases that are checked with sized typing off will still behave as expected in code checked with sized typing on,
+but global definitions checked with sized typing off will never be size-preserving.
+
+\subsection{}

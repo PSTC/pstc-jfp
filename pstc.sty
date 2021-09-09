@@ -111,17 +111,17 @@
 \renewcommand{\prod}[3]{\Pi #1 \mathbin{:} #2 \mathpunct{.} #3} % originally Π but really big
 \newcommand{\prodctx}[2]{\Pi #1 \mathpunct{.} #2}
 \newcommand{\letin}[4]{\kw{let}\ #1 \mathbin{:} #2 \coloneqq #3\ \kw{in}\ #4}
-\newcommand{\caseof}[4]{\kw{case}_{#1}\ #2\ \kw{of}\ \seq{#3 \Rightarrow #4}}
+\newcommand{\caseof}[4]{\kw{case}_{#1}\ #2\ \kw{of}\ \seq{\vec{#3 \Rightarrow #4}}}
 \WithSuffix\newcommand\caseof*[3]{\kw{case}_{#1}\ #2 \ \kw{of}\ #3}
 \newcommand{\defn}[3]{#1 \mathbin{:} #2 \mathbin{\coloneqq} #3}
 \newcommand{\assm}[2]{#1 \mathbin{:} #2}
 \newcommand{\Defn}[3]{\kw{Defn}\ #1 \mathbin{:} #2 \mathbin{\coloneqq} #3.}
 \newcommand{\Assm}[2]{\kw{Assm}\ #1 \mathbin{:} #2.}
 \renewcommand{\succ}[1]{\widehat{#1}} % originally ≻
-\newcommand{\fix}[4]{\kw{fix}_{#1}\ \seq{#2 : #3 \mathbin{\coloneqq} #4}}
-\newcommand{\cofix}[4]{\kw{cofix}_{#1}\ \seq{#2 \mathbin{:} #3 \mathbin{\coloneqq} #4}}
-\WithSuffix\newcommand\fix*[4]{\kw{fix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
-\WithSuffix\newcommand\cofix*[4]{\kw{cofix}_{#1}\ #2 \mathbin{:} #3 \mathbin{\coloneqq} #4}
+\newcommand{\fix}[4]{\kw{fix}_{#1}\ \seq{\vec{#2 : #3 \mathbin{\coloneqq} #4}}}
+\newcommand{\cofix}[4]{\kw{cofix}_{#1}\ \seq{\vec{#2 \mathbin{:} #3 \mathbin{\coloneqq} #4}}}
+\WithSuffix\newcommand\fix*[2]{\kw{fix}_{#1}\ \seq{#2}}
+\WithSuffix\newcommand\cofix*[2]{\kw{cofix}_{#1}\ \seq{#2}}
 \newcommand{\Size}{\const{Size}}
 \newcommand{\SizeLt}{\const{Size<}}
 \newcommand{\SizeUniv}{\const{SizeUniv}}
@@ -193,10 +193,10 @@
 \newcommand{\etc}{\emph{etc.}\xspace}
 
 % delimiters
+%\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
 \DeclarePairedDelimiter{\set}{\{}{\}}
 \DeclarePairedDelimiter{\seq}{\langle}{\rangle}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
-\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\erase}{|}{|}
 \DeclarePairedDelimiter{\br}{(}{)}

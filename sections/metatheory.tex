@@ -53,10 +53,10 @@ As a concrete example, consider the following coinductive definition for conatur
 \end{displaymath}
 For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
 \begin{align*}
-  &\caseof{\erase{P}}{\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}}}{\Succ}{e} \rhd_\nu \\
-  &\caseof{\erase{P}}{\app{\Succ}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})}}{\Succ}{e}
+  &\caseof*{\erase{P}}{\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}}}{\seq{\Succ \Rightarrow e}} \rhd_\nu \\
+  &\caseof*{\erase{P}}{\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}}{\seq{\Succ \Rightarrow e}}
 \end{align*}
-Assuming both terms are well-typed, the former has type $\app{P}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix{1}{\omega}{\Conat}{\app{\Succ}{\omega}})})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
+Assuming both terms are well-typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
 
 On the other hand, if we do allow unrestricted reduction, subject reduction does hold.
 
@@ -134,6 +134,7 @@ although perhaps at the expense of other desired metatheoretical properties,
 such as completeness of the algorithm with respect to the typing rules,
 which we discuss in the next subsection.
 
+\iffalse % TODO: Delete all this when metatheory subsection in Size Inference is complete
 \subsection{Soundness and Completeness of Size Inference}\label{sec:meta:sound-complete}
 The size inference algorithm assigns fresh size variables to each \coinductive type and produces a set of size constraints; however, the typing rules of \lang state a relationship between a particular sized term and its sized type.
 To prove soundness and completeness, we need the notions of a size substitution and satisfaction of a constraint system, introduced in \autoref{subsec:algorithm:wf}.
@@ -228,6 +229,7 @@ However, well-typedness under a malformed environment is meaningless, so we must
 Completeness also remains a conjecture.
 The core of the proof relies on a property of \RecCheckLoop that we have yet been able to figure out how to prove.
 Further investigation into the completeness proof of \RecCheck from \Fhat may yield a proof technique.
+\fi
 
 \subsection{Strong Normalization and Logical Consistency}
 
