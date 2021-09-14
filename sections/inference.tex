@@ -476,8 +476,8 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \end{align*}
 \end{proof}
 
-\begin{lemma}
-  If $\Sigma, \Gamma_G, \Gamma \vdash e : t$, then $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho e : \rho t$.
+\begin{lemma}\label{lem:typing-subst}
+  If $\Sigma, \Gamma_G, \Gamma \vdash e : t$, then $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho e : \rho t$ and $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho t : U$ for some $U$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
@@ -523,8 +523,8 @@ Suppose we have the following:
   \item \label{item:sound:wf:local} $\forall \rho \vDash C, \WF{\Gamma_G, \rho\Gamma_\Psi}$ holds; and
   \item \label{item:sound:psi} If $\Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2$, 
   \begin{enumerate}
-    \item $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds; and
-    \item $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Psi_1)$.
+    \item \label{item:sound:psi:sat} $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds; and
+    \item \label{item:sound:psi:sv} $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Psi_1)$.
   \end{enumerate}
 \end{enumerate}
 Then the following hold:
@@ -556,22 +556,21 @@ Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sou
   \begin{itemize}
     \item \refrule{a-var-def}.
     \begin{displaymath}
-      \inferrule[]{
+      \inferrule[\defrule{a-var-def}]{
           \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
-          \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(\Psi_1) \\\\
+          \overline{\upsilon'_i} = \SV(e, t) \\\\
           \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-          C_2 = C \cup \substvec{C_1}{\upsilon'_i}{\upsilon_i}
+          \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
+          C_2 = C \cup \rho C_1
       }{
-          \cgp \vdash x \rightsquigarrow C_2, x^{\seq{\upsilon_i}} \Rightarrow \substvec{t} {\upsilon'_i}{\upsilon_i}
+          \cgp \vdash x \rightsquigarrow C_2, x^\rho \Rightarrow \rho t
       }
     \end{displaymath}
-    Let $\rho \vDash C_2$.
-    By \autoref{lem:constraint-subst}, we have $\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}} \vDash C_1$.
-    Then by \ref{item:sound:psi}, we have that $$\Gamma_G, (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) \Gamma_{\Psi_1} \vdash (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) e : (\rho \circ \set{\vec{\upsilon_i' \mapsto \upsilon_i}}) t$$
-    Since $\vec{\upsilon_i'}$ are not in $\Psi_1$, with some rearranging, we have
-    $$\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho (\substvec{e}{\upsilon_i'}{\upsilon_i}) : \rho (\substvec{t}{\upsilon_i'}{\upsilon_i})$$
-    Then by \refrule{var-def}, using \ref{item:sound:wf:local}, we have $\Gamma_G, \rho\Gamma \vdash \rho x^{\seq{\upsilon_i}} : \rho (\substvec{t}{\upsilon_i'}{\upsilon_i})$ as desired.
-    % TODO: This is wrong.
+    Let $\rho' \vDash C_2$.
+    We must show that $\Gamma_G, \rho' \Gamma_{\Psi_1} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
+    Since $\vec{\upsilon'_i}$ are not in $\Gamma_{\Psi_1}$, applying $\rho$ to $\Gamma_{\Psi_1}$ would have no effect,
+    so we can rearrange the judgement to read $\Gamma_G, (\rho' \circ \rho) \Gamma_{\Psi_1} \vdash x^{\rho' \circ \rho} : (\rho' \circ \rho) t$.
+    % TODO: This is still wrong.
     \item \refrule{a-const-def}. % TODO.
     \item \refrule{a-let-in}. % TODO.
     \item \refrule{a-case}. % TODO.
