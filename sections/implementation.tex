@@ -50,4 +50,60 @@ When sized typing is not set, size annotations are still added, but constraints 
 meaning that things like type aliases that are checked with sized typing off will still behave as expected in code checked with sized typing on,
 but global definitions checked with sized typing off will never be size-preserving.
 
-\subsection{}
+\subsection{Analysis of Performance Degradation}
+
+When compiling parts of the Coq standard library with sized typing on, we noticed a severe performance degradation.
+This is bad news if we hope to replace guard checking with sized typing,
+or even if we simply wish to use sized typing as the primary method of termination or productivity checking throughout.
+In particular, we examine compilation of the \texttt{Coq.setoid\_ring.Field\_theory} library%
+\footnote{This file can be found in the artifact at \texttt{coq/theories/setoid\_ring/Field\_theory.v}.}
+up to and excluding the \fnormeval theorem.
+(We henceforth refer to this part of the library simply as \fieldtheory.)
+In this part of the file alone, we find a $14\times$ increase in compilation time with \texttt{coqc}.
+We investigate possible causes of this performance degredation and discuss possible solutions.
+
+\subsubsection{Profiling \texttt{Sized} Functions}
+
+To measure the performance degredation, we compare compiling \fieldtheory against itself with sized typing on and guard checking off, which we refer to as \fieldtheorysized.
+Both compilations are run five times each.
+The compilation times are significantly different ($t = 1096.30$, $p \ll 0.01$),
+with \fieldtheory's compilation time at $19.582 \pm 0.950$ seconds and \fieldtheorysized's at $281.664 \pm 0.469$ seconds.
+
+To identify the source of the slowdown and test our hypothesis that it is due to sized typing,
+we profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
+We divide these functions into four groups: the \solve and \RecCheck functions, the \texttt{foldmap}%
+\footnote{This is the \texttt{foldmap\_annots} function in \texttt{coq/kernel/Constr.ml}.}
+function common to all operations manipulating size annotations on the AST (such as applying size substitutions),
+the functions in \texttt{State}, and the functions in \texttt{Constraints}.
+\autoref{table:timing} summarizes the results, as well as the relative time spent in the functions in \fieldtheorysized.
+All of the $t$-statistics yield $p \ll 0.01$.
+% meaning that the differences between the sized and unsized times are statistically significant.
+
+\begin{table}
+\centering
+\begin{tabular}{| l | r | r | r | r |}
+\hline
+\textbf{Function(s)} & \textbf{Unsized time (s)} & \textbf{Sized time (s)} & \textbf{$t$} & \textbf{Sized time \%} \\
+\hline
+\textbf{\solve, \RecCheck}    & $0.620 \pm 0.002$ & $183.506 \pm 0.474$ &  865 & 65.2  \\
+\textbf{\texttt{foldmap}}     & $0.348 \pm 0.003$ & $ 40.774 \pm 0.084$ & 1078 & 14.4  \\
+\textbf{\texttt{State}}       & $0.183 \pm 0.002$ & $ 27.807 \pm 0.146$ &  422 &  9.87 \\
+\textbf{\texttt{Constraints}} & $0.313 \pm 0.002$ & $  7.920 \pm 0.037$ &  455 &  2.81 \\
+\hline
+\textbf{Total}                & $1.464 \pm 0.009$ & $260.007 \pm 0.741$ &      & 92.3  \\
+\hline
+\end{tabular}
+\caption{Compilation times of \fieldtheory vs. \fieldtheorysized}
+\label{table:timing}
+\end{table}
+
+Nearly two thirds of the compilation time in \fieldtheorysized is taken up by \solve and \RecCheck,
+while less than one third is taken up by other \texttt{Sized}-related overhead.
+We conjecture that some of this overhead can be reduced with more clever implementations.
+For instance, instead of explicitly performing size substitutions, the sizes can be looked up as needed,
+or instead of explicitly passing around a size state, we could use a state monad or a mutable global state.
+We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
+
+\subsubsection{An Explosion of Size Variables}
+
+
