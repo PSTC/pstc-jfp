@@ -316,7 +316,8 @@ The total $\solve$ algorithm, given some constraint graph $C$, is then as follow
 Since dividing the constraint graph into connected components partitions the size variables and constraints into disjoint sets,
 the time complexity of all executions of \solvecomp is $O(\norm{V}\norm{C})$.
 This is also the time complexity of negative-cycle finding.
-These two dominate the time complexity of finding the connected components, $O(\norm{V} + \norm{C})$.
+These two dominate the time complexity of finding the connected components,
+which is $O(\norm{V} + \norm{C})$.
 
 The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$.
 As we will see in the following subsection,

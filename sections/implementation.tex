@@ -104,6 +104,13 @@ For instance, instead of explicitly performing size substitutions, the sizes can
 or instead of explicitly passing around a size state, we could use a state monad or a mutable global state.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
 
+\subsubsection{Verifying Time Complexity of \solve and \RecCheck}
+
+As shown in \autoref{sec:algorithm}, given a constraint graph from constraint graph $C$ with size variables $V$,
+the time complexities of \solve and \RecCheck are $O(\norm{V}\norm{C})$.
+Indeed, in \autoref{fig:linregress}, plotting the mean execution times of each of the 301 calls to \solve and 9 calls to \RecCheck
+against the number of variables multiplied by the number constraints involved in each call,
+we see a strong positive correlation ($r = 0.995$).
+
+
 \subsubsection{An Explosion of Size Variables}
-
-
