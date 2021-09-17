@@ -113,7 +113,7 @@ against the number of variables multiplied by the number constraints involved in
 we see a strong positive correlation ($r = 0.995$).
 
 To verify that the execution time is dominated by a linear relationship to $\norm{V}\norm{C}$ at large values, we fit the data to a linear model and quantify the goodness of fit.
-Using a na\"ive ordinary least-squares regression, the residual plot reveals a fair amount of increase in variability of the residuals roughly proportional to $\norm{V}\norm{C}$.
+Using a na\"ive ordinary least-squares regression, the residual plot reveals a fair amount of increase in variability of the residuals roughly proportional to $\norm{V}\norm{C}$ (i.e. the data is heteroskedastic).
 This could be explained by the fact that with more variables and constants, the shape of the constraint graph varies more as well.
 To take this into account, we instead use a least-squares \emph{percentage} regression~\citep{lspr},
 which minimizes the sum of \emph{relative} squared residuals.
