@@ -302,6 +302,7 @@ Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ (where $V
 due to
 finding the single-source shortest paths in (\ref{item:solvecomp:shortest-path}) using,
 for instance, the Bellman--Ford algorithm.
+(Note that although there are no negative cycles, there are still negative \emph{weights}, so we cannot use, for example, Dijkstra's algorithm.)
 The total $\solve$ algorithm, given some constraint graph $C$, is then as follows:
 
 % Is removing negative cycles necessary? Could we prove that there are *no* negative cycles?

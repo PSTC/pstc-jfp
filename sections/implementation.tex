@@ -104,7 +104,7 @@ For instance, instead of explicitly performing size substitutions, the sizes can
 or instead of explicitly passing around a size state, we could use a state monad or a mutable global state.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
 
-\subsubsection{Verifying Time Complexity of \solve and \RecCheck}
+\subsubsection{Confirming Time Complexity of \solve and \RecCheck}
 
 As shown in \autoref{sec:algorithm}, given a constraint graph from constraint graph $C$ with size variables $V$,
 the time complexities of \solve and \RecCheck are $O(\norm{V}\norm{C})$.
@@ -112,5 +112,22 @@ Indeed, in \autoref{fig:linregress}, plotting the mean execution times of each o
 against the number of variables multiplied by the number constraints involved in each call,
 we see a strong positive correlation ($r = 0.995$).
 
+To verify that the execution time is dominated by a linear relationship to $\norm{V}\norm{C}$ at large values, we fit the data to a linear model and quantify the goodness of fit.
+Using a na\"ive ordinary least-squares regression, the residual plot reveals a fair amount of increase in variability of the residuals roughly proportional to $\norm{V}\norm{C}$.
+This could be explained by the fact that with more variables and constants, the shape of the constraint graph varies more as well.
+To take this into account, we instead use a least-squares \emph{percentage} regression~\citep{lspr},
+which minimizes the sum of \emph{relative} squared residuals.
+The model is overlaid on \autoref{fig:linregress} ($R^2 = 0.999$), with the the resulting relative residuals plot in \autoref{fig:residuals}
+(note the logarithmic scale of the independent variable used for clarity).
+
+For large values of $\norm{V}\norm{C}$, the residuals are scattered uniformly about zero, indicating that the linear model is suitable.
+For smaller values, the residuals appear to follow some unexplained pattern,
+possibly due to dominance of other factors proportional to, say, $\norm{V}$ or $\norm{C}$, due to traversal of the size variable set or constaint set.
+\autoref{fig:residuals-zoom} show the absolute residuals at these smaller values;
+since they are smaller than half a millesecond, these effects may be due to other irrelevant noise.
 
 \subsubsection{An Explosion of Size Variables}
+
+Now that we have verified the time complexities of \solve and \RecCheck,
+we can conclude that the performance degredation is likely due to a large number of variables and constraints involved in these calls.
+% TODO: Show the distribution of Vs and Cs as well as the concrete data for the worst calls.
