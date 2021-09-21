@@ -221,3 +221,60 @@ Time Definition natEq16 (n m : nat) : natEq15 n m = natEq15 n m := eq_refl.
 \caption{Size variables and time elapsed for definitions in \autoref{fig:nateq}}
 \label{table:large-nateq}
 \end{table}
+
+There are two things we can do to reduce the execution time of \solve and \RecCheck:
+eliminate constraints when possible, or reduce the number of size variables in definitions.
+One way to accomplish the first option would be to turn on sized typing only for certain definitions,
+in particular the ones involving \cofixpoints where they will be most useful.
+Then for all other definitions, since no constraints are collected, there will be no calls to \solve,
+regardless of how many size variables they contain.
+
+However, a \cofixpoint might require that some non-\corecursive definition with many size variables be size-preserving,
+which means that that definition also needs to be checked with sized typing on,
+or the \cofixpoint itself may have a large number of size variables.
+Furthermore, there's no clear indication of which definitions might have a large number of size variables and which don't,
+leaving it up to a lot of guesswork and experimentation.
+Using sized typing as a targeted tool for particular programs isn't viable
+if we cannot directly tell \emph{which} particular programs will benefit the most
+in terms of tradeoffs between non-structural \corecursion and performance.
+
+The second option to reduce the number of size variables can be done by allowing manual annotation of \coinductive types with the infinite size,
+reducing the number of free size variables that need to be substituted for
+and that propagate throughout subsequent definitions.
+For example, the equality types in \autoref{fig:nateq} can have infinite size annotations
+without affecting the sizes of either \coqinline{nat} argument.
+In other words, we allow size annotations in the surface language that users write,
+which would no longer be plain CIC;
+as this solution deviates from the philosophy of being wholly backward-compatible,
+it is beyond the scope of this paper.
+
+\subsection{Inferring Recursive Indices}\label{sec:impl:recind}
+
+As previously mentioned, users are not obligated to indicate which fixpoint argument is the one on which we recur,
+and its position index is inferred during pretyping in the kernel.
+In Coq, for a mutual fixpoint, this is done by trying the guard check on every combination of indices%
+\footnote{This is implemented in Coq as \texttt{Pretyping.search\_guard}.}.
+This is possible because the guard check is a syntactic check, requiring nothing but the elaborated fixpoint term.
+
+Unfortunately, we run into problems when attempting to apply the same strategy to inferring recursive indices through sized typing alone.
+Because termination checking is inextricably tied to type checking,
+the entire fixpoint needs to be type checked to verify whether the current set of indices is correct,
+and this type checking in the kernel can fail if the fixpoint still contains unsolved metavariables.
+Furthermore, because we only have access to the bare environments (\ie with no sizes inferred),
+local definitions in scope at the fixpoint may not yet known to be size-preserving,
+thus causing the check to fail.
+As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size-preserving,
+even though it ought to be, which causes the recursive call on the smaller argument wrapped in \coqinline{id} to not pass type checking.
+
+\begin{minted}{coq}
+let id (x : nat) := x in
+  fix f (n : nat) :=
+    match n with
+    | O => O
+    | S k => f (id k)
+    end
+\end{minted}
+
+This suggests that size inference should be done during the pretyping phase:
+size inference could be viewed as part of the elaboration step from the surface CIC to the core \lang.
+This, too, is beyond the scope of this paper, especially as there is no past work on the interaction between size inference and elaboration to build on.

@@ -8,7 +8,9 @@ However, Coq's core calculus extends quite a bit beyond merely CIC,
 and the presentation of various analogous features differ subtly but nontrivially.
 The goal of \lang is to bring sized types in CIC a few steps closer to Coq,
 while keeping with the original philosphy.
-In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is viable --- for Coq's codebase itself is old, large, fragile, and intricate --- we must also discard some features from \CIChatminus.
+In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is viable
+--- for Coq's codebase itself is old, large, and intricate ---
+we must also discard some features from \CIChatminus.
 In this section, we discuss what \lang has added or removed relative to past work and to Coq,
 and their implications on the metatheory and the implementation.
 
@@ -84,10 +86,9 @@ which infers universe levels that are prenex polymorphic at definitions.
 
 Unfortunately, even when only solving constraints for global declarations,
 our implementation of the size inference algorithm in the Coq codebase takes a rather significant performance hit.
-This is in part due to the proliferation of sizes that definitions are polymorphic over,
-as the worst-case time complexity of solving is quadratic in the number of size variables.
-We analyze the performance of our implementation and possible causes and solutions in a subsequent section.
-% TODO: Add an autoref to the right section once it exists.
+This is in part due to the proliferation of sizes in which the definitions are polymorphic,
+as the worst-case time complexity of solving is at least quadratic in the number of size variables.
+We analyze the performance of our implementation and discuss possible solutions in \autoref{sec:impl}.
 
 \subsection{Polarities}
 
@@ -124,8 +125,7 @@ we do assume that the recursive arguments are already indicated,
 separating what Coq already does from what there is to do to obtain sized types.
 In terms of the implementation, one downside of this approach is that not as many programs that \emph{could} pass type checking \emph{do},
 due to the existing architecture of the Coq type checker.
-We discuss this further in a subsequent section.
-% TODO: Add an autoref to the right section once it exists.
+We discuss this further in \autoref{sec:impl:recind}.
 
 % TODO: Is it worth mentioning that we remove the restrict to simple types?
 % I don't know how to justify it or what its consequences are. (Michael might)
