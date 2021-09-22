@@ -93,13 +93,15 @@ The constraint sets are generated when inferring sizes of terms.
 Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that enforce subsizing relations between those size variables.
 To this end, we introduce \emph{generic}%
 \footnote{This terminology is borrowed from \citet{universes}, who have similar environments in the context of universe level constraint collection in the presence of cumulativity.}
-environments in \autoref{fig:contexts-gen}, where definitions are associated with a set of constraints.
+environments in \autoref{fig:contexts-gen}, where definitions are associated with a constraint set.
+Given a generic local environment $\Psi$, we write $\Gamma_{\Psi}$ to mean the local environment corresponding to $\Psi$ without its constraint sets.
 % [This isn't ever used?] As usual, we will use $\Psi$ as shorthand for sized generic environments and $\Psi^\circ$ for bare generic environments.
 % By abuse of notation, we treat $\Psi(\ph)$ and $\Gamma_G(\ph)$ as lookup functions for $\Psi$ and $\Gamma_G$, where $\Psi(x) = t$ if $(x : t) \in \Psi$ and $\Psi(x) = (C, e : t)$ if $(C, x : t \coloneqq e) \in \Psi$, and similarly for $\Gamma_G$.
 
-We now define three judgements to represent \emph{checking}, \emph{inference}, and \emph{well-formed\-ness}.
+We now define four judgements to represent \emph{algorithmic subtyping}, \emph{checking}, \emph{inference}, and \emph{well-formed\-ness}.
 They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs on the right.
 \begin{itemize}
+  \item $\Gamma_G, \Gamma \vdash t \constrain u \rightsquigarrow C$ (algorithmic subtyping) takes environments $\Gamma_G, \Gamma$ and annotated terms $t, u$, and produces a set of constraints $C$ that must be satisfied in order for $t$ to be a subtype of $u$.
   \item $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ (checking) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a new set of constraints $C'$ that ensures that the type of $e$ subtypes $t$.
   \item $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ (inference) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a new set of constraints $C'$.
   \item $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ (well-formedness) takes a global environment with bare declarations and produces a global environment where each declaration has been properly annotated via size inference.
@@ -146,10 +148,11 @@ We discuss this and other implementational issues in the next section.
 \input{figures/algorithm.tex}
 
 \paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
-% TODO: Redo this paragraph after establishing that subtyping constraints judgement.
-To ensure that the inferred type subtypes the given type, we use the metafunction $\constrain$ that takes two sized terms and attempts to produce a set of subsizing constraints based on the subtyping rules of \autoref{fig:subtyping}.
-It also implicitly takes a global environment and a local generic environment.
-$\constrain$ may reduce terms to check convertibility and will fail if two terms are incompatible.
+It uses algorithmic subtyping in \autoref{fig:algorithm-subtyping} to ensure that the inferred type of the term is a subtype of given type.
+This subtyping is defined inductively over the rules of the subtyping judgement in the straightforward manner, taking the union of constraint sets from their premises;
+we present only Rules \refnorule{a-st-ind} and \refnorule{a-st-coind},
+which shows the concrete subsizing constraints derived from comparing two \coinductive types.
+It may also fail if two terms are not subtypes and are inconvertible.
 
 \autoref{fig:algorithm} is the inference component of the algorithm. Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
 Note that after type annotations pass through inference to become sized types, they must be erased to bare types again.
@@ -427,7 +430,7 @@ There are then two properties we want to ensure.
 
 We also want to ensure that \solvecomp and \solve actually return solutions of the constraint sets they are solving.
 
-\begin{theorem}[Correctness of \solve and \solvecomp]~\\[-4ex]
+\begin{theorem}[Correctness of \solve and \solvecomp]\label{thm:solve}~\\[-4ex]
 \begin{enumerate}
   \item If the constraint set $C_c$ contains no negative cycles, then $\solvecomp{C_c} \vDash C_c$ and
   \item $\solve{C} \vDash C$.
@@ -443,7 +446,6 @@ We also want to ensure that \solvecomp and \solve actually return solutions of t
 \end{proof}
 
 Before proceeding onto the main soundness theorems, we first need a few lemmas.
-Given a local generic environment $\Psi$, we use $\Gamma_\Psi$ to denote the corresponding local environment with the constraint sets removed.
 
 \begin{lemma}
 Suppose that $\rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
@@ -464,8 +466,11 @@ Then $\Gamma_G, \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By induction on the rules for constraints induced by subtyping in \autoref{fig:algorithm-subtyping}.
+By induction on the rules for algorithmic subtyping in \autoref{fig:algorithm-subtyping}.
 \end{proof}
+
+% TODO: I'm thinking of removing these few lemmas...
+% \iffalse
 
 \begin{lemma}\label{lem:constraint-subst}
 $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
@@ -500,9 +505,11 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
   The key is to notice that size and size substitution annotations are only added to $e$ in Rules \refnorule{a-var-def}, \refnorule{a-const-def}, \refnorule{a-ind}, and \refnorule{a-ind-star}, and those consist of fresh size variables.
 \end{proof}
 
+% \fi
+
 Now we are ready to tackle the main theorems.
 
-\begin{theorem}[Soundness (check/infer)]
+\begin{theorem}[Soundness (check/infer)]\label{thm:soundness}
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, and $C$ a constraint set.
 Suppose we have the following:
 \begin{enumerate}[label=\roman*.]
@@ -589,9 +596,70 @@ Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sou
 \end{enumerate}
 \end{proof}
 
-% TODO: State completeness theorem either as a conjecture or speculate on why it might not hold.
+\begin{conjecture}[Completeness (check/infer)]
+Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, $C$ a constraint set, and $\rho \vDash C$ a solution to the constraint set.
+Then the following hold:
+\begin{enumerate}
+  \item If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : \rho t$,
+    then there exist $C', \rho'$ such that:
+    \begin{itemize}
+      \item $\rho' \vDash C'$;
+      \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
+      \item $C, \Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$.
+    \end{itemize}
+  \item if $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
+    then there exist $C', \rho'$ such that:
+    \begin{itemize}
+      \item $\rho' \vDash C'$;
+      \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
+      \item $C, \Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C', e' \Rightarrow t'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$ and $\Gamma_G, \Gamma_{\Psi} \vdash \rho' t \leq t$.
+    \end{itemize}
+\end{enumerate}
+\end{conjecture}
 
-% TODO: State soundness and completeness theorems for well-foundedness of global environments.
+\begin{theorem}[Soundness (wellformedness)]
+If $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ then $\WF{\Gamma_G, \mt}$.
+\end{theorem}
+
+\begin{proof}
+By cases on the size inference rules for global declarations.
+\begin{itemize}
+  \item \refrule{a-global-nil}: Trivial.
+  \item \refrule{a-global-assum}.
+    \begin{displaymath}
+      \inferrule*[]{
+        \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
+        \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\
+        \rho = \solve{C_1}
+      }{
+        \Gamma_G^\circ(\Assm{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assm{x}{\rho t})
+      }
+    \end{displaymath}
+    By \autoref{thm:solve}, we have that $\rho \vDash C_1$.
+    By the induction hypothesis, we have that $\WF{\Gamma_G, \mt}$.
+    Then by \autoref{thm:soundness}, we have that $\Gamma_G, \mt \vdash \rho t : \varw$,
+    and by \refrule{wf-global-assum}, we conclude that $\WF{\Gamma_G(\Assm{x}{\rho t}), \mt}$.
+  \item \refrule{a-global-def}.
+    \begin{displaymath}
+      \inferrule*[]{
+        \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
+        \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+        C_1, \Gamma_G, \mt \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
+        \rho = \solve{C_2}
+      }{
+        \Gamma_G^\circ(\Defn{x}{t^\circ}{e^\circ\!\!}) \rightsquigarrow \Gamma_G(\Defn{x}{\rho t}{\rho e})
+      }
+    \end{displaymath}
+    By \autoref{thm:solve}, we have that $\rho \vDash C_2$.
+    By the induction hypothesis, we have that $\WF{\Gamma_G, \mt}$.
+    Then by \autoref{thm:soundness}, we have that $\Gamma_G, \mt \vdash \rho t : \varw$ and $\Gamma_G, \mt \vdash \rho e : \rho t$.
+    Finally, by \refrule{wf-global-def}, we conclude that $\WF{\Gamma_G(\Defn{x}{\rho t}{\rho e}), \mt}$.
+\end{itemize}
+\end{proof}
+
+Note that well-formedness is \emph{not} complete;
+that is, there exist well-formed global environments $\Gamma_G$ such that $\erase{\Gamma_G} \rightsquigarrow \Gamma_G$ does \emph{not} hold.
+This is because \solve only returns \emph{one} single deterministic solution to a given constraint set, while \emph{any} solution will yield well-typed terms.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
