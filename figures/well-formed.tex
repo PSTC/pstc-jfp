@@ -1,25 +1,25 @@
 \begin{figure}
 \begin{flushleft}
-  \fbox{$\WF{\sgg}$}
+  \fbox{$\WF{\gg}$}
 \end{flushleft}
 \begin{mathpar}
   \inferrule[\defrule{wf-nil}]{~}
     {\WF{\mt, \mt}}
   \and
   \inferrule[\defrule{wf-local-assum}]
-    {\sgg \vdash t: U \and x \notin \Gamma}
+    {\gg \vdash t: U \and x \notin \Gamma}
     {\WF{\Gamma_G, \Gamma (x:t)}}
   \and
   \inferrule[\defrule{wf-local-def}]
-    {\sgg \vdash e: t \and x \notin \Gamma}
+    {\gg \vdash e: t \and x \notin \Gamma}
     {\WF{\Gamma_G, \Gamma (x:t \coloneqq e)}}
   \and
   \inferrule[\defrule{wf-global-assum}]
-    {\sg \vdash t: U \and x \notin \Gamma_G}
+    {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
     {\WF{\Gamma_G (\Assm{x}{|t|^\infty\!\!}), \mt}}
   \and
   \inferrule[\defrule{wf-global-def}]
-    {\sg \vdash e: t \and x \notin \Gamma_G}
+    {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
     {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
 \end{mathpar}
 \caption{Well-formedness of environments}

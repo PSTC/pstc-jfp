@@ -141,10 +141,12 @@ and this position term itself is passed into the algorithm.
 Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
 We discuss this and other implementational issues in the next section.
 
+\input{figures/algorithm-subtyping.tex}
 \input{figures/algorithm-check.tex}
 \input{figures/algorithm.tex}
 
 \paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
+% TODO: Redo this paragraph after establishing that subtyping constraints judgement.
 To ensure that the inferred type subtypes the given type, we use the metafunction $\constrain$ that takes two sized terms and attempts to produce a set of subsizing constraints based on the subtyping rules of \autoref{fig:subtyping}.
 It also implicitly takes a global environment and a local generic environment.
 $\constrain$ may reduce terms to check convertibility and will fail if two terms are incompatible.
@@ -443,26 +445,26 @@ We also want to ensure that \solvecomp and \solve actually return solutions of t
 Before proceeding onto the main soundness theorems, we first need a few lemmas.
 Given a local generic environment $\Psi$, we use $\Gamma_\Psi$ to denote the corresponding local environment with the constraint sets removed.
 
-\iffalse
 \begin{lemma}
-If $\rho \vDash t \constrain u$ with global environment $\Gamma_G$ and local generic environment $\Psi$,
-then $\Gamma_G, \Gamma_\Psi \vdash \rho t \leq \rho u$ holds.
-\end{lemma}
-
-% TODO: Find correct statement for subtyping and prove;
-% May also need similar thing for whnf?
-\fi
-
-\begin{lemma}
-Suppose that $\forall \upsilon \in V, \rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
+Suppose that $\rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
 \begin{enumerate}
-  \item $\forall \upsilon \in V$, if $\upsilon \pos t$, then $\rho_1 t \leq \rho_2 t$.
-  \item $\forall \upsilon \in V$, if $\upsilon \neg t$, then $\rho_2 t \leq \rho_1 t$.
+  \item If $\upsilon \pos t$, then $\rho_1 t \leq \rho_2 t$; and
+  \item If $\upsilon \neg t$, then $\rho_2 t \leq \rho_1 t$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
 By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
+\end{proof}
+
+\begin{lemma}
+Let $\Gamma_G, \Gamma_{\Psi} \vdash t \constrain u \rightsquigarrow C$,
+and suppose that $\rho \vDash C$.
+Then $\Gamma_G, \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
+\end{lemma}
+
+\begin{proof}[{[Sketch]}]
+By induction on the rules for constraints induced by subtyping in \autoref{fig:algorithm-subtyping}.
 \end{proof}
 
 \begin{lemma}\label{lem:constraint-subst}
@@ -497,23 +499,6 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
   By mutual induction on the checking and inference algorithms.
   The key is to notice that size and size substitution annotations are only added to $e$ in Rules \refnorule{a-var-def}, \refnorule{a-const-def}, \refnorule{a-ind}, and \refnorule{a-ind-star}, and those consist of fresh size variables.
 \end{proof}
-
-\iffalse
-\begin{lemma}[Monotonicity of constraints]~\\[-4ex]
-\begin{enumerate}
-  \item If $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ and $\rho \vDash C'$, then $\rho \vDash C$.
-  \item If $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ and $\rho \vDash C'$, then $\rho \vDash C$.
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}[{[Sketch]}]
-By mutual induction on the checking and inference algorithms.
-Most cases are directly by the induction hypotheses and the fact that $\rho \vDash C \cup C' \implies \rho \vDash C, \rho \vDash C'$.
-\begin{itemize}
-  \item Rules \refnorule{a-fix} and \refnorule{a-cofix}: 
-\end{itemize}
-\end{proof}
-\fi
 
 Now we are ready to tackle the main theorems.
 
@@ -558,7 +543,7 @@ Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sou
   \begin{itemize}
     \item \refrule{a-var-def}.
     \begin{displaymath}
-      \inferrule[\defrule{a-var-def}]{
+      \inferrule[]{
           \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
           \overline{\upsilon'_i} = \SV(e, t) \\\\
           \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
@@ -569,12 +554,35 @@ Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sou
       }
     \end{displaymath}
     Let $\rho' \vDash C_2$.
-    We must show that $\Gamma_G, \rho' \Gamma_{\Psi_1} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
-    Since $\vec{\upsilon'_i}$ are not in $\Gamma_{\Psi_1}$, applying $\rho$ to $\Gamma_{\Psi_1}$ would have no effect,
-    so we can rearrange the judgement to read $\Gamma_G, (\rho' \circ \rho) \Gamma_{\Psi_1} \vdash x^{\rho' \circ \rho} : (\rho' \circ \rho) t$.
-    % TODO: This is still wrong.
-    \item \refrule{a-const-def}. % TODO.
-    \item \refrule{a-let-in}. % TODO.
+    We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
+    % TODO.
+    \item \refrule{a-const-def}.
+    \begin{displaymath}
+      \inferrule[\defrule{a-const-def}]{
+        (\defn{x}{t}{e}) \in \Gamma_G \and
+        \overline{\upsilon'_i} = \SV(e, t) \\\\
+        \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
+        \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
+      }{
+        \cgp \vdash x \rightsquigarrow C, x^\rho \Rightarrow \rho t
+      }
+    \end{displaymath}
+    Let $\rho' \vDash C$.
+    We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
+    % TODO.
+    \item \refrule{a-let-in}.
+    \begin{displaymath}
+      \inferrule[\defrule{a-let-in}]{
+        \cgp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
+          C_1, \Gamma_G, \Psi \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\\\
+          C_2, \Gamma_G, \Psi(C_2, x:t \coloneqq e_1) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
+      }{
+        \cgp \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
+      }
+    \end{displaymath}
+    Let $\rho \vDash C_3$.
+    We must show that $\Gamma_G, \Gamma_{\Psi} \vdash \rho (\letin{x}{|t|}{e_1}{e_2}) : \rho (u[x \coloneqq e_1])$.
+    % TODO.
     \item \refrule{a-case}. % TODO.
     \item \refrule{a-fix}. % TODO.
   \end{itemize}

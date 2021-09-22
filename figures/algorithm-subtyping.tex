@@ -1,0 +1,24 @@
+\begin{figure*}[ht]
+\centering
+\small
+
+\begin{flushleft}
+\fbox{$\Gamma_G, \Gamma \vdash t \constrain u \rightsquigarrow C$}
+\end{flushleft}
+
+\vspace{-2ex}
+
+\begin{mathpar}
+\dots
+\and
+\inferrule[\defrule{a-st-ind}]
+  {I \textrm{ inductive }}
+  {\gg \vdash I^s \leq I^{s'} \rightsquigarrow \set{s \sqsubseteq s'}}
+\and
+\inferrule[\defrule{a-st-coind}]
+  {I \textrm{ coinductive }}
+  {\gg \vdash I^s \leq I^{s'} \rightsquigarrow \set{s' \sqsubseteq s}}
+\end{mathpar}
+\caption{Size inference algorithm: Subtyping constraints (excerpt)}
+\label{fig:algorithm-subtyping}
+\end{figure*}

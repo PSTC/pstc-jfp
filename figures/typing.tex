@@ -3,93 +3,93 @@
 \small
 
 \begin{flushleft}
-\fbox{$\sgg \vdash e : t$}
+\fbox{$\gg \vdash e : t$}
 \end{flushleft}
 
 \vspace{-2ex}
 
 \begin{mathpar}
   \inferrule[\defrule{var-assum}]
-    {\WF{\sgg} \and (x:t) \in \Gamma}
-    {\sgg \vdash x:t}
+    {\WF{\gg} \and (x:t) \in \Gamma}
+    {\gg \vdash x:t}
 
   \inferrule[\defrule{var-def}]
-    {\WF{\sgg} \\\\
+    {\WF{\gg} \\\\
       \Gamma \equiv \Gamma_1 (x:t \coloneqq e) \Gamma_2 \and
       \Gamma_G, \Gamma_1 \vdash \rho e : \rho t}
-    {\sgg \vdash x^\rho : \rho t}
+    {\gg \vdash x^\rho : \rho t}
 
   \inferrule[\defrule{const-assum}]
-    {\WF{\sgg} \and (\Assm{x}{t}) \in \Gamma_G}
-    {\sgg \vdash x:t}
+    {\WF{\gg} \and (\Assm{x}{t}) \in \Gamma_G}
+    {\gg \vdash x:t}
 
   \inferrule[\defrule{const-def}]
-    {\WF{\sgg} \\\\
+    {\WF{\gg} \\\\
       \Gamma_G \equiv \Gamma_{G1}(\Defn{x}{t}{e})\Gamma_{G2} \and
       \Gamma_{G1}, \mt \vdash \rho e : \rho t}
-    {\sgg \vdash x^\rho : \rho t}
+    {\gg \vdash x^\rho : \rho t}
 
   \inferrule[\defrule{univ}]
-    {\WF{\sgg} \and (U_1, U_2) \in \Axioms}
-    {\sgg \vdash U_1 : U_2}
+    {\WF{\gg} \and (U_1, U_2) \in \Axioms}
+    {\gg \vdash U_1 : U_2}
 
   \inferrule[\defrule{conv}]
-    {\sgg \vdash e:t \and \sgg \vdash u:U \and \sgg \vdash t \leq u}
-    {\sgg \vdash e:u}
+    {\gg \vdash e:t \and \gg \vdash u:U \and \gg \vdash t \leq u}
+    {\gg \vdash e:u}
 
   \inferrule[\defrule{pi}]
     {(U_1, U_2, U_3) \in \Rules \\\\
-      \sgg \vdash t : U_1 \and
-      \sgg (x:t) \vdash u : U_2}
-    {\sgg \vdash \prod{x}{t}{u} : U_3}
+      \gg \vdash t : U_1 \and
+      \gg (x:t) \vdash u : U_2}
+    {\gg \vdash \prod{x}{t}{u} : U_3}
 
   \inferrule[\defrule{lam}]
-    {\sgg \vdash t : U \and \sgg (x:t) \vdash e:u}
-    {\sgg \vdash \abs{x}{\erase{t}}{e} : \prod{x}{t}{u}}
+    {\gg \vdash t : U \and \gg (x:t) \vdash e:u}
+    {\gg \vdash \abs{x}{\erase{t}}{e} : \prod{x}{t}{u}}
 
   \inferrule[\defrule{app}]
-    {\sgg \vdash e_1 : \prod{x}{t}{u} \and \sgg \vdash e_2 : t}
-    {\sgg \vdash \app{e_1}{e_2} : u[x \coloneqq e_2]}
+    {\gg \vdash e_1 : \prod{x}{t}{u} \and \gg \vdash e_2 : t}
+    {\gg \vdash \app{e_1}{e_2} : u[x \coloneqq e_2]}
 
   \inferrule[\defrule{let}]
-    {\sgg \vdash e_1:t \and \sgg (x:t \coloneqq e_1) \vdash e_2:u}
-    {\sgg \vdash \letin{x}{\erase{t}}{e_1}{e_2} : u[x \coloneqq e_1]}
+    {\gg \vdash e_1:t \and \gg (x:t \coloneqq e_1) \vdash e_2:u}
+    {\gg \vdash \letin{x}{\erase{t}}{e_1}{e_2} : u[x \coloneqq e_1]}
   \\
   \inferrule[\defrule{ind}]
-    {\WF{\sgg}}
-    {\sgg \vdash I^s : \indtype{I}}
+    {\WF{\gg}}
+    {\gg \vdash I^s : \indtype{I}}
 
   \inferrule[\defrule{constr}]
-    {\WF{\sgg}}
-    {\sgg \vdash c : \constrtype{c}{s}}
+    {\WF{\gg}}
+    {\gg \vdash c : \constrtype{c}{s}}
 
   \inferrule[\defrule{case}]
-    {\sgg \vdash e : \app{I_k^{\hat{s}}}{\overline{p}}{\overline{a}} \and
+    {\gg \vdash e : \app{I_k^{\hat{s}}}{\overline{p}}{\overline{a}} \and
       \indtype{I_k} = \prodctx{\any}{\prodctx{\any}{U_k}} \\
       (U_k, U, I_k) \in \Elims \and
-      \sgg \vdash P : \motivetype{\overline{p}}{U}{I_k^{\hat{s}}} \\
+      \gg \vdash P : \motivetype{\overline{p}}{U}{I_k^{\hat{s}}} \\
       \text{For each $j$:} \and
-      \sgg \vdash e_j : \branchtype{\overline{p}}{c_j}{s}{P}}
-    {\sgg \vdash \caseof{\erase{P}}{e}{c_j}{e_j} : \app{P}{\overline{a}}{e}}
+      \gg \vdash e_j : \branchtype{\overline{p}}{c_j}{s}{P}}
+    {\gg \vdash \caseof{\erase{P}}{e}{c_j}{e_j} : \app{P}{\overline{a}}{e}}
 
   \inferrule[\defrule{fix}]
     {\text{For each $k$:} \and
-      \sgg \vdash t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
+      \gg \vdash t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
       \norm{\Delta_{k}} = n_k - 1 \and
       \upsilon_k \pos u_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
-      \sgg \vdash t_k : U_k \and
-      \sgg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
-    {\sgg \vdash \fix{m}{f_k^{n_k}}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
+      \gg \vdash t_k : U_k \and
+      \gg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
+    {\gg \vdash \fix{m}{f_k^{n_k}}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
 
   \inferrule[\defrule{cofix}]
     {\text{For each $k$:} \and
-      \sgg \vdash t_k \approx \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
+      \gg \vdash t_k \approx \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
       \upsilon_k \neg \Delta_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
-      \sgg \vdash t_k : U_k \and
-      \sgg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
-    {\sgg \vdash \cofix{m}{f_k}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
+      \gg \vdash t_k : U_k \and
+      \gg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
+    {\gg \vdash \cofix{m}{f_k}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
 \end{mathpar}
 
 \caption{Typing rules}

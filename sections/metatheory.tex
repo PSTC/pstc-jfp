@@ -64,11 +64,11 @@ On the other hand, if we do allow unrestricted reduction, subject reduction does
   \label{thm:metatheory:sr}
   Let $\Sigma$ be a well-formed signature.
   Suppose that $\nu$-reduction to allows unrestricted reduction of cofixpoints.
-  Then $\sgg \vdash e : t$ and $e \rhd e'$ implies $\sgg \vdash e' : t$.
+  Then $\gg \vdash e : t$ and $e \rhd e'$ implies $\gg \vdash e' : t$.
 \end{theorem}
 
 \begin{proof}[{[sketch]}]
-  By induction on $\sgg \vdash e : t$.
+  By induction on $\gg \vdash e : t$.
   Most cases are straightforward.
   The case for \refrule{case} where $e \rhd e'$ by $\iota$-reduction relies on the fact that
   if $x$ is the name of a \coinductive type and appears strictly positively in $t$,
@@ -237,7 +237,7 @@ Our ultimate goal and primary future work is to prove strong normalization and l
 
 \begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
   %
-  If $\sgg \vdash e : t$ then $e$ contains no infinite
+  If $\gg \vdash e : t$ then $e$ contains no infinite
   reduction sequences.
   %
 \end{conjecture}
