@@ -1,12 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{jfp}[2020/07/23 V1.4 Standard LaTeX document class]
+\ProvidesClass{jfp}[2020/07/23 V1.5 Standard LaTeX document class]
 %
 \newif\ifcopoddhead\global\copoddheadfalse
 \newif\ifOA\global\OAfalse
 \newif\ifnatbiboff\global\natbibofffalse
 \newif\ifnolineno\global\nolinenofalse
 \newif\ifeqnum\global\eqnumfalse
-\newif\iftitval\global\titvalfalse
 \newif\ifkeyedin\global\keyedinfalse
 \newif\iffirstproof\global\firstprooffalse
 \newif\ifrevises\global\revisesfalse
@@ -852,9 +851,9 @@
 \def\sixfont{\fontsize{6}{7}\selectfont}
 \def\sevenaufont{\fontsize{7}{7}\itshape\selectfont}
 \def\historyfont{\fontsize{7}{9}\fontfamily{\sfdefault}\selectfont}
-\def\titlefont{\fontsize{18}{21}\ifx\subtcheck\undefined\itshape\else\fi\selectfont\centering\iftitval\itshape\else\fi}%\bfseries
+\def\titlefont{\fontsize{18}{21}\selectfont\centering\itshape}%\bfseries
 \def\corresfont{\fontsize{7}{9}\fontfamily{\sfdefault}\selectfont}
-\def\subtitlefont{\normalfont\iftitval\fontsize{12}{14}\selectfont\else\fontsize{18}{20}\selectfont\fi\itshape\centering}
+%\def\subtitlefont{\normalfont\iftitval\fontsize{12}{14}\selectfont\else\fontsize{18}{20}\selectfont\fi\itshape\centering}
 \def\keyfont{\fontsize{8}{10}\fontfamily{\sfdefault}\selectfont}
 \def\keyheadfont{\fontsize{8}{10}\fontfamily{\sfdefault}\selectfont}
 \def\absheadfont{\fontsize{12}{12}\fontfamily{\sfdefault}\selectfont}
@@ -1448,11 +1447,10 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
 
 \def\authorand{\unskip\unskip\ignorespaces{}and\ }%
 
-\newif\ifsubtitle\global\subtitlefalse
-
-\newbox\subtbox
-\newcommand{\subtitle}[1]{\global\subtitletrue\global\setbox\subtbox\vbox{\subtitlefont#1\vskip21.3pt}
-\protected@write\@auxout{}{\gdef\string\subtcheck{}}}
+%\newif\ifsubtitle\global\subtitlefalse
+%\newbox\subtbox
+%\newcommand{\subtitle}[1]{\global\subtitletrue\global\setbox\subtbox\vbox{\subtitlefont#1\vskip21.3pt}
+%\protected@write\@auxout{}{\gdef\string\subtcheck{}}}
 
 \newbox\authbox
 \newenvironment{authgrp}{\global\setbox\authbox\vbox\bgroup\authorfont}{\vskip11pt\egroup}
@@ -1478,9 +1476,8 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
 
 \newcommand{\affiliation}[1]{{\vskip3pt\affilfont#1\vskip8pt}}
 
-\def\titaltval{O}
-
-\renewcommand{\title}[2][]{\xdef\@titalt{#1}\ifx\@titalt\titaltval\global\titvaltrue\else\global\titvalfalse\fi\gdef\@title{#2}}
+%\def\titaltval{O}
+%\renewcommand{\title}[2][]{\xdef\@titalt{#1}\ifx\@titalt\titaltval\global\titvaltrue\else\global\titvalfalse\fi\gdef\@title{#2}}
 
 \newbox\keybox
 
@@ -1589,16 +1586,10 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
 \def\@maketitle#1{\@@par\ifbookreview\vspace*{10.5pt}\else\ifOA\vspace*{32pt}\else\vspace*{15pt}\fi\fi%
 \setbox\tempbox\vbox{%
 \pe@rl{#1}%
-\ifx\subtcheck\undefined%
 \titlefont\@title%
-\else%
-\iftitval%
-\titlefont\@title%
-\else%
-\titlefont\MakeUppercase{\titleso{\@title}}%
-\fi\fi\vphantom{y}\ifonline\pdfbookmark{\@title}{HLtitle}\else\fi\@@par%
-\ifsubtitle\iftitval\vskip10.5pt\else\vskip17pt\fi\else\ifbookreview\vskip30pt\else\vskip17.5pt\fi\fi%
-{\unvbox\subtbox}
+\vphantom{y}\ifonline\pdfbookmark{\@title}{HLtitle}\else\fi\@@par%
+\ifbookreview\vskip30pt\else\vskip17.5pt\fi%
+%{\unvbox\subtbox}
 {\unvbox\authbox}%
 %{\unvbox\hisbox}%
 {\unvbox\abstractbox}%
@@ -4360,3 +4351,10 @@ breaklinks=true}
 
 %%% \@pushfilename command was commented to support JFP class file in Ubuntu 20.04
 %%% amsmath package used before cleveref package to avoid compilation error generating from TeXLive 2019 and later.
+%%%
+%%% V1.5
+
+%%%% Changes done based on the update mentioned by Charlotte mail dated July 28, 2021 4:47 PM
+
+%%% \subtitle command was commented
+%%% \title command was modified with single argument.
