@@ -16,7 +16,7 @@
   \and
   \inferrule[\defrule{wf-global-assum}]
     {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
-    {\WF{\Gamma_G (\Assm{x}{|t|^\infty\!\!}), \mt}}
+    {\WF{\Gamma_G (\Assm{x}{t}), \mt}}
   \and
   \inferrule[\defrule{wf-global-def}]
     {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}

@@ -14,14 +14,15 @@
 \and
 \inferrule*[right=\defrule{a-global-assum}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \emptyset, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow \_, t \Rightarrow^* \varw
+    \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+    \rho = \solve{C_1}
 }{
-    \Gamma_G^\circ(\Assm{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assm{x}{|t|^\infty\!\!})
+    \Gamma_G^\circ(\Assm{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assm{x}{\rho t})
 }
 \and
 \inferrule*[right=\defrule{a-global-def}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \emptyset, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+    \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
     C_1, \Gamma_G, \mt \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
     \rho = \solve{C_2}
 }{
