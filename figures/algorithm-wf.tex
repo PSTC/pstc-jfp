@@ -14,7 +14,7 @@
 \and
 \inferrule*[right=\defrule{a-global-assum}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+    \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
     \rho = \solve{C_1}
 }{
     \Gamma_G^\circ(\Assm{x}{t^\circ\!\!}) \rightsquigarrow \Gamma_G(\Assm{x}{\rho t})
@@ -22,9 +22,9 @@
 \and
 \inferrule*[right=\defrule{a-global-def}]{
     \Gamma_G^\circ \rightsquigarrow \Gamma_G \\
-    \set{}, \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
-    C_1, \Gamma_G, \mt \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
-    \rho = \solve{C_2}
+    \Gamma_G, \mt \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* \varw \\\\
+    \Gamma_G, \mt \vdash e^\circ \Leftarrow t \rightsquigarrow C_2, e \\
+    \rho = \solve{C_1 \cup C_2}
 }{
     \Gamma_G^\circ(\Defn{x}{t^\circ}{e^\circ\!\!}) \rightsquigarrow \Gamma_G(\Defn{x}{\rho t}{\rho e})
 }

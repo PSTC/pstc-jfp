@@ -102,8 +102,8 @@ We now define four judgements to represent \emph{algorithmic subtyping}, \emph{c
 They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs on the right.
 \begin{itemize}
   \item $\Gamma_G, \Gamma \vdash t \constrain u \rightsquigarrow C$ (algorithmic subtyping) takes environments $\Gamma_G, \Gamma$ and annotated terms $t, u$, and produces a set of constraints $C$ that must be satisfied in order for $t$ to be a subtype of $u$.
-  \item $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$ (checking) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a new set of constraints $C'$ that ensures that the type of $e$ subtypes $t$.
-  \item $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ (inference) takes a set of constraints $C$, environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a new set of constraints $C'$.
+  \item $\gp \vdash e^\circ \Leftarrow t \rightsquigarrow C, e$ (checking) takes environments $\Gamma_G, \Psi$, a bare term $e^\circ$, and an annotated type $t$, and produces the annotated term $e$ with a set of constraints $C$ that ensures that the type of $e$ subtypes $t$.
+  \item $\gp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ (inference) takes environments $\Gamma_G, \Psi$, and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a set of constraints $C$.
   \item $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ (well-formedness) takes a global environment with bare declarations and produces a global environment where each declaration has been properly annotated via size inference.
 \end{itemize}
 
@@ -283,7 +283,7 @@ For our purposes, we assume that there is a singular well-formed signature defin
 Then we need to perform size inference on each declaration of $\Gamma_G$ in order.
 This is given by Rules \refnorule{a-global-nil}, \refnorule{a-global-assum}, and \refnorule{a-global-def} in \autoref{fig:algorithm-wf}.
 
-In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_2$ and produces a size substitution that, when applied to the annotated term and type, ensures that they form a well-typed judgement. In otherwords, we are guaranteed that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
+In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_1 \cup C_2$ and produces a size substitution that, when applied to the annotated term and type, ensures that they form a well-typed judgement. In otherwords, we are guaranteed that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
 Assuming for now that the corresponding constraint graph has no negative cycles, for every connected component, we want to assign each size variable the same common size variable but with a different size.
 For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilon}_2, \hat{\upsilon_1} \sqsubseteq \upsilon_3}$, a possible solution would be the mapping $\set{\upsilon_1 \mapsto \tau, \upsilon_2 \mapsto \upsilon^*, \upsilon_3 \mapsto \hat{\tau}}$.
@@ -340,9 +340,9 @@ Intuitively, soundness says that if you have a solution to a constraint set retu
 then there must also be a solution to the original constraint set satisfying some important properties.
 Dually, completness says that if you have a solution to the original constraint set satisfying these properties, then it must also be a solution to the constraint set returned by \RecCheck.
 
-\begin{theorem}[Soundness of \RecCheck (SRC)]
+\begin{theorem}[Soundness of \RecCheck (SRC)]\label{thm:src}
 If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDash C$,
-given a fresh stage variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
+given a fresh size variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
 \begin{enumerate}
   \item $\rho' \vDash C'$;
   \item $\rho'(\tau) = \upsilon$;
@@ -411,7 +411,7 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
 \RecCheckLoop, on the other hand, returns a constraint set for an entire mutual \cofixpoint definition, finding a suitable set of position variables.
 There are then two properties we want to ensure.
 
-\begin{theorem}[Correctness of RecCheckLoop]~\\[-4ex]
+\begin{theorem}[Correctness of RecCheckLoop]\label{thm:reccheckloop}~\\[-4ex]
 \begin{enumerate}
   \item \RecCheckLoop terminates on all inputs.
   \item If $\RecCheckLoop{C', \Psi, \vec{\tau_k}, \vec{t_k}, \vec{e_k}} = C$ with an initial position variable set $\mathcal{V}^*$,
@@ -447,7 +447,7 @@ We also want to ensure that \solvecomp and \solve actually return solutions of t
 
 Before proceeding onto the main soundness theorems, we first need a few lemmas.
 
-\begin{lemma}
+\begin{lemma}\label{lem:posneg}
 Suppose that $\rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
 \begin{enumerate}
   \item If $\upsilon \pos t$, then $\rho_1 t \leq \rho_2 t$; and
@@ -459,10 +459,10 @@ Suppose that $\rho_1(\upsilon) \sqsubseteq \rho_2(\upsilon)$.
 By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lem:subtyping}
 Let $\Gamma_G, \Gamma_{\Psi} \vdash t \constrain u \rightsquigarrow C$,
 and suppose that $\rho \vDash C$.
-Then $\Gamma_G, \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
+Then $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
@@ -486,23 +486,11 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \end{proof}
 
 \begin{lemma}\label{lem:typing-subst}
-  If $\Sigma, \Gamma_G, \Gamma \vdash e : t$, then $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho e : \rho t$ and $\Sigma, \Gamma_G, \rho \Gamma \vdash \rho t : U$ for some $U$.
+  If $\gg \vdash e : t$, then $\Gamma_G, \rho \Gamma \vdash \rho e : \rho t$ and $\Gamma_G, \rho \Gamma \vdash \rho t : U$ for some $U$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
 % TODO: Uses earlier lemma showing that $\Sigma, \Gamma_G, \subst{\Gamma}{\upsilon}{s} \vdash \subst{e}{\upsilon}{s} : \subst{t}{\upsilon}{s}.
-\end{proof}
-
-\begin{lemma}~\\[-4ex]
-  \begin{enumerate}
-    \item If $\cgp \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$, then $\forall \upsilon \in SV(e), \upsilon \notin \SV(\Psi)$.
-    \item If $\cgp \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$, then $\forall \upsilon \in SV(e), \upsilon \notin \SV(\Psi)$.
-  \end{enumerate}
-\end{lemma}
-
-\begin{proof}[{[Sketch]}]
-  By mutual induction on the checking and inference algorithms.
-  The key is to notice that size and size substitution annotations are only added to $e$ in Rules \refnorule{a-var-def}, \refnorule{a-const-def}, \refnorule{a-ind}, and \refnorule{a-ind-star}, and those consist of fresh size variables.
 \end{proof}
 
 % \fi
@@ -510,88 +498,173 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 Now we are ready to tackle the main theorems.
 
 \begin{theorem}[Soundness (check/infer)]\label{thm:soundness}
-Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, and $C$ a constraint set.
+Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, and $\Psi$ a generic local environment.
 Suppose we have the following:
 \begin{enumerate}[label=\roman*.]
-  \item \label{item:sound:wf:global} $\WF{\Gamma_G, \mt}$ holds;
-  \item \label{item:sound:wf:local} $\forall \rho \vDash C, \WF{\Gamma_G, \rho\Gamma_\Psi}$ holds; and
-  \item \label{item:sound:psi} If $\Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2$, 
-  \begin{enumerate}
-    \item \label{item:sound:psi:sat} $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds; and
-    \item \label{item:sound:psi:sv} $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Psi_1)$.
-  \end{enumerate}
+  \item \label{item:sound:wf:global} $\WF{\Gamma_G, \mt}$ holds; and
+  \item \label{item:sound:psi} If $\Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2$, then
+    $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds.
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}
-  \item If $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$,
-  then $\forall \rho \vDash C'$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
-  \item If $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$,
-  then $\forall \rho \vDash C'$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  \item If $\gp \vdash e^\circ \Leftarrow t \rightsquigarrow C, e$,
+  then $\forall \rho \vDash C$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  \item If $\gp \vdash e^\circ \rightsquigarrow C, e \Rightarrow t$,
+  then $\forall \rho \vDash C$, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}[{[Partial]}]
 By mutual induction on the checking and inference rules of the algorithm.
-Suppose \ref{item:sound:wf:global}, \ref{item:sound:wf:local}, and \ref{item:sound:psi} hold.
+Suppose \ref{item:sound:wf:global} and \ref{item:sound:psi} hold.
 \begin{enumerate}
   \item By \refrule{a-check}, we have
   \begin{displaymath}
-    \inferrule[]{
-        \cgp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t
+    \inferrule[\defrule{a-check}]{
+      \gp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t \\
+      \Gamma_G, \Gamma_{\Psi} \vdash t \constrain u \rightsquigarrow C_2
     }{
-        \cgp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup t \constrain u, e
+      \gp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup C_2, e
     }
   \end{displaymath}
-  Let $\rho \vDash C_1$.
-  By the induction hypothesis on the premise, we have $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
-  % TODO: Complete later.
+  Let $\rho \vDash C_1 \cup C_2$.
+  By the induction hypotheses on the premise, we have $\Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$.
+  By \autoref{lem:subtyping}, we have $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
+  Then by \refrule{conv}, we have $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho e : \rho u$.
   \item We will prove the cases for definitions, let expressions, case expressions, and fixpoints;
-  the case for cofixpoints are similar to that of fixpoints, and the remaining cases are straightforward.
+  the case for cofixpoints is similar to that of fixpoints, and the remaining cases are straightforward.
   \begin{itemize}
     \item \refrule{a-var-def}.
     \begin{displaymath}
       \inferrule[]{
-          \Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2 \and
-          \overline{\upsilon'_i} = \SV(e, t) \\\\
-          \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-          \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
-          C_2 = C \cup \rho C_1
-      }{
-          \cgp \vdash x \rightsquigarrow C_2, x^\rho \Rightarrow \rho t
-      }
-    \end{displaymath}
-    Let $\rho' \vDash C_2$.
-    We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
-    % TODO.
-    \item \refrule{a-const-def}.
-    \begin{displaymath}
-      \inferrule[\defrule{a-const-def}]{
-        (\defn{x}{t}{e}) \in \Gamma_G \and
-        \overline{\upsilon'_i} = \SV(e, t) \\\\
+        (C, x : t \coloneqq e) \in \Psi \and
+        \overline{\upsilon'_i} = \SV(e, t) \and
         \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-        \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}} \and
+        \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
       }{
-        \cgp \vdash x \rightsquigarrow C, x^\rho \Rightarrow \rho t
+        \gp \vdash x \rightsquigarrow \rho C, x^\rho \Rightarrow \rho t
       }
     \end{displaymath}
     Let $\rho' \vDash C$.
     We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
     % TODO.
-    \item \refrule{a-let-in}.
+    \item \refrule{a-const-def}.
     \begin{displaymath}
-      \inferrule[\defrule{a-let-in}]{
-        \cgp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
-          C_1, \Gamma_G, \Psi \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\\\
-          C_2, \Gamma_G, \Psi(C_2, x:t \coloneqq e_1) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
+      \inferrule[]{
+        (\defn{x}{t}{e}) \in \Gamma_G \and
+        \overline{\upsilon'_i} = \SV(e, t) \and
+        \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
+        \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
       }{
-        \cgp \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
+        \gp \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
       }
     \end{displaymath}
-    Let $\rho \vDash C_3$.
-    We must show that $\Gamma_G, \Gamma_{\Psi} \vdash \rho (\letin{x}{|t|}{e_1}{e_2}) : \rho (u[x \coloneqq e_1])$.
+    Since the constraint set is empty, we must simply show that $\Gamma_G, \Gamma_{\Psi} \vdash x^\rho : (\rho t)$ holds.
     % TODO.
-    \item \refrule{a-case}. % TODO.
-    \item \refrule{a-fix}. % TODO.
+    \item \refrule{a-let-in}.
+    \begin{displaymath}
+      \inferrule[]{
+        \gp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
+        \gp \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\
+        \gp (C_1 \cup C_2, x:t \coloneqq e_1) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
+      }{
+        \gp \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_1 \cup C_2 \cup C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
+      }
+    \end{displaymath}
+    Let $\rho \vDash C_1 \cup C_2 \cup C_3$.
+    We must show that $\Gamma_G, \Gamma_{\Psi} \vdash \rho (\letin{x}{|t|}{e_1}{e_2}) : \rho (u[x \coloneqq e_1])$.
+    The induction hypotheses on the premises tell us the following:
+    \begin{itemize}
+      \item $\forall \rho_1 \vDash C_1, \Gamma_G, \rho_1 \Gamma_{\Psi} \vdash \rho_1 t : U$;
+      \item $\forall \rho_2 \vDash C_2, \Gamma_G, \rho_2 \Gamma_{\Psi} \vdash \rho_2 e_1 : \rho_2 t$; and
+      \item $\forall \rho_3 \vDash C_3, \Gamma_G, \rho_3 (\Gamma_{\Psi}(\defn{x}{t}{e_1})) \vdash \rho_3 e_2 : \rho_3 u$.
+    \end{itemize}
+    Applying $\rho$ to all three and using \refrule{let} yields our goal.
+    \item \refrule{a-case}.
+      \begin{displaymath}
+      \inferrule[]{
+        \gp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow^* \app{I_k^s}{\vec{p}}{\vec{a}} \\
+        \gp \vdash P^\circ \rightsquigarrow C_2, P \Rightarrow t_p \\
+        \prodctx{\any}{\prodctx{\Delta_k}{U_k}} = \indtype{I_k} \\
+        U = \decompose{t_p}{\norm{\Delta_k} + 1} \\
+        \elim{U_k}{U}{I_k} \\
+        \upsilon = \fresh{1} \\
+        \Gamma_G, \Gamma_{\Psi} \vdash t_p \constrain \motivetype{\overline{p}}{U}{I_k^{\hat{\upsilon}}} \rightsquigarrow C_3 \\
+        \textrm{For each $j$:} \\
+        \Gamma_G, \Psi \vdash e^\circ_j \Leftarrow \branchtype{\overline{p}}{c_j}{\upsilon}{P} \rightsquigarrow C_{4j}, e_j \\
+        C = \casesize{I_k^s}{\hat{\upsilon}} \cup C_1 \cup C_2 \cup C_3 \cup (\textstyle\bigcup_j C_{4j})
+      }{
+        \gp \vdash \caseof{P^\circ}{e^\circ}{c_j}{e_j^\circ} \rightsquigarrow C, \caseof{|P|}{e}{c_j}{e_j} \Rightarrow \app{P}{\vec{a}}{e}
+      }
+      \end{displaymath}
+      Let $\rho \vDash C$.
+      We must show that $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho (\caseof{|P|}{e}{c_j}{e_j}) : \rho (\app{P}{\vec{a}}{e})$.
+      The induction hypotheses and \autoref{lem:subtyping} tell us the following:
+      \begin{itemize}
+        \item $\forall \rho_1 \vDash C_1, \Gamma_G, \rho_1 \Gamma_{\Psi} \vdash \rho_1 e : \rho_1 (\app{I^s_k}{\vec{p}}{\vec{a}})$;
+        \item $\forall \rho_2 \vDash C_2, \Gamma_G, \rho_2 \Gamma_{\Psi} \vdash \rho_2 P : \rho_2 t_p$;
+        \item $\forall \rho_3 \vDash C_3, \Gamma_G, \rho_3 \Gamma_{\Psi} \vdash \rho_3 t_p \leq \rho_3 (\motivetype{\vec{p}}{U}{I_k^{\hat{\upsilon}}})$; and
+        \item $\forall \rho_{4j} \vDash C_{4j}, \Gamma_G, \rho_{4j} \Gamma_{\Psi} \vdash \rho_{4j} e_j : \rho_{4j} (\branchtype{\vec{p}}{c_j}{\upsilon}{P})$.
+      \end{itemize}
+      We can apply $\rho$ to all four of these.
+      By \refrule{conv}, we have that $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho P : \rho (\motivetype{\vec{p}}{U}{I_k^{\hat{\upsilon}}})$.
+      Because $\rho \vDash \casesize{I_k^s, \hat{\upsilon}}$,
+      $\rho s \sqsubseteq \rho \hat{\upsilon}$ if $I_k$ is inductive and
+      $\rho \hat{\upsilon} \sqsubseteq s$ if $I_k$ is coinductive.
+      Then by Rules \refnorule{st-ind} or \refnorule{st-coind} respectively,
+      we have $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho I_k^s \leq \rho I_k^{\hat{\upsilon}}$,
+      and by \refrule{conv}, we have $\forall \rho_1 \vDash C_1, \Gamma_G, \rho_1 \Gamma_{\Psi} \vdash \rho_1 e : \rho_1 (\app{I_k^{\hat{\upsilon}}}{\vec{p}}{\vec{a}})$.
+      Finally, using \refrule{case}, we have our goal.
+    \item \refrule{a-fix}.
+      \begin{displaymath}
+        \inferrule[\defrule{a-fix}]{
+          \textrm{For each $k$:} \\
+          \gp \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
+          \gp \vdash \setrecstars{t_k^\circ}{n_k} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
+          \prodctx{\Delta_k}{u_k} = \whnf{t_k} \and \prodctx{\Delta_k}{u'_k} = \shift{\prodctx{\Delta_k}{u_k}} \\
+          \gp \overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
+          \Gamma_G, \Gamma_{\Psi} \Delta_k \vdash u_k \constrain u'_k \rightsquigarrow C_{3k} \\
+          C_4 = \textstyle\bigcup_k C_{1k} \cup C_{2k} \cup C_{3k} \\
+          C_5 = \RecCheckLoop{C_4}{\overline{\getrecvar{t_k}{n_k}}}{\overline{t_k}}{\overline{e_k}}
+        }{
+          \gp \vdash \fix{m}{f_k^{n_k}}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \fix{m}{f_k^{n_k}}{|t_k|^*}{e_k} \Rightarrow t_m
+        }
+      \end{displaymath}
+      Let $\rho \vDash C_5$.
+      We must show that $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho (\fix{m}{f_k^{n_k}}{|t_k|^*}{e_k}) : \rho t_m$.
+      The induction hypotheses tell us the following:
+      \begin{itemize}
+        \item $\forall \rho_{1k} \vDash C_{1k}, \Gamma_G, \rho_{1k} \Gamma_{\Psi} \vdash \rho_{1k} t_k : U$;
+        \item $\forall \rho_{2k} \vDash C_{2k}, \Gamma_G, \rho_{2k} (\Gamma_{\Psi} \vec{(f_k : t_k)}) \vdash \rho_{2k} e_k : \rho_{2k} (\prodctx{\Delta_k}{u'_k})$; and
+        \item $\forall \rho_{3k} \vDash C_{3k}, \Gamma_G, \rho_{3k} (\Gamma_{\Psi} \Delta_k) \vdash \rho_{3k} u_k \leq \rho_{3k} u'_k$.
+      \end{itemize}
+      By \autoref{thm:reccheckloop}, from $\rho \vDash C_5$,
+      we also have that for every $i \in \vec{k}$,
+      $\rho \vDash \RecCheck{C_4, \tau_i, \PV{t_i}, \SV{\Psi, t_i, e_i} \setminus \PV{t_i}}$,
+      where $\tau_i = \getrecvar{t_i, n_i}$.
+      Then applying \autoref{thm:src}, letting $\upsilon_i$ be a fresh size variable, there exists a $\rho'$ such that the following hold:
+      \begin{enumerate}
+        \item \label{item:soundness:fix:1} $\rho' \vDash C_4$;
+        \item \label{item:soundness:fix:2} $\rho' \tau_i = \upsilon_i$
+        \item \label{item:soundness:fix:3} $\floor{\rho' \PV{t_i}} = \upsilon_i$
+        \item \label{item:soundness:fix:4} $\floor{\rho' (\SV{\Psi, t_i, e_i} \setminus \PV{t_i})} \neq \upsilon_i$;
+        \item \label{item:soundness:fix:5} $\forall \upsilon' \in \SV{\Psi, t_i, e_i} \setminus \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau} \circ \rho') \upsilon' = \rho \upsilon'$; and
+        \item \label{item:soundness:fix:6} $\forall \tau' \in \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau} \circ \rho') \tau' \sqsubseteq \rho \tau'$.
+      \end{enumerate}
+      By \ref{item:soundness:fix:4} and \ref{item:soundness:fix:5} together, we can conclude that 
+      $\forall \upsilon' \in \SV{\Psi, t_i, e_i} \setminus \PV{t_i}, \rho' \upsilon' = \rho \upsilon'$, so $\rho'\Psi = \rho \Psi$ and $\rho' e_k = \rho e_k$.
+      Then by \ref{item:soundness:fix:1}, we can apply $\rho'$ to each the inductive hypotheses and simplify to yield:
+      \begin{itemize}
+        \item $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho' t_k : U$;
+        \item $\Gamma_G, (\rho \Gamma_{\Psi})\vec{(f_k : \rho' t_k)} \vdash \rho e_k : \rho' (\prodctx{\Delta_k}{u'_k})$; and
+        \item $\Gamma_G, (\rho \Gamma_{\Psi})(\rho'\Delta_k) \vdash \rho' u_k \leq \rho' u'_k$.
+      \end{itemize}
+      Notice that \shift only shifts position variables up by one, which means that by \ref{item:soundness:fix:2}, $\rho'u'_k = \set{\upsilon_i \mapsto \succ{\upsilon}_i}(\rho'u_k)$.
+      Then by \autoref{lem:posneg} applied to the empty substitution and $\set{\upsilon_i \mapsto \succ{\upsilon}_i}$, the last subtyping judgement implies that $\upsilon_i \pos \rho'u_k$.
+      At last, we are able to apply \refrule{fix}, picking $s = \upsilon_m$:
+      $$\Gamma_G, \rho \Gamma_{\Psi} \vdash \fix{m}{f_k^{n_k}}{|\rho' t_k|^{\upsilon_k}}{\rho e_k} : \rho' t_m$$
+      By \ref{item:soundness:fix:3} and \ref{item:soundness:fix:4}, we have $\erase{\rho' t_i}^{\upsilon_i} = \erase{t_i}^*$.
+      Finally, % TODO: Apply \ref{item:soundness:fix:6}.
   \end{itemize}
 \end{enumerate}
 \end{proof}
