@@ -133,14 +133,14 @@ We use the following additional expressions relating membership in contexts and 
 
 \subsection{Reduction Rules}
 
-The reduction rules are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
-We define convertibility ($\approx$) as the symmetric--reflexive--transitive compatible closure of reductions up to $\eta$-expansion.
-The complete reduction rules are reproduced in \autoref{sec:red-conv-trans};
-we refer the reader to previous work~\citep{cic-hat-minus, cic-hat, cc-hat-omega} and the Coq manual in particular~\citet{coq} for precise details and definitions.
+The reduction rules, listed in \autoref{fig:reduction} are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
+We define $\rhd$ as the congruent closure of the reductions, $\rhd^*$ as the reflexive--transitive closure of $\rhd$,
+and convertibility ($\approx$) as the confluent congruent closure of $\rhd^*$ up to $\eta$-convertibility.
+We refer the reader to previous work~\citep{cic-hat-minus, cic-hat, cc-hat-omega} and the Coq manual in particular~\citep{coq} for precise details and definitions.
 
 \input{figures/reduction.tex}
 
-In the case of \deltaDeltareduction, if the variable has a size substitution annotation, we define additional rules, shown in \autoref{fig:reduction}.
+In the case of \deltaDeltareduction, where the variable has a size substitution annotation, we define additional Rules \refnorule{delta} and \refnorule{Delta}.
 These reduction rules are important for supporting size inference with definitions.
 If the definition body contains \coinductive types (or other defined variables), we can assign them fresh size variables for each distinct usage of the defined variable.
 Further details are discussed in \autoref{sec:algorithm}.
