@@ -59,12 +59,6 @@ so $\Delta^\infty$ for instance is a local declaration environment with only ful
 
 \autoref{fig:sugar} defines syntactic sugar on terms, most of which is standard.
 
-We use $t[x \coloneqq e]$ to denote the term $t$ with free variable $x$ substituted by expression $e$,
-and $t[\upsilon \coloneqq s]$ to denote the term $t$ with size variable $\upsilon$ substituted by size expression $s$.
-Furthermore, we use $\rho e$ to denote applying the size substitution $\rho$ to the term $e$.
-That is, if $\upsilon \mapsto s$ is in $\rho$, then we perform the substitution $\subst{e}{\upsilon}{s}$.
-$\rho s$ similarly does the same thing for the size expression $s$, and $\rho \Gamma$ for every term in the environment $\Gamma$.
-
 \subsubsection{Mutual (Co)Inductive Definitions}
 
 \input{figures/inductives.tex}
@@ -109,28 +103,27 @@ We further assume throughout that there is some implicit well-formed signature $
 Note that nested \coinductive types are \emph{not} supported in \lang, as they break subject reduction (see \autoref{sec:metatheory} for details).
 This restriction manifests in the definition of strict positivity.
 
-\subsubsection{Metafunctions}
+\subsubsection{Metafunctions and Metarelations}
 
 We declare the following metafunctions, whose definitions are straightforward:
 
 \begin{itemize}
-    \item $\FV{\ph}, \SV{\ph}$ return the set of free term and size variables in a given term or environment;
+    \item $\FV{\ph}, \SV{\ph}$ return the set of free term and size variables in a given term or environment, respectively;
     \item $\floor{\ph}$ returns the size variable a given finite (\ie not $\infty$) size expression;
     \item $\norm{\ph}$ returns the cardinality of its argument (\eg sequence length, set size, \etc);
     \item $\erase{\ph}$ erases sized terms to bare terms; and
     \item $\erase{\ph}^\upsilon$ replaces size annotations with size variable $\upsilon$ by $*$ and removes all other ones.
 \end{itemize}
 
-The free size variables of a size substition $\rho$ are only those of the sizes that $\rho$ maps \emph{to}.
+Note that the free size variables of a size substition $\rho$ are only those of the sizes that $\rho$ maps \emph{to}.
 
-We use the following additional expressions relating membership in contexts and signatures:
+We use $t[x \coloneqq e]$ to denote the term $t$ with free variable $x$ substituted by expression $e$,
+and $t[\upsilon \coloneqq s]$ to denote the term $t$ with size variable $\upsilon$ substituted by size expression $s$.
+Furthermore, we use $\rho e$ to denote applying the size substitution $\rho$ to the term $e$.
+That is, if $\upsilon \mapsto s$ is in $\rho$, then we perform the substitution $\subst{e}{\upsilon}{s}$.
+$\rho s$ similarly does the same thing for the size expression $s$, and $\rho \Gamma$ for every term in the environment $\Gamma$.
 
-\begin{itemize}
-    \item $x \in \Gamma$, $(\assm{x}{t}) \in \Gamma$, or $(\defn{x}{t}{e}) \in \Gamma$ indicate that there is some declaration with variable name $x$, some assumption with type $t$, or some definition with type $t$ and body $e$ in the local context, and similarly for $\Gamma_G$;
-    \item $\Gamma(x)$ returns the type bound to $x$ in $\Gamma$, and similarly for $\Gamma_G$;
-    \item $I \in \Sigma$ means the \coinductive definition of type $I$ is in the signature.
-\end{itemize}
-
+Finally, $x \in \Gamma$, $(\assm{x}{t}) \in \Gamma$, or $(\defn{x}{t}{e}) \in \Gamma$ indicate that there is some declaration with variable name $x$, some assumption with type $t$, or some definition with type $t$ and body $e$ in the local context, respectively, and similarly for $\Gamma_G$.
 \subsection{Reduction Rules}
 
 The reduction rules listed in \autoref{fig:reduction} are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
