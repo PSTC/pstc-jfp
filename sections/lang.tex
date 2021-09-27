@@ -133,14 +133,16 @@ We use the following additional expressions relating membership in contexts and 
 
 \subsection{Reduction Rules}
 
-The reduction rules, listed in \autoref{fig:reduction} are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
-We define $\rhd$ as the congruent closure of the reductions, $\rhd^*$ as the reflexive--transitive closure of $\rhd$,
-and convertibility ($\approx$) as the confluent congruent closure of $\rhd^*$ up to $\eta$-convertibility.
-We refer the reader to previous work~\citep{cic-hat-minus, cic-hat, cc-hat-omega} and the Coq manual in particular~\citep{coq} for precise details and definitions.
+The reduction rules listed in \autoref{fig:reduction} are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
+We define reduction ($\reduce$) as the congruent closure of the reductions,
+multi-step reduction ($\rhd^*$) in \autoref{fig:reductions} as the reflexive--transitive closure of $\rhd$,
+and convertibility ($\approx$) in \autoref{fig:convertibility}.
+For brevity, we state congruence rules using substitution,
+and refer the reader to previous work~\citep{cic-hat-minus, cic-hat, cc-hat-omega} and the Coq manual in particular~\citep{coq} for precise details and definitions.
 
 \input{figures/reduction.tex}
 
-In the case of \deltaDeltareduction, where the variable has a size substitution annotation, we define additional Rules \refnorule{delta} and \refnorule{Delta}.
+In the case of \deltaDeltareduction, where the variable has a size substitution annotation, we modify the usual rules.
 These reduction rules are important for supporting size inference with definitions.
 If the definition body contains \coinductive types (or other defined variables), we can assign them fresh size variables for each distinct usage of the defined variable.
 Further details are discussed in \autoref{sec:algorithm}.
@@ -191,14 +193,15 @@ We begin with the rules for well-formedness of local and global environments, pr
 As mentioned earlier, we elide the definition of well-formedness of signatures,
 and assume that the ambient implicit signature is well-formed.
 
+\input{figures/sets.tex}
+
 \input{figures/metafunctions.tex}
 
 \input{figures/pos-neg.tex}
 
 \input{figures/typing.tex}
 
-The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
-These are listed in \autoref{fig:axruel} in \autoref{sec:supplementary}.
+The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
 Metafunctions that construct some important function types are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 Finally, the typing rules use the notions of positivity and negativity, whose rules are given in \autoref{fig:posneg}, describing where the position annotations of fixpoints are allowed to appear.
 Positivity and negativity are structured such that the properties $\upsilon \pos t \Leftrightarrow t \leq \subst{t}{\upsilon}{\hat{\upsilon}}$ and $\upsilon \neg t \Leftrightarrow \subst{t}{\upsilon}{\hat{\upsilon}} \leq t$ hold.

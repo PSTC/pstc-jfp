@@ -1,6 +1,15 @@
 \section{Prototype Implementation and Evaluation} \label{sec:impl}
 
-% TODO: Intro for the section
+We have implemented the sized typing algorithm in a beta version of Coq 8.12,
+which can be found in the supplementary materials.
+% TODO: Are they called supplementary materials in JFP?
+% TODO: Update the implementation on Zenodo (\cite{impl}).
+Naturally, the full core language of Coq has more features (irrelevant for sized typing) than \lang,
+and the implementation has to interact with these as well as other proof assistant features such as elaboration and the vernacular.
+Furthermore, many details of the sized typing algorithm are left underspecified.
+In this section, we take a take a brief look at these details,
+verify the time complexity of the implementation against the theoretical complexities from the previous section,
+and discuss the practical feasibility of the implementation as well as the problems that were encountered.
 
 \subsection{Architecture of the Coq Kernel}
 
@@ -77,7 +86,7 @@ We divide these functions into four groups: the \solve and \RecCheck functions, 
 function common to all operations manipulating size annotations on the AST (such as applying size substitutions),
 the functions in \texttt{State}, and the functions in \texttt{Constraints}.
 \autoref{table:timing} summarizes the results, as well as the relative time spent in the functions in \fieldtheorysized.
-All of the $t$-statistics yield $p \ll 0.01$.
+The differences in execution times of the functions in each group are all statistically significant ($p \ll 0.01$ for all of the $t$-statistics).
 % meaning that the differences between the sized and unsized times are statistically significant.
 
 \begin{table}

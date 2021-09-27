@@ -1,35 +1,40 @@
 \begin{figure}
 \fbox{$\gg \vdash e \reduce_{\beta\zeta\delta\Delta\iota\mu\nu} e$} \hfill
-\begin{mathpar}
-  \inferrule*[right=\defnamerule{delta}{$\delta$}]
-    {(x : t \coloneqq e) \in \Gamma}
-    {\gg \vdash x^\rho \reduce_\delta \rho e}
-  \and
-  \inferrule*[right=\defnamerule{Delta}{$\Delta$}]
-    {(\Defn{x}{t}{e}) \in \Gamma_G}
-    {\gg \vdash x^\rho \reduce_\Delta \rho e}
-  \and
-  \inferrule*[right=\defnamerule{beta}{$\beta$}]{~}
-    {\gg \vdash \app{(\abs{x}{t^\circ}{e_1})}{e_2} \reduce_\beta \subst{e_1}{x}{e_2}}
-  \and
-  \inferrule*[right=\defnamerule{zeta}{$\zeta$}]{~}
-    {\gg \vdash \letin{x}{t^\circ}{e_1}{e_2} \reduce_\zeta \subst{e_2}{x}{e_1}}
-  \and
-  \inferrule*[right=\defnamerule{iota}{$\iota$}]{~}
-    {\gg \vdash \caseof{P^\circ}{(\app{c_\ell}{\vec{p}}{\vec{a}})}{c_j}{e_j} \reduce_\iota \app{e_\ell}{\vec{a}}}
-  \and
-  \inferrule*[right=\defnamerule{mu}{$\mu$}]
-    {q_i \equiv \fix{i}{f_k^{n_k}}{t_k}{e_k} \and \norm{\vec{b}} = n_m - 1}
-    {\gg \vdash \app{q_m}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
-      \reduce_\mu \app{\substvec{e_m}{f_k}{q_k}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}}
-  \and
-  \inferrule*[right=\defnamerule{nu}{$\nu$}]
-    {q_i \equiv \cofix{i}{f_k}{t_k}{e_k}}
-    {\gg \vdash \caseof{P^\circ}{(\app{q_m}{\vec{b}})}{c_j}{a_j}
-      \reduce_\nu \caseof{P^\circ}{(\app{\substvec{e_m}{f_k}{q_k}}{\vec{b}})}{c_j}{a_j}}
-\end{mathpar}
+\begin{align*}
+\gg \vdash x^\rho & \reduce_\delta \rho e \qquad \textit{where} ~ (x : t \coloneqq e) \in \Gamma \\
+\gg \vdash x^\rho & \reduce_\Delta \rho e \qquad \textit{where} ~ (\Defn{x}{t}{e}) \in \Gamma_G \\
+\gg \vdash \app{(\abs{x}{t^\circ}{e_1})}{e_2} & \reduce_\beta \subst{e_1}{x}{e_2} \\
+\gg \vdash \letin{x}{t^\circ}{e_1}{e_2} & \reduce_\zeta \subst{e_2}{x}{e_1} \\
+\gg \vdash \caseof{P^\circ}{(\app{c_\ell}{\vec{p}}{\vec{a}})}{c_j}{e_j} & \reduce_\iota \app{e_\ell}{\vec{a}} \\
+\gg \vdash \app{q_m}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
+  & \reduce_\mu \app{\substvec{e_m}{f_k}{q_k}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})} \\
+  \textit{where} ~ & \forall i \in \vec{k}, q_i \equiv \fix{i}{f_k^{n_k}}{t_k}{e_k}, \norm{\vec{b}} = n_m - 1 \\
+\gg \vdash \caseof{P^\circ}{(\app{q_m}{\vec{b}})}{c_j}{a_j}
+  & \reduce_\nu \caseof{P^\circ}{(\app{\substvec{e_m}{f_k}{q_k}}{\vec{b}})}{c_j}{a_j} \\
+  \textit{where} ~ & \forall i \in \vec{k}, q_i \equiv \cofix{i}{f_k}{t_k}{e_k}
+\end{align*}
 \caption{Reduction rules}
 \label{fig:reduction}
+\end{figure}
+
+\begin{figure}
+\fbox{$\gg \vdash e \reduce^* e$} \hfill
+\vspace{-2ex}
+
+\begin{mathpar}
+  \inferrule[\defrule{red-refl}]{~}{
+    \gg \vdash e \reduce^* e
+  }
+  \and
+  \inferrule[\defrule{red-trans}]{
+    \gg \vdash e_1 \reduce e_2 \and
+    \gg \vdash e_2 \reduce^* e_3
+  }{
+    \gg \vdash e_1 \reduce^* e_3
+  }
+\end{mathpar}
+\caption{Multi-step reduction rules}
+\label{fig:reductions}
 \end{figure}
 
 \begin{figure}
@@ -38,11 +43,11 @@
 
 \begin{mathpar}
   \inferrule[\defrule{conv-cong}]
-    {\text{For every i:} \and
+    {\text{For every $i$:} \and
       \gg \vdash a_i \conv b_i}
     {\gg \vdash \substvec{e}{x_i}{a_i} \conv \substvec{e}{x_i}{b_i}}
   \and
-  \inferrule[\defnamerule{conv-red}{conv-$\reduce^*$}]
+  \inferrule[\defrule{conv-red}]
     {\gg \vdash e_1 \reduce^* e \\\\
       \gg \vdash e_2 \reduce^* e}
     {\gg \vdash e_1 \conv e_2}
@@ -60,7 +65,7 @@
     {\gg \vdash e_1 \conv e_2}
 \end{mathpar}
 \caption{Convertibility rules}
-\label{fig:conversion}
+\label{fig:convertibility}
 \end{figure}
 
 %%% Local Variables:

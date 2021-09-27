@@ -128,7 +128,7 @@ The short answer to our question, ``why doesn't Coq \emph{just} use sized types'
 While this isn't possible, it seems wildly impractical.
 
 The remainder of this paper is organized as follows.
-We begin in \autoref{sec:sponge-cake} with a high-level overview of the design of \lang, its role in Coq, and the main lessons from our design.
+We begin in \autoref{sec:overview} with a high-level overview of the design of \lang, its role in Coq, and the main lessons from our design.
 We formalize the calculus \lang in \autoref{sec:typing}.
 In \autoref{sec:algorithm}, we present a size inference algorithm from CIC terms to sized \lang terms that details how we annotate the types of \cofixpoints, how we deal with the lack of polarities, and how definitions are supported, and termination and productivity checking.
 % In \autoref{sec:examples}, we provide a few examples of programs that pass sized typing but not guard checking and vice versa, discuss some categories of terminating programs that cannot be typed in \lang, and step through the size inference algorithm for an example program.
