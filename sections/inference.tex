@@ -470,8 +470,7 @@ By induction on the rules for algorithmic subtyping in \autoref{fig:algorithm-su
 \end{proof}
 
 % TODO: I'm thinking of removing these few lemmas...
-% \iffalse
-
+\iffalse
 \begin{lemma}\label{lem:constraint-subst}
 $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \end{lemma}
@@ -492,8 +491,7 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \begin{proof}[{[Sketch]}]
 % TODO: Uses earlier lemma showing that $\Sigma, \Gamma_G, \subst{\Gamma}{\upsilon}{s} \vdash \subst{e}{\upsilon}{s} : \subst{t}{\upsilon}{s}.
 \end{proof}
-
-% \fi
+\fi
 
 Now we are ready to tackle the main theorems.
 
@@ -674,23 +672,23 @@ Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
 Then the following hold:
 \begin{enumerate}
   \item If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : \rho t$,
-    then there exist $C', \rho'$ such that:
+    then there exist $C, \rho'$ such that:
     \begin{itemize}
-      \item $\rho' \vDash C'$;
+      \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $C, \Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$.
+      \item $\Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$.
     \end{itemize}
   \item if $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
-    then there exist $C', \rho'$ such that:
+    then there exist $C, \rho'$ such that:
     \begin{itemize}
-      \item $\rho' \vDash C'$;
+      \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $C, \Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C', e' \Rightarrow t'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$ and $\Gamma_G, \Gamma_{\Psi} \vdash \rho' t \leq t$.
+      \item $\Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C, e' \Rightarrow t'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$ and $\Gamma_G, \Gamma_{\Psi} \vdash \rho' t \leq t$.
     \end{itemize}
 \end{enumerate}
 \end{conjecture}
 
-\begin{theorem}[Soundness (wellformedness)]
+\begin{theorem}[Soundness (well-formedness)]
 If $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ then $\WF{\Gamma_G, \mt}$.
 \end{theorem}
 
@@ -727,6 +725,34 @@ By cases on the size inference rules for global declarations.
     By the induction hypothesis, we have that $\WF{\Gamma_G, \mt}$.
     Then by \autoref{thm:soundness}, we have that $\Gamma_G, \mt \vdash \rho t : \varw$ and $\Gamma_G, \mt \vdash \rho e : \rho t$.
     Finally, by \refrule{wf-global-def}, we conclude that $\WF{\Gamma_G(\Defn{x}{\rho t}{\rho e}), \mt}$.
+\end{itemize}
+\end{proof}
+
+The completeness theorem for well-formedness is slightly different than expected:
+a well-formed global environment, when erased, should successfully have sizes inferred,
+but we don't place any requirements on the newly size-inferred environment,
+just that there should be \emph{some} answer.
+
+\begin{theorem}[Completeness (well-formedness)]
+If $\WF{\Gamma_G, \mt}$ then $\erase{\Gamma_G} \rightsquigarrow \Gamma'_G$.
+\end{theorem}
+
+\begin{proof}
+By cases on the well-formedness rules for global declarations.
+\begin{itemize}
+  \item \refrule{wf-nil}: Trivial.
+  \item \refrule{wf-global-assum}.
+    \begin{displaymath}
+      \inferrule[]
+        {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
+        {\WF{\Gamma_G (\Assm{x}{t}), \mt}}
+    \end{displaymath}
+  \item \refrule{wf-global-def}.
+    \begin{displaymath}
+      \inferrule[\defrule{wf-global-def}]
+        {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
+        {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
+    \end{displaymath}
 \end{itemize}
 \end{proof}
 
