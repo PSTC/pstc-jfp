@@ -2,14 +2,14 @@
 \label{sec:metatheory}
 
 In this section, we describe the metatheory of \lang.
-Some of the metatheory is inherited or essentially similar to past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat}, although we must adapt key proofs to account for differences in subtyping and definitions.
-Complete proofs for a language like \lang are too involved to present in full, so we provide key lemmas and proof sketches; full proofs can be found in \anotherpdf.
+Some of the metatheory is inherited or essentially similar to past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat},
+although we must adapt key proofs to account for differences in subtyping and definitions.
+Complete proofs for a language like \lang are too involved to present in full,
+so we provide only key lemmas and proof sketches.
 
-In short, \lang satisfies confluence and subject reduction (with the same caveats as in CIC for cofixpoints).
-Proofs of strong normalization and logical consistency for \lang, and soundness and completeness of the size inference algorithm with respect to the typing rules, remain future work.
+In short, \lang satisfies confluence and subject reduction, with the same caveats as in CIC for cofixpoints.
+Proofs of strong normalization and logical consistency for \lang remain future work.
 We conjecture how the proofs of strong normalization and consistency should proceed based on past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat}.
-
-The metatheoretical investigations provide many interesting questions, so we discuss future work in context as these questions arise.
 
 \subsection{Confluence}
 
@@ -17,22 +17,18 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
 
 \begin{theorem}[Confluence]
 \label{thm:metatheory:confluence}
-  %
-  Let $e, e_{1,2}$ be terms.
-  %
-  If $e_1 \prescript{*}{}{\lhd ~ } e \rhd^* e_2$ then
-  $e_1 \rhd^* e' \prescript{*}{}{\lhd ~ } e_2$
-  for a term $e'$.
-  %
+  If $\gg \vdash e \rhd^* e_1$ and $\gg \vdash e \rhd^* e_2$,
+  then there is some term $e'$ such that $\gg \vdash e_1 \rhd^* e'$ and $\gg \vdash e_2 \rhd^* e'$.
 \end{theorem}
-%
+
 \begin{proof}[{[sketch]}]
-  %
-  We use the Takahashi translation technique due to \citet{takahashitrans}, which is a simplification of the standard
-  parallel reduction technique.
-  %
+  We use the Takahashi translation technique due to \citet{takahashitrans},
+  which is a simplification of the standard parallel reduction technique.
+  It uses the Takahashi translation $e^\dagger$ of terms $e$,
+  defined as the simultaneous single-step reduction of all
+  $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.
   The proof is straightforward.
-  %
+  % TODO: Is it though?
 \end{proof}
 
 \subsection{Subject Reduction}
@@ -58,7 +54,19 @@ For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
 \end{align*}
 Assuming both terms are well-typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
 
-On the other hand, if we do allow unrestricted reduction, subject reduction does hold.
+\begin{figure}
+  \fbox{$\gg \vdash e \reduce_{\beta\zeta\delta\Delta\iota\mu\nu'} e$} \hfill
+  \vspace{-3ex}
+  \begin{align*}
+    \dots & \\
+    \gg \vdash q_m & \reduce_{\nu'} \substvec{e_m}{f_k}{q_k} \\
+    \textit{where} ~ & \forall i \in \vec{k}, q_i \equiv \cofix{i}{f_k}{t_k}{e_k}
+  \end{align*}
+  \caption{Reduction rules with unrestricted cofixpoint reduction}
+  \label{fig:reduction-alt}
+\end{figure}
+
+On the other hand, if we do allow unrestricted $\nu$-reduction as in \autoref{fig:reduction-alt}, subject reduction does hold.
 
 \begin{theorem}[Subject Reduction]
   \label{thm:metatheory:sr}
@@ -133,103 +141,6 @@ We conjecture that the terms synthesized by the inference algorithm do indeed sa
 although perhaps at the expense of other desired metatheoretical properties,
 such as completeness of the algorithm with respect to the typing rules,
 which we discuss in the next subsection.
-
-\iffalse % TODO: Delete all this when metatheory subsection in Size Inference is complete
-\subsection{Soundness and Completeness of Size Inference}\label{sec:meta:sound-complete}
-The size inference algorithm assigns fresh size variables to each \coinductive type and produces a set of size constraints; however, the typing rules of \lang state a relationship between a particular sized term and its sized type.
-To prove soundness and completeness, we need the notions of a size substitution and satisfaction of a constraint system, introduced in \autoref{subsec:algorithm:wf}.
-We further define composition, $(\rho_1 \circ \rho_2)(\upsilon) \coloneqq \rho_1(\rho_2(\upsilon))$, and pointwise mapping, $\rho(V) \coloneqq \set{s : \forall \upsilon \in V, \rho(\upsilon) = s}$.
-Abusing notation, we write $\rho(V) = s$ to mean $\forall s' \in \rho(V), s' = s$.
-
-Soundness and completeness of the size inference algorithm rely on notions of soundness and completeness for \RecCheck, stated below.
-They have been slightly modified from their original defintions; we refer the reader to \anotherpdf and to \citet{f-hat} for the full proofs of SRC and CRC.
-
-\begin{theorem}[Soundness of \RecCheck (SRC)]
-  If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDash C$, given a fresh stage variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
-  \begin{itemize}
-    \item $\rho' \vDash C'$
-    \item For all $\upsilon' \in V^\neq$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\upsilon') = \rho(\upsilon')$
-    \item For all $\tau' \in V^*$, $(\subst{}{\upsilon}{\rho(\tau)} \circ \rho')(\tau') = \rho(\tau')$
-    \item $\rho'(V^*) = \upsilon$
-    \item $\floor{\rho'(V^\neq)} \neq \upsilon$
-  \end{itemize}
-  Intuitively, if \RecCheck succeeds with $C$, then given any substitution $\rho$ that satisfies $C$, there is another substitution $\rho'$ that satisfies the original constraint system $C'$ while also not violating any of the properties that \RecCheck enforces to produce $C$.
-\end{theorem}
-
-\begin{theorem}[Completeness of \RecCheck (CRC)]
-  Suppose the following all hold:
-  \begin{itemize}
-    \item $\rho \vDash C'$
-    \item $\rho(V^*) = \upsilon$
-    \item $\floor{\rho(V^\neq)} \neq \upsilon$
-  \end{itemize}
-  Then $\RecCheck(C', \tau, V^*, V^\neq) = C$ and $\rho \vDash C$.
-\end{theorem}
-
-Given a generic environment $\Psi$, we use $\Gamma_\Psi$ to denote the environment stripped of all of the constraints in $\Psi$.
-We can now state soundness and completeness of the checking, inference, and well-formedness portions of the algorithm.
-
-\begin{theorem}[Soundness (check/infer)]
-  Let $\Sigma$ be a fixed, well-formed signature.
-  Suppose $\WF{\Sigma, \Gamma_G, \mt}$ holds.
-  \begin{enumerate}
-    \item If for every $\rho$ such that $\rho \vDash C$ the following hold:
-      \begin{itemize}
-        \item $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
-        \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
-        \item $C, \Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$
-      \end{itemize}
-      Then for every $\rho$ such that $\rho \vDash C'$, $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$ holds.
-    \item If for every $\rho$ such that $\rho \vDash C$ the following hold:
-      \begin{itemize}
-        \item $\WF{\Sigma, \Gamma_G, \rho\Gamma_\Psi}$
-        \item If $\Psi = \Psi_1 (C_1, x : u \coloneqq a) \Psi_2$, then $\forall \rho \vDash C_1$, we have $\Sigma, \Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho a : \rho u$
-        \item $C, \Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$
-      \end{itemize}
-      Then for every $\rho$ such that $\rho \vDash C'$, $\Sigma, \Gamma_G, \rho\Gamma_\Psi \vdash \rho e : \rho t$ holds.
-  \end{enumerate}
-\end{theorem}
-
-The third condition tells us our primary goal: if the checking or inference algorithm succeeds, then given a solution of the constraints it produces, the term is well-typed.
-However, well-typedness under a malformed environment is meaningless, so we must also require that the environments we provide to the algorithm are well-formed, and that the constraints of generic environments are valid.
-
-\begin{proof}[{[sketch]}]
-  By simultaneous induction on the checking and inference judgements of the algorithm.
-  We refer the reader to \anotherpdf for the bulk of the proof and to \citet{f-hat, cc-hat-omega} for further details.
-  SRC is used in the cases of \refrule{a-fix} and \refrule{a-cofix}: if \RecCheckLoop succeeds, then there is some position annotation of the bare \cofixpoint type such that \RecCheck succeeds, and we can apply SRC.
-  Since the typing rules use positivity and negativity while the algorithm uses subtyping, we also make use of a lemma stating if $\rho_1(V) \sqsubseteq \rho_2(V)$, then $V \pos t \implies \rho_1 t \leq \rho_2 t$ and $V \neg t \implies \rho_2 t \leq \rho_1 t$.
-\end{proof}
-
-\begin{theorem}[Soundness (well-formedness)]
-  Let $\Sigma$ be a fixed, well-formed signature. \\
-  If $\Gamma^\circ_G \rightsquigarrow \Gamma_G$, then $\WF{\Sigma, \Gamma_G, \mt}$ holds.
-\end{theorem}
-
-\begin{proof}[{[sketch]}]
-  By induction on the well-formedness judgements of the algorithm.
-  Again, we refer the reader to \anotherpdf for the bulk of the proof, which relies on the soundness of the checking and inference judgements.
-  It also requires a lemma stating $\solve{C} \vDash C$ to ensure that global definitions are well-typed.
-\end{proof}
-
-\begin{conjecture}[Completeness]
-  Let $\Sigma$ a fixed, well-formed signature.
-  \begin{enumerate}
-    \item\label{thm:completeness:checking} If $\Sigma, \Gamma_G, \rho\Gamma \vdash e : \rho t$ and $\rho \vDash C$, then there exist $C', \rho', \Psi, e'$ such that $\forall \upsilon \in \SV{\Gamma, t}, \rho(\upsilon) = \rho'(\upsilon)$ and $\rho' \vDash C'$ and $\Gamma_\Psi = \Gamma$ and $\rho' e' = e$ and $C, \Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$.
-    \item\label{thm:completeness:inference} If $\Sigma, \Gamma_G, \rho\Gamma \vdash e : t$ and $\rho \vDash C$, then there exist $C', \rho', \Psi, e', t'$ such that $\forall \upsilon \in \SV{\Gamma}, \rho(\upsilon) = \rho'(\upsilon)$ and $\rho' \vDash C'$ and $\Gamma_\Psi = \Gamma$ and $\rho' e' = e$ and $\rho' t' \leq t$ and $C, \Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C', e' \Rightarrow t'$.
-    \item\label{thm:completeness:wf} If $\WF{\Sigma, \Gamma_G, \mt}$, then $\erase{\Gamma_G} \rightsquigarrow \Gamma_G$.
-  \end{enumerate}
-\end{conjecture}
-
-\begin{proof}[{[sketch]}]
-  By induction on the typing judgement.
-  We refer the reader to \citet{f-hat, cc-hat-omega} for the bulk of the proof details.
-  We conjecture that if a \cofixpoint with position-annotated types $\overline{t_k}$ is well-typed, then \RecCheckLoop can find position annotations for $\overline{\erase{t_k}}$ that have at least the same position annotations as $\overline{t_k}$ such that \RecCheck succeeds, so that we can apply CRC.
-\end{proof}
-
-Completeness also remains a conjecture.
-The core of the proof relies on a property of \RecCheckLoop that we have yet been able to figure out how to prove.
-Further investigation into the completeness proof of \RecCheck from \Fhat may yield a proof technique.
-\fi
 
 \subsection{Strong Normalization and Logical Consistency}
 
