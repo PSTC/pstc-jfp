@@ -469,8 +469,6 @@ Then $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
 By induction on the rules for algorithmic subtyping in \autoref{fig:algorithm-subtyping}.
 \end{proof}
 
-% TODO: I'm thinking of removing these few lemmas...
-\iffalse
 \begin{lemma}\label{lem:constraint-subst}
 $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \end{lemma}
@@ -484,6 +482,23 @@ $\rho \vDash \rho' C$ iff $\rho \circ \rho' \vDash C$.
 \end{align*}
 \end{proof}
 
+\begin{lemma}\label{lem:fresh-vars}~\\[-4ex]
+\begin{enumerate}
+  \item If $\Gamma_G, \Psi \vdash e^\circ \Leftarrow t \rightsquigarrow C, e$, then $\forall \upsilon \in \SV{e}, \upsilon \notin \SV{\Psi}$.
+  \item If $\Gamma_G, \Psi \vdash e^\circ \rightsquigarrow C, e \Rightarrow t$, then $\forall \upsilon \in \SV{e}, \upsilon \notin \SV{\Psi}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}[{[Sketch]}]
+By mutual induction on the checking and inference rules of the algorithm.
+For checking, it follows by the induction hypothesis on the inference premise.
+For inference, most cases are straightforward applications of the induction hypothesis;
+new size annotations are only introduced in $e$ in Rules \refnorule{a-ind} and \refnorule{a-ind-star},
+which introduce fresh size variables that are by definition not in $\SV{\Psi}$.
+\end{proof}
+
+% TODO: I'm thinking of removing these few lemmas...
+\iffalse
 \begin{lemma}\label{lem:typing-subst}
   If $\gg \vdash e : t$, then $\Gamma_G, \rho \Gamma \vdash \rho e : \rho t$ and $\Gamma_G, \rho \Gamma \vdash \rho t : U$ for some $U$.
 \end{lemma}
@@ -499,9 +514,12 @@ Now we are ready to tackle the main theorems.
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, and $\Psi$ a generic local environment.
 Suppose we have the following:
 \begin{enumerate}[label=\roman*.]
-  \item \label{item:sound:wf:global} $\WF{\Gamma_G, \mt}$ holds; and
+  \item \label{item:sound:wf} There exists a $\rho$ such that $\WF{\Gamma_G, \rho \Gamma_{\Psi}}$; and
   \item \label{item:sound:psi} If $\Psi \equiv \Psi_1 (C_1, x : t \coloneqq e) \Psi_2$, then
-    $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds.
+  \begin{itemize}
+    \item $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV{\Psi_1}$; and
+    \item $\forall \rho \vDash C_1$, $\Gamma_G, \rho \Gamma_{\Psi_1} \vdash \rho e : \rho t$ holds.
+  \end{itemize}
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}
@@ -514,7 +532,7 @@ Then the following hold:
 
 \begin{proof}[{[Partial]}]
 By mutual induction on the checking and inference rules of the algorithm.
-Suppose \ref{item:sound:wf:global} and \ref{item:sound:psi} hold.
+Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
 \begin{enumerate}
   \item By \refrule{a-check}, we have
   \begin{displaymath}
@@ -543,13 +561,20 @@ Suppose \ref{item:sound:wf:global} and \ref{item:sound:psi} hold.
         \gp \vdash x \rightsquigarrow \rho C, x^\rho \Rightarrow \rho t
       }
     \end{displaymath}
-    Let $\rho' \vDash C$.
+    Let $\rho' \vDash \rho C$.
     We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
-    % TODO.
+    This follows from \refrule{var-def} if we can show that $\rho' \Gamma_{\Psi_1} \vdash \rho' (\rho e) : \rho' (\rho t)$ holds.
+    By \autoref{lem:constraint-subst}, we have $\rho' \circ \rho \vDash C$.
+    Then by \ref{item:sound:psi}, we have that $\Gamma_G, \rho'(\rho \Gamma_{\Psi_1}) \vdash \rho' (\rho e) : \rho' (\rho t)$ holds.
+    Since $\upsilon'_i \notin \SV(\Psi)$, $\rho \Gamma_{\Psi_1}$ is then simply $\Gamma_{\Psi_1}$,
+    which the judgement we need.
+    However, the definition in $\rho' \Gamma_{\Psi}$ is not $\defn{x}{\rho' (\rho t)}{\rho' (\rho e)}$ but rather $\defn{x}{\rho' t}{\rho' e}$,
+    so we are unable to apply \refrule{var-def}!
+    \texttt{\textcolor{red}{STUCK}}.
     \item \refrule{a-const-def}.
     \begin{displaymath}
       \inferrule[]{
-        (\defn{x}{t}{e}) \in \Gamma_G \and
+        (\Defn{x}{t}{e}) \in \Gamma_G \and
         \overline{\upsilon'_i} = \SV(e, t) \and
         \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
         \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
@@ -558,7 +583,10 @@ Suppose \ref{item:sound:wf:global} and \ref{item:sound:psi} hold.
       }
     \end{displaymath}
     Since the constraint set is empty, we must simply show that $\Gamma_G, \Gamma_{\Psi} \vdash x^\rho : (\rho t)$ holds.
-    % TODO.
+    By well-formedness of $\Gamma_G$, we have that $\Gamma_{G1}, \mt \vdash e : t$,
+    where $\Gamma_G \equiv \Gamma_{G1} (\Defn{x}{t}{e}) \Gamma_{G2}$.
+    Since $\rho$ merely freshens all size variables, we also have $\Gamma_{G1}, \mt \vdash \rho e : \rho t$.
+    Then by \refrule{const-def}, we have our goal.
     \item \refrule{a-let-in}.
     \begin{displaymath}
       \inferrule[]{
@@ -575,7 +603,8 @@ Suppose \ref{item:sound:wf:global} and \ref{item:sound:psi} hold.
     \begin{itemize}
       \item $\forall \rho_1 \vDash C_1, \Gamma_G, \rho_1 \Gamma_{\Psi} \vdash \rho_1 t : U$;
       \item $\forall \rho_2 \vDash C_2, \Gamma_G, \rho_2 \Gamma_{\Psi} \vdash \rho_2 e_1 : \rho_2 t$; and
-      \item $\forall \rho_3 \vDash C_3, \Gamma_G, \rho_3 (\Gamma_{\Psi}(\defn{x}{t}{e_1})) \vdash \rho_3 e_2 : \rho_3 u$.
+      \item $\forall \rho_3 \vDash C_3, \Gamma_G, \rho_3 (\Gamma_{\Psi}(\defn{x}{t}{e_1})) \vdash \rho_3 e_2 : \rho_3 u$ \\
+        (since $\forall \upsilon \in \SV{e, t}, \upsilon \notin \SV{\Psi}$ by \autoref{lem:fresh-vars}).
     \end{itemize}
     Applying $\rho$ to all three and using \refrule{let} yields our goal.
     \item \refrule{a-case}.
