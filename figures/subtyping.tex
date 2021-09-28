@@ -10,7 +10,7 @@
     {\gg \vdash \Type{i} \leq \Type{i+1}}
   \and
   \inferrule[\defrule{st-conv}]
-    {\gg \vdash t \approx u}
+    {\gg \vdash t \conv* u}
     {\gg \vdash t \leq u}
   \and
   \inferrule[\defrule{st-trans}]
@@ -18,11 +18,11 @@
     {\gg \vdash t \leq v}
   \and
   \inferrule[\defrule{st-prod}]
-    {\gg \vdash t_1 \approx t_2 \\\\ \gg(\assm{y}{t_2}) \vdash \subst{u_1}{x}{y} \leq u_2} % t_2 \leq t_1
+    {\gg \vdash t_1 \conv* t_2 \\\\ \gg(\assm{y}{t_2}) \vdash \subst{u_1}{x}{y} \leq u_2} % t_2 \leq t_1
     {\gg \vdash \prod{x}{t_1}{u_1} \leq \prod{y}{t_2}{u_2}}
   \and
   \inferrule[\defrule{st-app}]
-    {\gg \vdash t_1 \leq t_2 \\\\ \gg \vdash u_1 \approx u_2} % \u_2 \leq u_1
+    {\gg \vdash t_1 \leq t_2 \\\\ \gg \vdash u_1 \conv* u_2} % \u_2 \leq u_1
     {\gg \vdash t_1 ~ u_1 \leq t_2 ~ u_2}
   \and
   \inferrule[\defrule{st-ind}]

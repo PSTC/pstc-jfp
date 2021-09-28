@@ -9,7 +9,7 @@ However, this restricted cofixpoint unfolding causes issues with subject reducti
 \autoref{fig:reduction-full-unrestricted} presents an alternate unrestricted nonterminating $\nu'$-reduction of cofixpoints outside of case expressions so that subject reduction holds at the cost of normalization.
 
 We define $\reduce$ as the least compatible closure of $\reduce_{\beta\zeta\delta\Delta\iota\mu\nu}$, $\reduce_n$ as the $n$-step reduction of $\reduce$, and $\reduce^*$ as the reflexive--transitive closure of $\reduce$.
-Convertibility ($\approx$) is the symmetric closure of $\reduce^*$ up to $\eta$-expansion, and is formally defined in \autoref{fig:conversion}.
+Convertibility ($\conv$) is the symmetric closure of $\reduce^*$ up to $\eta$-expansion, and is formally defined in \autoref{fig:conversion}.
 
 The Takahashi translation $e^\dagger$ of a term $e$~\citep{takahashitrans} is used in our proof of confluence.
 Informally, we define it as the simultaneous single-step reduction of all $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.

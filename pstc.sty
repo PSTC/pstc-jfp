@@ -150,6 +150,7 @@
 
 % relations (for math envs)
 \newcommand{\conv}{\mathrel{\approx}}
+\WithSuffix\newcommand\conv*{\stackMath\mathbin{\stackinset{c}{0ex}{c}{0.8ex}{\scriptscriptstyle{\ast}}{\approx}}}
 \newcommand{\reduce}{\mathrel{\rhd}}
 \newcommand{\expand}{\mathrel{\lhd}}
 \newcommand{\pos}{\mathrel{\text{pos}}}
@@ -194,6 +195,8 @@
 \newcommand{\ie}{\emph{i.e.}\xspace}
 \newcommand{\eg}{\emph{e.g.}\xspace}
 \newcommand{\etc}{\emph{etc.}\xspace}
+\newcommand{\opcitt}[1]{\defcitealias{#1}{\emph{op. cit.}}\citetalias{#1}\xspace}
+\newcommand{\opcitp}[1]{\defcitealias{#1}{\emph{op. cit.}}\citepalias{#1}\xspace}
 
 % delimiters
 %\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}

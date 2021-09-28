@@ -74,7 +74,7 @@
 
   \inferrule[\defrule{fix}]
     {\text{For each $k$:} \and
-      \gg \vdash t_k \approx \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
+      \gg \vdash t_k \conv* \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
       \norm{\Delta_{k}} = n_k - 1 \and
       \upsilon_k \pos u_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
@@ -84,7 +84,7 @@
 
   \inferrule[\defrule{cofix}]
     {\text{For each $k$:} \and
-      \gg \vdash t_k \approx \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
+      \gg \vdash t_k \conv* \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
       \upsilon_k \neg \Delta_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
       \gg \vdash t_k : U_k \and

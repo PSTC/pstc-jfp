@@ -129,9 +129,11 @@ Finally, $x \in \Gamma$, $(\assm{x}{t}) \in \Gamma$, or $(\defn{x}{t}{e}) \in \G
 The reduction rules listed in \autoref{fig:reduction} are the usual ones for CIC: $\beta$\=/reduction (function application), $\zeta$\=/reduction (let expression evaluation), $\iota$\=/reduction (case expressions), $\mu$\=/reduction (fixpoint expressions), $\nu$\=/reduction (cofixpoint expressions), $\delta$\=/reduction (local definitions), and $\Delta$\=/reduction (global definitions).
 We define reduction ($\reduce$) as the congruent closure of the reductions,
 multi-step reduction ($\rhd^*$) in \autoref{fig:reductions} as the reflexive--transitive closure of $\rhd$,
-and convertibility ($\approx$) in \autoref{fig:convertibility}.
-For brevity, we state congruence rules using substitution,
-and refer the reader to previous work~\citep{cic-hat-minus, cic-hat, cc-hat-omega} and the Coq manual in particular~\citep{coq} for precise details and definitions.
+and convertibility ($\conv$, $\conv*$) in \autoref{fig:convertibility}.
+Convertibility is divided into two judgements to take into account $\eta$-convertibility,
+as is done informally in the Coq manual~\citep{coq} and formally in \citet{conversion}.
+Note that there are no explicit rules for symmetry and transitivity of convertibility
+because these properties are derivable, as proven in\opcitt{conversion}
 
 \input{figures/reduction.tex}
 
@@ -157,7 +159,7 @@ The key features are:
 
 \begin{itemize}
     \item Universes are \textbf{cumulative}. (\refnorule{st-cumul})
-    \item Since convertibility is symmetric, if $t \approx u$, then we have both $t \leq u$ and $u \leq t$. (\refnorule{st-conv})
+    \item Since convertibility is symmetric, if $t \conv* u$, then we have both $t \leq u$ and $u \leq t$. (\refnorule{st-conv})
     \item Inductive types are \textbf{covariant} in their size annotations; coinductive types are \textbf{contravariant}. (\refnorule{st-ind}, \refnorule{st-coind})
     \item The argument types of function types are \textbf{invariant}. (\refnorule{st-prod})
     \item The arguments of applications (and therefore the parameters and arguments of \coinductive types) are \textbf{invariant}. (\refnorule{st-app})
@@ -172,7 +174,7 @@ Conversely, for coinductive types, we can consider size annotations as a measure
 Rules \refnorule{st-prod} and \refnorule{st-app} differ from \CIChat and \CIChatminus in their invariance, but correspond to CIC in Coq.
 As previously mentioned, inductive definitions do not have polarities, so there is no way to indicate whether parameters are covariant, contravariant, or invariant.
 As a compromise, we treat all parameters as invariant.
-Note that, algorithmically speaking, the subtyping relation would produce \textit{both} subsizing constraints, and not \textit{neither}. For instance, $\List^{s_1} ~ \Nat^{s_3} \leq \List^{s_2} ~ \Nat^{s_4}$ yields $\Nat^{s_3} \approx \Nat^{s_4}$, which yields both $s_3 \sqsubseteq s_4$ and $s_4 \sqsubseteq s_3$.
+Note that, algorithmically speaking, the subtyping relation would produce \textit{both} subsizing constraints, and not \textit{neither}. For instance, $\List^{s_1} ~ \Nat^{s_3} \leq \List^{s_2} ~ \Nat^{s_4}$ yields $\Nat^{s_3} \conv* \Nat^{s_4}$, which yields both $s_3 \sqsubseteq s_4$ and $s_4 \sqsubseteq s_3$.
 Further details on the subtyping algorithm are presented in \autoref{sec:algorithm}.
 
 \subsection{Typing Rules}\label{sec:typing:rules}

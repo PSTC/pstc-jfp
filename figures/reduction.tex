@@ -38,30 +38,30 @@
 \end{figure}
 
 \begin{figure}
-\fbox{$\gg \vdash e \conv e$} \hfill
-\vspace{-3ex}
+\fbox{$\gg \vdash e \conv* e$} \quad \fbox{$\gg \vdash e \conv e$} \hfill
 
 \begin{mathpar}
+  \inferrule[\defrule{conv-red}]
+    {\gg \vdash e_1 \reduce^* e'_1 \\
+      \gg \vdash e_2 \reduce^* e'_2 \\\\
+      \gg \vdash e'_1 \conv e'_2}
+    {\gg \vdash e_1 \conv* e_2}
+  \and
   \inferrule[\defrule{conv-cong}]
     {\text{For every $i$:} \and
       \gg \vdash a_i \conv b_i}
     {\gg \vdash \substvec{e}{x_i}{a_i} \conv \substvec{e}{x_i}{b_i}}
-  \and
-  \inferrule[\defrule{conv-red}]
-    {\gg \vdash e_1 \reduce^* e \\\\
-      \gg \vdash e_2 \reduce^* e}
-    {\gg \vdash e_1 \conv e_2}
   \\
   \inferrule[\defnamerule{conv-eta-r}{conv-$\eta$-l}]
     {\gg \vdash e_1 \reduce^* \abs{x}{\erase{t}}{e} \\\\
       \gg \vdash e_2 \reduce^* e'_2 \\\\
-      \gg (x:t) \vdash e \conv e'_2 ~ x}
+      \gg (x:t) \vdash e \conv* e'_2 ~ x}
     {\gg \vdash e_1 \conv e_2}
   \and
   \inferrule[\defnamerule{conv-eta-1}{conv-$\eta$-r}]
     {\gg \vdash e_1 \reduce^* e'_1 \\\\
       \gg \vdash e_2 \reduce^* \abs{x}{\erase{t}}{e} \\\\
-      \gg (x:t) \vdash e'_1 ~ x \conv e}
+      \gg (x:t) \vdash e'_1 ~ x \conv* e}
     {\gg \vdash e_1 \conv e_2}
 \end{mathpar}
 \caption{Convertibility rules}
