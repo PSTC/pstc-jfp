@@ -450,13 +450,14 @@ Before proceeding onto the main soundness theorems, we first need a few lemmas.
 \begin{lemma}\label{lem:posneg}
 Suppose that $\rho_1 \upsilon \sqsubseteq \rho_2 \upsilon$.
 \begin{enumerate}
-  \item If $\upsilon \pos t$, then $\rho_1 t \leq \rho_2 t$; and
-  \item If $\upsilon \neg t$, then $\rho_2 t \leq \rho_1 t$.
+  \item $\upsilon \pos t$ iff $\gg \vdash \rho_1 t \leq \rho_2 t$ for some environments $\Gamma_G, \Gamma$; and
+  \item $\upsilon \neg t$ iff $\gg \vdash \rho_2 t \leq \rho_1 t$ for some environments $\Gamma_G, \Gamma$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
+\emph{If direction}: By induction on the subtyping rules in \autoref{fig:subtyping}. \\
+\emph{Only-if direction}: By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}. \todo: What about the environments that need to be constructed?
 \end{proof}
 
 \begin{lemma}\label{lem:subtyping}
@@ -676,8 +677,8 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
         \item \label{item:soundness:fix:2} $\rho' \tau_i = \upsilon_i$
         \item \label{item:soundness:fix:3} $\floor{\rho' \PV{t_i}} = \upsilon_i$
         \item \label{item:soundness:fix:4} $\floor{\rho' (\SV{\Psi, t_i, e_i} \setminus \PV{t_i})} \neq \upsilon_i$;
-        \item \label{item:soundness:fix:5} $\forall \upsilon' \in \SV{\Psi, t_i, e_i} \setminus \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau} \circ \rho') \upsilon' = \rho \upsilon'$; and
-        \item \label{item:soundness:fix:6} $\forall \tau' \in \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau} \circ \rho') \tau' \sqsubseteq \rho \tau'$.
+        \item \label{item:soundness:fix:5} $\forall \upsilon' \in \SV{\Psi, t_i, e_i} \setminus \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau_i} \circ \rho') \upsilon' = \rho \upsilon'$; and
+        \item \label{item:soundness:fix:6} $\forall \tau' \in \PV{t_i}, (\set{\upsilon_i \mapsto \rho \tau_i} \circ \rho') \tau' \sqsubseteq \rho \tau'$.
       \end{enumerate}
       By \ref{item:soundness:fix:4} and \ref{item:soundness:fix:5} together, we can conclude that 
       $\forall \upsilon' \in \SV{\Psi, t_i, e_i} \setminus \PV{t_i}, \rho' \upsilon' = \rho \upsilon'$, so $\rho'\Psi = \rho \Psi$ and $\rho' e_k = \rho e_k$.
@@ -689,10 +690,17 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
       \end{itemize}
       Notice that \shift only shifts position variables up by one, which means that by \ref{item:soundness:fix:2}, $\rho'u'_k = \set{\upsilon_i \mapsto \succ{\upsilon}_i}(\rho'u_k)$.
       Then by \autoref{lem:posneg} applied to the empty substitution and $\set{\upsilon_i \mapsto \succ{\upsilon}_i}$, the last subtyping judgement implies that $\upsilon_i \pos \rho'u_k$.
-      At last, we are able to apply \refrule{fix}, picking $s = \upsilon_m$:
-      $$\Gamma_G, \rho \Gamma_{\Psi} \vdash \fix{m}{f_k^{n_k}}{|\rho' t_k|^{\upsilon_k}}{\rho e_k} : \rho' t_m$$
-      By \ref{item:soundness:fix:3} and \ref{item:soundness:fix:4}, we have $\erase{\rho' t_i}^{\upsilon_i} = \erase{t_i}^*$.
-      Finally, \todo.
+      At last, we are able to apply \refrule{fix}, picking $s = \rho \tau_m$:
+      \begin{equation}\label{eqn:soundness:fix}
+        \Gamma_G, \rho \Gamma_{\Psi} \vdash \fix{m}{f_k^{n_k}}{|\rho' t_k|^{\upsilon_k}}{\rho e_k} : \subst{(\rho' t_m)}{\upsilon_m}{\rho \tau_m}
+      \end{equation}
+      By \ref{item:soundness:fix:3} and \ref{item:soundness:fix:4}, we have $\erase{\rho' t_i}^{\upsilon_i} = \erase{t_i}^*$,
+      as all position variables in $t_i$ are mapped to $\upsilon_i$ by $\rho'$.
+      Finally, by \ref{item:soundness:fix:5}, $\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho' = \rho$ when applied to non-position variables,
+      while $\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho' \sqsubseteq \rho$ when applied to position variables.
+      Since $\Delta_m$ contains no position variables, and all position variables appear positively in $u_m$, by \autoref{lem:posneg},
+      $\Gamma_G, \rho \Gamma_{\Psi} \vdash (\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho') t_m \leq \rho t_m$.
+      The goal then follows by \refrule{conv} on \autoref{eqn:soundness:fix}.
   \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -706,14 +714,14 @@ Then the following hold:
     \begin{itemize}
       \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $\Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$.
+      \item $\Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv* e$.
     \end{itemize}
-  \item if $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
+  \item If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
     then there exist $C, \rho'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $\Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C, e' \Rightarrow t'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv e$ and $\Gamma_G, \Gamma_{\Psi} \vdash \rho' t \leq t$.
+      \item $\Gamma_G, \Psi \vdash \erase{e} \rightsquigarrow C, e' \Rightarrow t'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv* e$ and $\Gamma_G, \Gamma_{\Psi} \vdash \rho' t \leq t$.
     \end{itemize}
 \end{enumerate}
 \end{conjecture}
