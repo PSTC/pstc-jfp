@@ -716,18 +716,18 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
 \end{enumerate}
 \end{proof}
 
-\begin{conjecture}[Completeness (check/infer)]
+\begin{conjecture}[Completeness (check/infer)]\label{thm:completeness}
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Psi$ a generic local environment, $C$ a constraint set, and $\rho \vDash C$ a solution to the constraint set.
 Then the following hold:
 \begin{enumerate}
-  \item If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : \rho t$,
+  \item \label{thm:completeness:check} If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : \rho t$,
     then there exist $C, \rho'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma_{\Psi}, t), \rho \upsilon = \rho' \upsilon$; and
       \item $\Gamma_G, \Psi \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma_{\Psi} \vdash \rho' e' \conv* e$.
     \end{itemize}
-  \item If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
+  \item \label{thm:completeness:infer} If $\Gamma_G, \rho\Gamma_{\Psi} \vdash e : t$,
     then there exist $C, \rho'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C$;
@@ -796,14 +796,15 @@ By cases on the well-formedness rules for global declarations.
         {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
         {\WF{\Gamma_G (\Assm{x}{t}), \mt}}
     \end{displaymath}
-    \todo.
+    Follows from \autoref{thm:completeness} on the premise.
   \item \refrule{wf-global-def}.
     \begin{displaymath}
       \inferrule[\defrule{wf-global-def}]
         {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
         {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
     \end{displaymath}
-    \todo.
+    Follows from \autoref{thm:completeness} on the premise.
+    \todo: Reference well-typedness of types once that's in the metatheory section.
 \end{itemize}
 \end{proof}
 
