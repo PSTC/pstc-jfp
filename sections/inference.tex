@@ -570,7 +570,7 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
     which the judgement we need.
     However, the definition in $\rho' \Gamma_{\Psi}$ is not $\defn{x}{\rho' (\rho t)}{\rho' (\rho e)}$ but rather $\defn{x}{\rho' t}{\rho' e}$,
     so we are unable to apply \refrule{var-def}!
-    \texttt{\textcolor{red}{STUCK}}.
+    \stuck.
     \item \refrule{a-const-def}.
     \begin{displaymath}
       \inferrule[]{
@@ -586,7 +586,8 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
     By well-formedness of $\Gamma_G$, we have that $\Gamma_{G1}, \mt \vdash e : t$,
     where $\Gamma_G \equiv \Gamma_{G1} (\Defn{x}{t}{e}) \Gamma_{G2}$.
     Since $\rho$ merely freshens all size variables, we also have $\Gamma_{G1}, \mt \vdash \rho e : \rho t$.
-    Then by \refrule{const-def}, we have our goal.
+    However, we cannot apply \refrule{const-def} because we do not have that $\WF{\Gamma_G, \Gamma_{\Psi}}$ holds.
+    \stuck.
     \item \refrule{a-let-in}.
     \begin{displaymath}
       \inferrule[]{
@@ -691,7 +692,7 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
       At last, we are able to apply \refrule{fix}, picking $s = \upsilon_m$:
       $$\Gamma_G, \rho \Gamma_{\Psi} \vdash \fix{m}{f_k^{n_k}}{|\rho' t_k|^{\upsilon_k}}{\rho e_k} : \rho' t_m$$
       By \ref{item:soundness:fix:3} and \ref{item:soundness:fix:4}, we have $\erase{\rho' t_i}^{\upsilon_i} = \erase{t_i}^*$.
-      Finally, % TODO: Apply \ref{item:soundness:fix:6}.
+      Finally, \todo.
   \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -776,18 +777,16 @@ By cases on the well-formedness rules for global declarations.
         {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
         {\WF{\Gamma_G (\Assm{x}{t}), \mt}}
     \end{displaymath}
+    \todo.
   \item \refrule{wf-global-def}.
     \begin{displaymath}
       \inferrule[\defrule{wf-global-def}]
         {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
         {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
     \end{displaymath}
+    \todo.
 \end{itemize}
 \end{proof}
-
-Note that well-formedness is \emph{not} complete;
-that is, there exist well-formed global environments $\Gamma_G$ such that $\erase{\Gamma_G} \rightsquigarrow \Gamma_G$ does \emph{not} hold.
-This is because \solve only returns \emph{one} single deterministic solution to a given constraint set, while \emph{any} solution will yield well-typed terms.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
