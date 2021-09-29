@@ -76,8 +76,8 @@
     {\text{For each $k$:} \and
       \gg \vdash t_k \conv* \prodctx{\Delta_{k}}{\prod{x_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}}{u_k}} \and
       \norm{\Delta_{k}} = n_k - 1 \and
-      \upsilon_k \pos u_k \\
-      \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
+      \gg \vdash \upsilon_k \pos u_k \\
+      \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k, \Delta_k} \and
       \gg \vdash t_k : U_k \and
       \gg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}
     {\gg \vdash \fix{m}{f_k^{n_k}}{\erase{t_k}^{\upsilon_k}}{e_k} : t_m[\upsilon_m \coloneqq s]}
@@ -85,7 +85,7 @@
   \inferrule[\defrule{cofix}]
     {\text{For each $k$:} \and
       \gg \vdash t_k \conv* \prodctx{\Delta_k}{\app{I_k^{\upsilon_k}}{\overline{a}_k}} \and
-      \upsilon_k \neg \Delta_k \\
+      \gg \vdash \upsilon_k \neg \Delta_k \\
       \upsilon_k \notin \SV{\Gamma, \overline{a}_k, e_k} \and
       \gg \vdash t_k : U_k \and
       \gg \overline{(f_k : t_k)} \vdash e_k : t_k[\upsilon_k \coloneqq \hat{\upsilon}_k]}

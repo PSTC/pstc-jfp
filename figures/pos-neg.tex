@@ -1,33 +1,43 @@
 \begin{figure}
 \centering
 \begin{flushleft}
-  \fbox{$\upsilon \pos t$} \quad
-  \fbox{$\upsilon \neg t$}
+  \fbox{$\gg \vdash \upsilon \pos t$} \quad
+  \fbox{$\gg \vdash \upsilon \neg t$}
 \end{flushleft}
 \begin{mathpar}
-  \inferrule[\defnamerule{pos-notin}{pos-$\notin$}]
-    {\upsilon \notin \SV{t}}
-    {\upsilon \pos t}
-  \and\quad
-  \inferrule[\defnamerule{neg-notin}{neg-$\notin$}]
-    {\upsilon \notin \SV{t}}
-    {\upsilon \neg t}
-  \and\qquad
+  \inferrule[\defnamerule{pos-neg-notin}{pos-neg-$\notin$}]
+    {\gg \vdash \upsilon \notin \SV{t}}
+    {\gg \vdash \upsilon \pos t \\\\ \gg \vdash \upsilon \neg t}
+
+  \inferrule[\defrule{pos-red}]
+    {\gg \vdash t \rhd^* t' \\\\
+      \gg \vdash \upsilon \pos t'}
+    {\gg \vdash \upsilon \pos t}
+
+  \inferrule[\defrule{neg-red}]
+    {\gg \vdash t \rhd^* t' \\\\
+      \gg \vdash \upsilon \neg t'}
+    {\gg \vdash \upsilon \neg t}
+  
   \inferrule[\defnamerule{pos-prod}{pos-$\Pi$}]
-    {\upsilon \notin \SV{t} \and \upsilon \pos u}
-    {\upsilon \pos \prod{x}{t}{u}}
-  \and\quad
+    {\upsilon \pos u \\\\
+      \gg \vdash \upsilon \notin \SV{t}}
+    {\gg \vdash \upsilon \pos \prod{x}{t}{u}}
+
   \inferrule[\defnamerule{neg-prod}{neg-$\Pi$}]
-    {\upsilon \notin \SV{t} \and \upsilon \neg u}
-    {\upsilon \neg \prod{x}{t}{u}}
+    {\upsilon \neg u \\\\
+      \gg \vdash \upsilon \notin \SV{t}}
+    {\gg \vdash \upsilon \neg \prod{x}{t}{u}}
 
   \inferrule[\defrule{pos-ind}]
-    {\upsilon \notin \SV{\overline{a}} \and I ~ \text{inductive}}
-    {\upsilon \pos \app{I^s}{\overline{a}}}
+    {I ~ \text{inductive} \\\\
+      \gg \vdash \upsilon \notin \SV{\overline{a}}}
+    {\gg \vdash \upsilon \pos \app{I^s}{\overline{a}}}
 
   \inferrule[\defrule{neg-coind}]
-    {\upsilon \notin \SV{\overline{a}} \and I ~ \text{coinductive}}
-    {\upsilon \neg \app{I^s}{\overline{a}}}
+    {I ~ \text{coinductive} \\\\
+      \gg \vdash \upsilon \notin \SV{\overline{a}}}
+    {\gg \vdash \upsilon \neg \app{I^s}{\overline{a}}}
 \end{mathpar}
 \caption{Positivity/negativity of size variables in terms}
 \label{fig:posneg}

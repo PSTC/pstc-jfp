@@ -447,29 +447,28 @@ We also want to ensure that \solvecomp and \solve actually return solutions of t
 
 Before proceeding onto the main soundness theorems, we first need a few lemmas.
 
+\begin{lemma}\label{lem:subtyping-posneg}~\\[-4ex]
+\begin{enumerate}
+  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\succ{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
+  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\succ{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.
+\end{enumerate}
+\end{lemma}
+
 \begin{lemma}\label{lem:posneg-subtyping}
 Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \upsilon$.
 \begin{enumerate}
-  \item If $\upsilon \pos t$, then $\gg \vdash \rho_1 t \leq \rho_2 t$ for some environments $\Gamma_G, \Gamma$; and
-  \item If $\upsilon \neg t$, then $\gg \vdash \rho_2 t \leq \rho_1 t$ for some environments $\Gamma_G, \Gamma$.
+  \item If $\gg \vdash \upsilon \pos t$, then $\gg \vdash \rho_1 t \leq \rho_2 t$; and
+  \item If $\gg \vdash \upsilon \neg t$, then $\gg \vdash \rho_2 t \leq \rho_1 t$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
 By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
-\todo: What about the environments that need to be constructed?
 \end{proof}
-
-\begin{lemma}\label{lem:subtyping-posneg}~\\[-4ex]
-\begin{enumerate}
-  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\succ{\upsilon}}$ then $\upsilon \pos t$.
-  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\succ{\upsilon}} \leq t$ then $\upsilon \neg t$.
-\end{enumerate}
-\end{lemma}
 
 \begin{proof}[{[Sketch]}]
 By induction on the subtyping rules in \autoref{fig:subtyping}.
-\todo: What about subtyping relations that hold by convertibility?
+\todo: What about subtyping relations that hold by $\eta$-convertibility?
 \end{proof}
 
 \begin{lemma}\label{lem:subtyping}
@@ -479,7 +478,7 @@ Then $\Gamma_G, \rho \Gamma_{\Psi} \vdash \rho t \leq \rho u$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By induction on the rules for algorithmic subtyping in \autoref{fig:algorithm-subtyping}.
+By induction on the algorithmic subtyping rules in \autoref{fig:algorithm-subtyping}.
 \end{proof}
 
 \begin{lemma}\label{lem:constraint-subst}
@@ -701,7 +700,7 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
         \item $\Gamma_G, (\rho \Gamma_{\Psi})(\rho'\Delta_k) \vdash \rho' u_k \leq \rho' u'_k$.
       \end{itemize}
       Notice that \shift only shifts position variables up by one, which means that by \ref{item:soundness:fix:2}, $\rho'u'_k = \set{\upsilon_i \mapsto \succ{\upsilon}_i}(\rho'u_k)$.
-      Then by \autoref{lem:subtyping-posneg}, the last subtyping judgement implies that $\upsilon_i \pos \rho'u_k$.
+      Then by \autoref{lem:subtyping-posneg}, the last subtyping judgement implies that $\upsilon_k$ is positive in $\rho' u_k$.
       At last, we are able to apply \refrule{fix}, picking $s = \rho \tau_m$:
       \begin{equation}\label{eqn:soundness:fix}
         \Gamma_G, \rho \Gamma_{\Psi} \vdash \fix{m}{f_k^{n_k}}{|\rho' t_k|^{\upsilon_k}}{\rho e_k} : \subst{(\rho' t_m)}{\upsilon_m}{\rho \tau_m}
