@@ -9,13 +9,13 @@
     {\gg \vdash \upsilon \notin \SV{t}}
     {\gg \vdash \upsilon \pos t \\\\ \gg \vdash \upsilon \neg t}
 
-  \inferrule[\defrule{pos-red}]
-    {\gg \vdash t \rhd^* t' \\\\
+  \inferrule[\defrule{pos-conv}]
+    {\gg \vdash t \conv* t' \\\\
       \gg \vdash \upsilon \pos t'}
     {\gg \vdash \upsilon \pos t}
 
-  \inferrule[\defrule{neg-red}]
-    {\gg \vdash t \rhd^* t' \\\\
+  \inferrule[\defrule{neg-conv}]
+    {\gg \vdash t \conv* t' \\\\
       \gg \vdash \upsilon \neg t'}
     {\gg \vdash \upsilon \neg t}
   
