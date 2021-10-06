@@ -7,28 +7,35 @@ For fixpoints, recursive calls must be \emph{guarded by destructors}; that is, t
 For cofixpoints, corecursive calls must be \emph{guarded by constructors}; that is, they must be the structural arguments of a constructor.
 The following examples illustrate these structural conditions.
 
-\begin{samepage}
 \begin{minted}{coq}
 Fixpoint plus n m : nat :=
   match n with
   | O => m
   | S p => S (plus p m)
   end.
-Variable A : Type.
-CoFixpoint const a : Stream A := Cons a (const a).
+CoFixpoint const {A} a : Stream A := Cons a (const a).
 \end{minted}
-\end{samepage}
 
 In the recursive call to \coqinline{plus}, the first argument \coqinline{p} is structurally smaller than \coqinline{S p}, which is the form of the original first argument \coqinline{n}. Similarly, in \coqinline{const}, the constructor \coqinline{Cons} is applied to the corecursive call.
 
-The actual implementation of the guard predicate extends beyond the \guardedbydestructors and \guardedbyconstructors conditions to accept a larger set of terminating and productive functions.
-In particular, function calls will be unfolded (\ie inlined) in the bodies of \cofixpoints as needed before checking the guard predicate.
-This has a few disadvantages: firstly, the bodies of these functions are required, which hinders modular design; and secondly, the \cofixpoint bodies may become very large after unfolding, which can decrease the performance of type checking.
+The actual implementation of the guard predicate extends beyond the \guardedbydestructors and \guardedbyconstructors conditions
+to accept a larger set of terminating and productive functions.
+In particular, function calls will be unfolded (\ie inlined) in the bodies of \cofixpoints
+and reduction will be performed as needed before checking the guard predicate.
+This has a few disadvantages:
+firstly, the bodies of these functions are required, which hinders modular design;
+and secondly, as aptly summarized by \citet{coqterm},
+
+\begin{quote}
+  ... unfold[ing] all the definitions used in the body of the function, do[ing] reductions, e.t.c.
+  ... makes typechecking extremely slow at times.
+  Also, the unfoldings can cause the code to bloat by orders of magnitude and become impossible to debug.
+\end{quote}
 
 Furthermore, changes in the structural form of functions used in \cofixpoints can cause the guard predicate to reject the program even if the functions still behave the same.
 The following simple example, while artificial, illustrates this structural fragility.
 \begin{minted}{coq}
-Fixpoint minus n m :=
+Fixpoint minus n m : nat :=
   match n, m with
   | O, _ => n
   | _, O => n
@@ -36,7 +43,7 @@ Fixpoint minus n m :=
   end.
 \end{minted}
 \begin{minted}{coq}
-Fixpoint div n m :=
+Fixpoint div n m : nat :=
   match n with
   | O => O
   | S n' => S (div (minus n' m) m)
@@ -44,12 +51,15 @@ Fixpoint div n m :=
 \end{minted}
 
 If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour does not change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
-The acceptance of \coqinline{div} then depends on a function external to it, which can lead to difficulty in debugging for larger programs.
+The acceptance of \coqinline{div} then depends a separate definition independent of \coqinline{div}.
+While the difference is easy to spot here, for larger programs or programs that use many imported library definitions,
+this behaviour can make debugging much more difficult.
 Furthermore, the guard predicate is unaware of the obvious fact that \coqinline{minus} never returns a \coqinline{nat} larger than its first argument, which the user would have to prove in order for \coqinline{div} to be accepted with our alternate definition of \coqinline{minus}.
 
-In short, the syntactic guard condition long used by Coq is anti-modular, anti-compositional, has poor performance characteristics, and requires the programmer to either avoid certain algorithms to pay large cost in proof burden.
+In short, the extended syntactic guard condition long used by Coq is anti-modular, anti-compositional, has poor performance characteristics, and requires the programmer to either avoid certain algorithms or pay a large cost in proof burden.
 
-This situation is particularly unfortunate, as the Agda programmer is aware, given that there exists a non-syntactic termination and productivity condition which solves essentially all of these problems, whose theory has existed for nearly as long as the guard condition---\emph{sized types}!
+\paragraph*{} This situation is particularly unfortunate, as there exists a non-syntactic termimation- and productivity-checking method that overcomes these issues,
+whose theory is nearly as old as the guard condition itself --- sized types.
 
 In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
 In this paper, we consider a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
@@ -79,61 +89,76 @@ In short, they both follow the following (simplified) typing rule, where $\upsil
     {\Gamma \vdash \kw{(co)fix}\ f \mathbin{:} t \mathbin{\coloneqq} e : t^s}
 \end{mathpar}
 
-We can then assign \coqinline{minus} the type $\text{Nat}^\iota \to \text{Nat} \to \text{Nat}^\iota$.
-The fact that we can assign it a type indicates that it will terminate, and the $\iota$ annotations indicate that the function preserves the size of its first argument.
+We can then assign \coqinline{minus} the type $\text{Nat}^\upsilon \to \text{Nat} \to \text{Nat}^\upsilon$.
+The fact that we can assign it a type indicates that it will terminate,
+and the $\upsilon$ annotations indicate that the function preserves the size of its first argument.
 Then \coqinline{div} uses only the type of \coqinline{minus} to successfully type check, not requiring its body.
-Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O} does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
-Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving, expanding the set of terminating and productive functions that can be accepted.
-Finally, if additional expressivity is needed, rather than syntactic hacks like inlining, we can take the semantic approach of enriching the size algebra.
+Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O}
+does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
+Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving,
+expanding the set of terminating and productive functions that can be accepted.
+Finally, if additional expressivity is needed, rather than using syntactic hacks like inlining, we can take the semantic approach of enriching the size algebra.
 
-It seems perfect; so why doesn't Coq \emph{just} use sized types?
+\paragraph*{} It seems perfect; so why doesn't Coq \emph{just} use sized types?
 
-That is the question we seek to answer in this paper.
+\noindent That is the question we seek to answer in this paper.
 
 Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
 
 \begin{itemize}
-    \item They require nontrivial backwards-incompatible additions to the surface language.
-      These include annotations that mark the positions of \corecursive and size-preserved types, and polarity annotations on \coinductive definitions that describe how subtyping works with respect to parameters.
-    \item They require the \corecursive arguments of \cofixpoints to have literal \coinductive types.
-      That is, the types cannot be expressions that convert to \coinductive types.
-    \item Their languages do not support local and global definitions, which Coq includes.
-%      In particular, size inference should be done locally, \ie confined to within a single global definition.
+    \item They require nontrivial backward-incompatible additions to the surface language,
+      such as size annotations on \cofixpoint types and polarity annotations on \coinductive definitions.
+    \item They are missing important features found in Coq such as global and local definitions,
+      universe cumulativity, and an impredicative $\Prop$.
+    \item They disallow size variables from appearing in terms, which precludes, for instance,
+      defining type aliases for sized types.
 \end{itemize}
 
-We start by solving these theoretical problems.
-We design \lang (``\emph{CIC-star-hat}''), a calculus for representing the core of Coq with sized types, and an inference algorithm from CIC to \lang.
-It is an extension of \CIChat~\citep{cic-hat} and \CIChatminus~\citep{cic-hat-minus} that resolves the issues above.
-We prove subject reduction, confluence, and strong normalization of a subset of \lang including W types.
+To resolve these issues, we extend \CIChat~\citep{cic-hat} and \CIChatminus~\citep{cic-hat-minus-nat,cic-hat-minus} in our calculus \textbf{\lang} (``\emph{CIC-star-hat}''),
+and design a size inference algorithm from CIC to \lang,
+borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
 
-However, in attempting to recover backwards-compatibility and the entire feature set of Coq, we run into new theoretical problems.
+For \lang we prove confluence and subject reduction.
+However, new difficulties arise when attempting to prove strong normalization and consistency using the same techniques as past work.
+\todo: Adapt summary of proof attempts here.
+
+\iffalse
+However, in attempting to recover backward-compatibility and the entire feature set of Coq,
+we run into new theoretical problems.
 Proving strong normalization and consistency of the new language becomes difficult compared to pure CIC, for reasons that seem intrinsic.
-Some of the design goals of CIC---untyped reduction, orthogonality to classical axioms---seem at odds with set theoretical models that include sized types.
-Some of these might be solvable if we could sacrifice backwards compatibility.
+Some of the design goals of CIC --- untyped reduction, orthogonality to classical axioms --- seem at odds with set theoretical models that include sized types.
+Some of these might be solvable if we could sacrifice backward compatibility.
 Even if they are solvable, the complexity of these models would at least sacrifice trust in the core of Coq.
 We discuss our models and the meta-theory of \lang in detail.
+\fi
 
-We then ask a second question: even supposing we can solve the theoretical problems and finish the proof of strong normalization and consistency, is the implementation of this system practical?
-We have forked Coq\blindimpl\xspace and implemented the size inference algorithm and size-based termination and productivity checking of \lang.
-To maximize backward compatibility, the surface language is completely unchanged, and the existing guard condition and sized types can be enabled or disabled independently, or used in conjunction.
-Sized typing can be turned on with a flag that is off by default for safe and gradual testing of the new kernel.
-\blinding{We are currently working with the Coq development team to merge the work into Coq.}{A draft pull request in the Coq repository has been opened for this fork.\footnote{\url{https://github.com/coq/coq/pull/12426/}}}
+Even supposing we can solve the metatheoretical problems and prove strong normalization and consistency,
+is an implementation of this sytem practical?
+Seeking to answer this question, we have forked Coq~\citep{impl}, implemented the size inference algorithm within its kernel,
+and opened a draft pull request to the Coq repository.\footnote{\url{https://github.com/coq/coq/pull/12426/}}
+To maximize backward compatibility, the surface language is completely unchanged,
+and sized typing can be enabled by a flag that is off by default.
+This flag can be used in conjuction with or without the existing guard checking flag enabled.
 
 While the sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
-We measure at least 16x increase in compilation time in some standard libraries.
-The performance cost seems to be intrinsic to the size inference algorithm, and thus, intrinsic to attempting to maintain backwards compatibility.
-We analyze the performance of our size inference algorithm, and our implementation in detail.
+We measure at least a $14\times$ increase in compilation time in some standard libraries.
+The performance cost seems to be intrinsic to the size inference algorithm, and thus intrinsic to attempting to maintain backward compatibility.
+We analyze the performance of our size inference algorithm and our implementation in detail.
 
-The short answer to our question, ``why doesn't Coq \emph{just} use sized types'', seems to be that Coq must either sacrifice backwards compatibility, some of its syntactic meta-theory, and/or compile time performance to do so.
-While this isn't possible, it seems wildly impractical.
+So why doesn't Coq \emph{just} use sized types?
+Because it seems it must either sacrifice backward compatibility or compile-time performance,
+and the lack of a proof of consistency may be a threat to Coq's trusted core.
+While nothing yet leads us to believe that \lang is inconsistent,
+the compatibility or performance sacrifice required makes our approach seem wildly impractical.
 
-The remainder of this paper is organized as follows.
-We begin in \autoref{sec:overview} with a high-level overview of the design of \lang, its role in Coq, and the main lessons from our design.
-We formalize the calculus \lang in \autoref{sec:typing}.
-In \autoref{sec:algorithm}, we present a size inference algorithm from CIC terms to sized \lang terms that details how we annotate the types of \cofixpoints, how we deal with the lack of polarities, and how definitions are supported, and termination and productivity checking.
-% In \autoref{sec:examples}, we provide a few examples of programs that pass sized typing but not guard checking and vice versa, discuss some categories of terminating programs that cannot be typed in \lang, and step through the size inference algorithm for an example program.
-\autoref{sec:metatheory} states some of the metatheoretical properties of \lang that have been proven or remain to be proven.
-Finally, we briefly compare with the past work on sized types for CIC and related languages in \autoref{sec:related}.
+\paragraph*{} The remainder of this paper is organized as follows.
+We begin in \autoref{sec:overview} with a high-level overview of the design of \lang as compared to past work and Coq,
+and the consequences resulting from these design decisions.
+We formalize the calculus \lang in \autoref{sec:typing},
+and discuss the desired metatheoretical properties in \autoref{sec:metatheory}.
+In \autoref{sec:algorithm}, we present the size inference algorithm from unsized terms to sized \lang terms,
+and evaluate its actual implementation in our fork in \autoref{sec:impl}.
+Finally, we take a look at all of the past work on sized types leading up to \lang in \autoref{sec:related}, and conclude in \autoref{sec:conclusion}.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
