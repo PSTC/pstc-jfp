@@ -454,6 +454,10 @@ Before proceeding onto the main soundness theorems, we first need a few lemmas.
 \end{enumerate}
 \end{lemma}
 
+\begin{proof}[{[Sketch]}]
+By induction on the subtyping rules in \autoref{fig:subtyping}.
+\end{proof}
+
 \begin{lemma}\label{lem:posneg-subtyping}
 Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \upsilon$.
 \begin{enumerate}
@@ -464,11 +468,6 @@ Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \u
 
 \begin{proof}[{[Sketch]}]
 By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
-\end{proof}
-
-\begin{proof}[{[Sketch]}]
-By induction on the subtyping rules in \autoref{fig:subtyping}.
-\todo: What about subtyping relations that hold by $\eta$-convertibility?
 \end{proof}
 
 \begin{lemma}\label{lem:subtyping}
@@ -508,17 +507,6 @@ For inference, most cases are straightforward applications of the induction hypo
 new size annotations are only introduced in $e$ in Rules \refnorule{a-ind} and \refnorule{a-ind-star},
 which introduce fresh size variables that are by definition not in $\SV{\Psi}$.
 \end{proof}
-
-% TODO: I'm thinking of removing these few lemmas...
-\iffalse
-\begin{lemma}\label{lem:typing-subst}
-  If $\gg \vdash e : t$, then $\Gamma_G, \rho \Gamma \vdash \rho e : \rho t$ and $\Gamma_G, \rho \Gamma \vdash \rho t : U$ for some $U$.
-\end{lemma}
-
-\begin{proof}[{[Sketch]}]
-% TODO: Uses earlier lemma showing that $\Sigma, \Gamma_G, \subst{\Gamma}{\upsilon}{s} \vdash \subst{e}{\upsilon}{s} : \subst{t}{\upsilon}{s}.
-\end{proof}
-\fi
 
 Now we are ready to tackle the main theorems.
 

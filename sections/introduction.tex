@@ -110,7 +110,7 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Ca
       such as size annotations on \cofixpoint types and polarity annotations on \coinductive definitions.
     \item They are missing important features found in Coq such as global and local definitions,
       universe cumulativity, and an impredicative $\Prop$.
-    \item They disallow size variables from appearing in terms, which precludes, for instance,
+    \item They restrict size variables from appearing in terms, which precludes, for instance,
       defining type aliases for sized types.
 \end{itemize}
 
@@ -119,8 +119,13 @@ and design a size inference algorithm from CIC to \lang,
 borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
 
 For \lang we prove confluence and subject reduction.
-However, new difficulties arise when attempting to prove strong normalization and consistency using the same techniques as past work.
-\todo: Adapt summary of proof attempts here.
+However, new difficulties arise when attempting to prove strong normalization and consistency.
+Proof techniques from past work, especially in \citet{cic-hat-minus}, don't readily adapt to our modifications,
+in particular to impredicative $\Prop$, universe cumulativity, and unrestricted size variables.
+On the other hand, set-theoretic semantics of type theories that do have these features don't readily adapt to the interpretation of sizes, either,
+with additional difficulties due to untyped conversion.
+We list a few proof attempts and possible future directions in detail.
+
 
 \iffalse
 However, in attempting to recover backward-compatibility and the entire feature set of Coq,
@@ -132,7 +137,7 @@ Even if they are solvable, the complexity of these models would at least sacrifi
 We discuss our models and the meta-theory of \lang in detail.
 \fi
 
-Even supposing we can solve the metatheoretical problems and prove strong normalization and consistency,
+Even supposing that the metatheoretical problems can be solved and strong normalization and consistency proven,
 is an implementation of this sytem practical?
 Seeking to answer this question, we have forked Coq~\citep{impl}, implemented the size inference algorithm within its kernel,
 and opened a draft pull request to the Coq repository.\footnote{\url{https://github.com/coq/coq/pull/12426/}}
@@ -140,7 +145,7 @@ To maximize backward compatibility, the surface language is completely unchanged
 and sized typing can be enabled by a flag that is off by default.
 This flag can be used in conjuction with or without the existing guard checking flag enabled.
 
-While the sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
+While sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
 We measure at least a $14\times$ increase in compilation time in some standard libraries.
 The performance cost seems to be intrinsic to the size inference algorithm, and thus intrinsic to attempting to maintain backward compatibility.
 We analyze the performance of our size inference algorithm and our implementation in detail.
@@ -149,7 +154,7 @@ So why doesn't Coq \emph{just} use sized types?
 Because it seems it must either sacrifice backward compatibility or compile-time performance,
 and the lack of a proof of consistency may be a threat to Coq's trusted core.
 While nothing yet leads us to believe that \lang is inconsistent,
-the compatibility or performance sacrifice required makes our approach seem wildly impractical.
+the performance sacrifice required for compatibility makes our approach seem wildly impractical.
 
 \paragraph*{} The remainder of this paper is organized as follows.
 We begin in \autoref{sec:overview} with a high-level overview of the design of \lang as compared to past work and Coq,

@@ -65,10 +65,11 @@ every definition and let binding is implicitly quantified over \emph{all} size v
 The corresponding notion of size instantiation comes in the form of size substitution annotations on variables and constants, so that $N^{\set{\upsilon \mapsto s}}$ for instance reduces to $\Nat^s$.
 These and all other size annotations are inferrable, as detailed in \autoref{sec:algorithm}.
 
-Having definitions and annotated variables and constants also means we need to allow sizes to appear
+Having definitions and annotated variables and constants also means we need to now allow sizes to appear
 not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
 in contrast to \CIChatminus.
-% TODO: Ask Michael about the consequences of this on normalization.
+This complicates the set-theoretic interpretation of \lang terms,
+which we go into detail in \autoref{sec:metatheory}.
 
 \paragraph*{} While \CIChat's size inference algorithm takes a local environment and an unannotated term
 and returns a size-annotate term and its type along with a set of constraints on their size annotations,
@@ -126,9 +127,6 @@ separating what Coq already does from what there is to do to obtain sized types.
 In terms of the implementation, one downside of this approach is that not as many programs that \emph{could} pass type checking \emph{do},
 due to the existing architecture of the Coq type checker.
 We discuss this further in \autoref{sec:impl:recind}.
-
-% TODO: Is it worth mentioning that we remove the restrict to simple types?
-% I don't know how to justify it or what its consequences are. (Michael might)
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
