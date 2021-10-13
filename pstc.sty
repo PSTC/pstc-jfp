@@ -1,13 +1,27 @@
 \ProvidesPackage{pstc}
 
+% values
+\def\fboxsepdefault{3pt}
+\setlist{leftmargin=2em}
+\setlength{\fboxsep}{\fboxsepdefault}
+
 % colours
 \usepackage{xcolor}
 \definecolor{kwcolour}{RGB}{0,128,0}
 \definecolor{constcolour}{RGB}{176,0,64}
 \definecolor{metacolour}{RGB}{64,128,128}
+\definecolor{newcolour}{gray}{0.85}
 \newcommand{\kw}[1]{\mathtt{\textcolor{kwcolour}{#1}}}
 \newcommand{\const}[1]{\mathtt{\textcolor{constcolour}{#1}}}
 \newcommand{\meta}[1]{\texttt{\textcolor{metacolour}{#1}}}
+\newcommand{\new}[1]{
+  \setlength{\fboxsep}{1pt}
+  \mathchoice
+    {\colorbox{newcolour}{$\displaystyle#1$}}
+    {\colorbox{newcolour}{$\textstyle#1$}}
+    {\colorbox{newcolour}{$\scriptstyle#1$}}
+    {\colorbox{newcolour}{$\scriptscriptstyle#1$}}
+  \setlength{\fboxsep}{\fboxsepdefault}}
 
 % long (\iftrue) or short (\iffalse) version of paper
 \newcommand{\iflong}{\iffalse}
@@ -161,7 +175,7 @@
 
 % substitutions (for math envs)
 \newcommand{\subst}[3]{#1 [#2 \coloneqq #3]}
-\newcommand{\substvec}[3]{#1 \vec{[#2 \coloneqq #3]}}
+\newcommand{\substvec}[3]{#1 [\vec{#2 \coloneqq #3}]}
 \newcommand{\substseq}[5]{#1 [#2 \coloneqq #3] \dots [#4 \coloneqq #5]}
 
 % other
@@ -210,12 +224,6 @@
 \DeclarePairedDelimiter{\sqbr}{[\![}{]\!]}
 
 % editing
-\definecolor{newhighlight}{gray}{0.85}
-\newcommand{\new}[1]{\mathchoice%
-  {\colorbox{newhighlight}{$\displaystyle#1$}}%
-  {\colorbox{newhighlight}{$\textstyle#1$}}%
-  {\colorbox{newhighlight}{$\scriptstyle#1$}}%
-  {\colorbox{newhighlight}{$\scriptscriptstyle#1$}}}%
 \newcommand{\JC}[1]{\textcolor{magenta}{#1}}
 \newcommand{\ML}[1]{\textcolor{blue}{#1}}
 \newcommand{\stuck}{\texttt{\textcolor{red}{STUCK}}\xspace}

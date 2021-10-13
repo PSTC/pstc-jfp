@@ -60,7 +60,7 @@ What we want instead is to allow a different size for each use of $N$,
 allowing the above type to reduce to $\Nat^{\upsilon_1} \rightarrow \Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
 This means $N$ must be polymorphic in the sizes involved in its definition,
 the same kind of rank-1 or prenex polymorphism in ML-style let polymorphism for type variables.
-To retain backward compatibility, there is no explicit size quantification ---
+To retain backward compatibility, there is no explicit size quantification or application ---
 every definition and let binding is implicitly quantified over \emph{all} size variables involved.
 The corresponding notion of size instantiation comes in the form of size substitution annotations on variables and constants, so that $N^{\set{\upsilon \mapsto s}}$ for instance reduces to $\Nat^s$.
 These and all other size annotations are inferrable, as detailed in \autoref{sec:algorithm}.

@@ -8,10 +8,10 @@
 \gg \vdash \caseof{P^\circ}{(\app{c_\ell}{\vec{p}}{\vec{a}})}{c_j}{e_j} & \reduce_\iota \app{e_\ell}{\vec{a}} \\
 \gg \vdash \app{q_m}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
   & \reduce_\mu \app{\substvec{e_m}{f_k}{q_k}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})} \\
-  \textit{where} ~ & \forall i \in \vec{k}, q_i \equiv \fix{i}{f_k^{n_k}}{t_k}{e_k}, \norm{\vec{b}} = n_m - 1 \\
+  \textit{where} ~ & q_i \equiv \fix{i}{f_k^{n_k}}{t_k}{e_k}, \norm{\vec{b}} = n_m - 1 \\
 \gg \vdash \caseof{P^\circ}{(\app{q_m}{\vec{b}})}{c_j}{a_j}
   & \reduce_\nu \caseof{P^\circ}{(\app{\substvec{e_m}{f_k}{q_k}}{\vec{b}})}{c_j}{a_j} \\
-  \textit{where} ~ & \forall i \in \vec{k}, q_i \equiv \cofix{i}{f_k}{t_k}{e_k}
+  \textit{where} ~ & q_i \equiv \cofix{i}{f_k}{t_k}{e_k}
 \end{align*}
 \caption{Reduction rules}
 \label{fig:reduction}

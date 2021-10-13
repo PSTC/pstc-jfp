@@ -1,18 +1,39 @@
 \begin{figure}
 \centering
+
 \begin{align*}
+m, n, i, j, k, \ell &\Coloneqq \meta{positive naturals} \\
 f, g, h, x, y, z &\Coloneqq \meta{term variables} &
 \tau, \upsilon &\Coloneqq \meta{size variables} \\
 I &\Coloneqq \meta{(co)inductive type names} &
 c &\Coloneqq \meta{constructor names} \\
-r, s &\Coloneqq \upsilon \mid \succ{s} \mid \infty \qquad
-\rho \Coloneqq \set{\vec{\upsilon \mapsto s}} &
+r, s &\Coloneqq \new{\upsilon \mid \succ{s} \mid \infty} \qquad
+\rho \Coloneqq \new{\set{\vec{\upsilon \mapsto s}}} &
 U &\Coloneqq \Prop \mid \Set \mid \Type{n} \\
-e, a, b, p, q, t, u, v, P &\Coloneqq \mathrlap{x \mid x^{\rho} \mid U \mid \prod{x}{t}{t} \mid \abs{x}{t^\circ}{e} \mid \app{e}{e} \mid \letin{x}{t^\circ}{e}{e} \mid I^s \mid c} \\
-&\mathrlap{\mid \caseof{P^\circ}{e}{c}{e} \mid \fix{m}{f^n}{t^*}{e} \mid \cofix{m}{f}{t^*}{e}}
+e, a, b, p, q, t, u, v, P &\Coloneqq
+  \mathrlap{x
+  \mid \new{x^{\rho}}
+  \mid U
+  \mid \prod{x}{t}{t}
+  \mid \abs{x}{\new{t^\circ}}{e}
+  \mid \app{e}{e}
+  \mid \letin{x}{\new{t^\circ}}{e}{e}
+  \mid \new{I^s}
+  \mid c} \\
+&\mathrlap{\mid \caseof{\new{P^\circ}}{e}{c}{e}
+  \mid \fix{m}{f^n}{\new{t^*}}{e}
+  \mid \cofix{m}{f}{\new{t^*}}{e}}
 \end{align*}
-\caption{Syntax of \lang terms}
-\label{fig:terms-general}
+
+\begin{align*}
+\Delta &\Coloneqq \mt \mid \Delta(\assm{x}{e}) &\textit{local assm. environments} \\
+\Gamma &\Coloneqq \mt \mid \Gamma(\assm{x}{e}) \mid \Gamma(\defn{x}{t}{t}) &\textit{local environments} \\
+\Gamma_G &\Coloneqq \mt \mid \Gamma_G(\Assm{x}{e}) \mid \Gamma_G(\Defn{x}{t}{t}) &\textit{global environments} \\
+\Sigma &\Coloneqq \mt \mid \Sigma(\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i}}}} \coloneqq \seq{\vec{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\dom{\Delta_p}}{\overline{t}_j}}}}}) &\textit{signatures} \\
+\end{align*}
+
+\caption{Syntax of \lang terms, environments, and signatures}
+\label{fig:syntax}
 \end{figure}
 
 %%% Local Variables:
