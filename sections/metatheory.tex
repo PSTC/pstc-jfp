@@ -27,7 +27,7 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
   It uses the Takahashi translation $e^\dagger$ of terms $e$,
   defined as the simultaneous single-step reduction of all
   $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.
-  The proof is straightforward.
+  The proof is relatively standard thanks to reduction being purely syntactic.
   % Is it though?
 \end{proof}
 
@@ -76,8 +76,10 @@ On the other hand, if we do allow unrestricted $\nu$-reduction as in \autoref{fi
 \end{theorem}
 
 \begin{proof}[{[sketch]}]
-  By induction on $\gg \vdash e : t$.
-  Most cases are straightforward.
+  By induction on $\gg \vdash e : t$.  Most cases are straightforward,
+  making use of confluence when necessary, such as for a lemma of
+  $\Pi$-injectivity to handle $\beta$-reduction in \refrule{app}.
+  %
   The case for \refrule{case} where $e \rhd e'$ by $\iota$-reduction relies on the fact that
   if $x$ is the name of a \coinductive type and appears strictly positively in $t$,
   then $x$ appears covariantly in $t$.
