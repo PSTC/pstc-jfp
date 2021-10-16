@@ -163,27 +163,264 @@ Our ultimate goal and primary future work is to prove strong normalization and l
 
 
 Taking inspiration from \citet{cic-hat-minus,cc-hat-omega,cic-hat},
-we conjecture that these statements can be proven using the
-$\Lambda$-set technique from \citet{lambda-set-altenkrich,lambda-set-pts}.
-Our proof attempt is still ongoing.
+we conjecture that these statements are likely true.
+% Our proof attempt is still ongoing.
 
-However, with coinduction and cofixpoints, results from \citet{cc-hat-omega}
-suggest that subject reduction and strong
-normalization may not be true at the same time, because subject
-reduction appears to require unrestricted unfolding of cofixpoints,
-which breaks normalization.
+In fact, we have proof that alternative formulation of CIC with sized
+types, alternative to \lang, is strongly normalizing.
+%
+This proof is uses a semantics-first set-theoretic model construction
+equipped with realisability candidates based on the works of
+\citet{barras-thesis}.
+%
+This alternative formulation differs from \lang in the following
+aspects:
+%
+\begin{itemize}
+  %
+  \item One requires size variables to be explicitly annotated, and
+  treat fixpoint recursor as binders for size variables.
+  %
+  That is, fixpoint recursors are now of the form such as
+  %
+  \begin{align*}
+    \kw{fix}^\upsilon ~ f : \prod{n}{\Nat^\upsilon}{u} \coloneqq e
+    \tag{$\star$}\label{eqn:new-fix}
+  \end{align*}
+  %
+  where $f$ is said to \emph{bind} the size variable $\upsilon$.
+  %
+  This explicit binding of size variables serves the purpose of
+  specifying which argument the recursion is happening on.
+  %
+  The corresponding typing rule then allows $\upsilon$ to be
+  specialised to any size expression $s$:
+  %
+  \begin{mathparpagebreakable}
+    \inferrule*[right=\defrule{fix-another}]
+    { \Gamma (f : \prod{n}{\Nat^\upsilon}{u}) \vdash e :
+      \prod{n}{\Nat^{\hat{\upsilon}}}{\subst{u}{\upsilon}{\hat{\upsilon}}} }
+    { \Gamma \vdash \kw{fix}^\upsilon ~ f : \prod{n}{\Nat^\upsilon}{u} \coloneqq e :
+      \prod{n}{\Nat^{s}}{\subst{u}{\upsilon}{s}} }
+  \end{mathparpagebreakable}
+  %
+  \item One only considers predicative W-types in order to alleviate
+  some syntactic burden of dealing with strict positivity conditions.
+  %
+  However, \citet{barras-thesis,polynomial-functors-w} have shown that
+  W-types are powerful enough to encode many strictly positive
+  inductive definitions, including nested inductive types and
+  inductive types with non-uniform parameters.
+  %
+  Including impredicative inductive types to the strong normalization
+  model, on the other hand, does pose several technical challenges
+  related to the realisability semantics.
+  %
+  \item As it is the case for most set-theoretic model constructions,
+  one uses a notion of typed reduction.
+  %
+  Additionally, the strong normalization model does not include let
+  statements or global or local contexts like \lang does.
+  %
+\end{itemize}
 
-Recall that Coq itself is not strongly normalizing, only weakly normalizing.\footnote{At least, the underlying calculus is not. The counterexample ``normalizes'' to a stack overflow on machine with finite memory.}
+As a consequence of treating fixpoint recursors as binders for size
+variables as in \eqref{eqn:new-fix}, when we reduce a fixpoint
+recursor, we need to replace the corresponding bound size variable in
+its body.
+%
+Work under some context $\Gamma$ and put
+%
+\begin{align*}
+  F \triangleq \kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e
+\end{align*}
+%
+and let $t$ be some $\Nat$ in constructor form, so $t$ has size
+$\hat{s}$ for some size $s$.
+%
+Then, as fixpoint recursors bind size variables, when we apply $F$ to
+$t$, we specialise $\upsilon$ to $\hat{s}$, so $\mu$-reduction should
+say
+%
+\begin{align*}
+  \app{F}{t} \rhd \app{\subst{\subst{e}{\upsilon}{s}}{f}{F}}{t}
+\end{align*}
+%
+But of course the size $\hat{s}$ is unknown just from the term $t$, so
+it appears that the syntax needs to be further modified, such as by
+adding extra mandatory size argument to fixpoint recursors, so that we
+may recover the $\hat{s}$.
+%
+However, as a consequence of typed reduction, this was not necessary,
+because the size $\hat{s}$ can be recovered from the typing of the
+term $t$:
+%
+\begin{align*}
+  %
+  \inferrule
+  {\Gamma \vdash t : \Nat^{\hat{s}}}
+  {\Gamma \vdash \app{F}{t} \approx \app{\subst{\subst{e}{\upsilon}{s}}{f}{F}}{t}}
+  %
+  \tag{$\varheartsuit$}\label{eqn:F-t-red}
+  %
+\end{align*}
+
+\paragraph*{} Via this model construction, the main lesson learnt is
+that the intuition about how size types ensure termination by
+restricting recursion on smaller elements is perhaps not quite so
+straightforward to capture set-theoretically.
+
+Take the situation in \eqref{eqn:F-t-red} as an example.
+%
+In the strong normalization model, we interpret terms and types as
+their natural set-theoretic counterparts and size variables as
+ordinals.
+%
+For $\rho$ a valuation of $\Gamma$ mapping variables to sets and $\pi$
+mapping size variables to ordinals, denote by $\Val(M)_\rho^\pi$ the
+set-theoretic denotation of the term $M$ under these valuations.
+%
+Now, consider how one would define $\Val(F)_\rho^\pi$.
+%
+Intuitively, we take some initial approximation of the fixpoint of the
+value of $e$ and at every stage, improve the approximation by
+evaluating $e$ on the prior approximation, until the approximation
+cannot be further improved, which means we have reached a fixpoint of
+the iteration.
+
+For the sake of simplicity, assume that for all ordinals $\alpha$, the
+value of $\Nat^\upsilon$ where $\upsilon$ is interpreted as $\alpha$
+is just
+$\Val(\Nat^\upsilon)_\rho^{\subst{\pi}{\upsilon}{\alpha}} =
+\min(\alpha,\omega)$.
+%
+Putting $D_0$ to be some well-chosen singleton set and
+$D_\alpha \triangleq \Val(\Nat^\upsilon \to
+\Nat^\upsilon)_\rho^{\subst{\pi}{\upsilon}{\alpha}}$, the usual
+approach is to iterate up until the least fixpoint of the operator
+%
+\begin{align*}
+  \varphi \triangleq
+  (\alpha \in \Ord) \mapsto (\psi \in D_\alpha) \mapsto \Val(e)_{\subst{\rho}{f}{\psi}}^{\subst{\pi}{\upsilon}{\alpha}}
+\end{align*}
+%
+starting from some the initial approximation $\varphi_0 \in D_0$ and
+setting the $(\alpha+1)$-th approximation $\varphi_{\alpha+1}$ as
+$\varphi(\varphi_\alpha)$.
+%
+The typing rule for $F$ given by \refrule{fix-another} is sufficient
+to ensure that each $\varphi_\alpha \in D_\alpha$.
+%
+However, this alone is not enough: we want the sequence
+$(\varphi_\alpha)_\alpha$ to be convergent.
+
+What would be a sufficient condition for convergence?
+%
+Note that $(\varphi_\alpha)_\alpha$ is obtained by successively
+improving upon approximations of the fixpoint of $\varphi$, so one
+would expect that
+%
+\begin{align*}
+  \varphi_\alpha(x) = \varphi_\beta(x) \text{ for all } x < \alpha < \beta
+  \label{eqn:size-irrel}\tag{\textsc{size-irrel}}
+\end{align*}
+%
+This expresses a condition of size-irrelevance: size variables bound
+by fixpoint recursors can only be used to restrict their domains, and
+should not be used to affect computation.
+%
+And it turns out that \eqref{eqn:size-irrel} is enough to ensure
+$(\varphi_\alpha)_\alpha$ converges to $\varphi_\omega$.
+%
+So, it remains to prove \eqref{eqn:size-irrel}.
+%
+Assume inductively it holds $\alpha,\beta$ and we would like to prove
+it for $\alpha+1,\beta+1$, so that the goal is to show, for
+$x < \alpha+1 < \beta+1$,
+%
+\begin{align*}
+  \Val(e)_{\subst{\rho}{f}{\varphi_\alpha}}^{\subst{\pi}{\upsilon}{\alpha}}(x) =
+  \Val(e)_{\subst{\rho}{f}{\varphi_\beta}}^{\subst{\pi}{\upsilon}{\beta}}(x)
+\end{align*}
+%
+By the intuitive understanding of sized typing, on input of size
+$\alpha+1$, the body $e$ can only recursively call $f$ on inputs of
+size at most $\alpha$.
+%
+And inductively, $\varphi_\alpha$ behaves identically to
+$\varphi_\beta$ on inputs of size at most $\alpha$.
+%
+So, $e$ should not be able to distinguish between $\varphi_\alpha$ and
+$\varphi_\beta$, thus ensuring the above equality.
+%
+However, just from \refrule{fix-another}, it seems that one cannot
+easily conclude that $e$ cannot tell apart $\varphi_\alpha$ and
+$\varphi_\beta$.
+
+This problem was encountered also by \citet{barras-thesis}, who solved
+it by introducing a special typing mode called size-irrelevance typing
+and syntactic marker for the $\Pi$-types of fixpoint recursors.
+%
+We have used a similar solution to get around this problem in the
+strong normalization proof of the alternative formulation of \lang.
+%
+However, in the size-irrelevance typing of \citet{barras-thesis},
+there was the requirement that fixpoint recursors can never occur as
+arguments to other functions in their defining body.
+%
+For example, in order for $e$ to pass size-irrelevance typing, $e$
+cannot contain a sub-expression of the form $(\app{M}{f})$.
+%
+We were able to get rid of this requirement in the strong
+normalization proof of this alternative formulation of \lang.
+%
+In fact, the typing rules allowed for size-irrelevance typing can be
+expanded to include counterparts for almost all of the ``normal''
+typing rules.
+
+An alternative approach seems to be to use a model involving PERs,
+where the PERs are designed to ensure size-irrelevance.
+%
+In any case, it seems that an inherent restriction of size-irrelevance
+is one may not have a recursive function $F$ with behaviours such as
+$\app{F}{n} \approx \Nat^\upsilon \to ...n\text{ times}... \to
+\Nat^\upsilon$ or even $\app{F}{n} \approx \Nat^\upsilon$ where
+$\upsilon$ is the size variable bound by $F$.
+%
+\citet{cic-hat-minus} has a similar restriction present in
+\CIChatminus, and indeed matches the intuition of size-irrelevance.
+%
+If $\app{F}{n} \approx \Nat^\upsilon$ then the value of $F$ on an
+input $n$ depends on the size $\upsilon$, which precisely the
+behaviour size-irrelevance aims to forbid.
+%
+On the other hand, $\app{F}{n} \approx \Nat^\infty \to
+...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
+
+\paragraph*{}
+Let us conclude this section by recalling that Coq itself is not
+strongly normalizing, only weakly normalizing.
+%
+\footnote{At least, the
+  underlying calculus is not. The counterexample ``normalizes'' to a
+  stack overflow on machine with finite memory.}
 
 \begin{minted}{coq}
 Definition cbv_omega := fix f (n : nat) := let x := f n in O.
 \end{minted}
 
-This is a side-effect of relaxing the guard condition to enable more sound programs to type check.
-Ideally, sufficiently expressive sized typing will allow us to replace the guard condition entirely and regain strong normalization in Coq.
+This is a side-effect of relaxing the guard condition to enable more
+sound programs to type check.
+%
+Ideally, sufficiently expressive sized typing will allow us to replace
+the guard condition entirely and regain strong normalization in Coq.
 
-However, an intermediate goal may be to achieve only weak normalization.
-This would also maintain backward compatibility with Coq, although it is unclear if counterexamples like the above are ever desired in user programs.
+However, an intermediate goal may be to achieve only weak
+normalization of \lang.
+%
+This would also maintain backward compatibility with Coq, although it
+is unclear if counterexamples like the above are ever desired in user
+programs.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
