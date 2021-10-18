@@ -403,7 +403,85 @@ behaviour size-irrelevance aims to forbid.
 On the other hand, $\app{F}{n} \approx \Nat^\infty \to
 ...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
 
-\paragraph*{}
+\subsubsection{Computation of $\infty$}
+%
+In the set-theoretic model, we also discovered that giving a
+set-theoretic interpretation of the $\infty$ size was more technically
+involved than one would expect.
+
+Take the $\mu$-reduction equation in \eqref{eqn:mu-example} as an
+example.
+%
+Once again, assume $s=\infty$ and \eqref{eqn:size-irrel} holds, so that
+$(\varphi_\alpha)_\alpha$ is constant beyond $\omega$.
+%
+Then, by the previous discussion, the value of $F$ and of
+$\left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon
+  \coloneqq e\right\}_{s}$ are both taken to be
+$\varphi_\omega = \varphi_{\kappa}$ for all $\kappa \geq \omega$.
+%
+Then, by substitutivity, the $\mu$-reduction equation in
+\eqref{eqn:mu-example} should say, for sufficiently large
+$\kappa \geq \omega$,
+%
+\begin{align*}
+  \Val(\app{F}{t})_\rho^\pi =
+  \Val(\app{\subst{\subst{e}{\upsilon}{\infty}}{f}{
+  \left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e\right\}_{\infty}
+  }}{t})_\rho^\pi
+\end{align*}
+%
+By substitutivity, this is equivalent to showing that
+%
+\begin{align*}
+  \varphi_{\kappa+1}(\Val(t)_\rho^\pi) =
+  \Val(\subst{e}{\upsilon}{\infty})_{\subst{\rho}{f}{\varphi_\kappa}}^{\pi}(\Val(t)_\rho^\pi)
+\end{align*}
+%
+But
+$\varphi_{\kappa+1} =
+\Val(e)_{\subst{\rho}{f}{\varphi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}}$,
+to show the above equality, it remains to move the
+$\subst{e}{\nu}{\infty}$ in the syntax into the valuation
+$\subst{\pi}{\nu}{\kappa}$, for some large $\kappa$.
+
+More generally, it seems true that for all terms $M$ and valuations
+$\rho$ and $\pi$, and size variables $\nu$, there is some ordinal
+$\Infty(M;\nu)_\rho^\pi$ with the $\infty$-substitutivity property:
+%
+\begin{align*}
+  \kappa \geq \Infty(M;\nu)_\rho^\pi \text{ implies }
+  \Val(\subst{M}{\nu}{\infty})_\rho^\pi = \Val(M)_\rho^{\subst{\pi}{\nu}{\kappa}}
+  \label{eqn:infty-subst}\tag{$\infty$-subst}
+\end{align*}
+%
+This equality somehow expresses the idea that $\Infty(M;\nu)_\rho^\pi$
+closes off all inductive types annotated with $\nu$ in $M$, so
+$\Infty(M;\nu)_\rho^\pi$ is the denotation of $\infty$ for $\nu$ in
+$M$ under $\rho$ and $\pi$.
+%
+Intuitively, we know this ordinal $\Infty(M;\nu)_\rho^\pi$ exists,
+because the strict positivity condition ensures that by iterating the
+operator associated with an inductive type up to its closure ordinal,
+we eventually reach their fixpoints.
+%
+Since there can only be finitely many inductive types in $M$, an
+ordinal with the $\infty$-substitutivity property is just the
+supremum of these closure ordinals.
+
+However, the computation of $\Infty(M;\nu)_\rho^\pi$ is complicated by
+the fact that in $M$, the size variable $\nu$ can be annotated to more
+than one inductive type.
+%
+For example, in $M$, the size variable $\nu$ can be annotated to both
+$\Nat^\nu$ and $I^\nu$, where $I$ is some inductive type with a
+different closure ordinal than $\Nat$.
+%
+In fact, it turned out that computing $\Infty(M;\nu)_\rho^\pi$ was
+much more involved than initially expected.
+
+\subsubsection{Relation to \lang and Coq}
+%
 Let us conclude this section by recalling that Coq itself is not
 strongly normalizing, only weakly normalizing.
 %
