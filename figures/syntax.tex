@@ -29,7 +29,7 @@ e, a, b, p, q, t, u, v, P &\Coloneqq
 \Delta &\Coloneqq \mt \mid \Delta(\assm{x}{e}) &\textit{local assm. environments} \\
 \Gamma &\Coloneqq \mt \mid \Gamma(\assm{x}{e}) \mid \Gamma(\defn{x}{t}{t}) &\textit{local environments} \\
 \Gamma_G &\Coloneqq \mt \mid \Gamma_G(\Assm{x}{e}) \mid \Gamma_G(\Defn{x}{t}{t}) &\textit{global environments} \\
-\Sigma &\Coloneqq \mt \mid \Sigma(\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i}}}} \coloneqq \seq{\vec{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\dom{\Delta_p}}{\overline{t}_j}}}}}) &\textit{signatures} \\
+\Sigma &\Coloneqq \mt \mid \Sigma(\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\new{\Delta^\infty_i}}{U_i}}}} \coloneqq \seq{\vec{\assm{c_j}{\prodctx{\new{\Delta^\infty_j}}{\app{I_j}{\dom{\Delta_p}}{\new{\overline{t^\infty}_j}}}}}}) &\textit{signatures} \\
 \end{align*}
 
 \caption{Syntax of \lang terms, environments, and signatures}

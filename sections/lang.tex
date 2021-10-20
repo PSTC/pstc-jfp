@@ -50,6 +50,7 @@ This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
 \citet{cic-hat-minus} discusses the issue in further detail.
+Similarly, we use $t^\infty$ to denote \textit{full terms}, which will appear mainly in signatures.
 
 \subsubsection{Fixpoints and Cofixpoints}
 
@@ -84,6 +85,7 @@ global environments represent top-level declarations corresponding to Coq vernac
 We may also refer to global environments alone as \textit{programs}.
 Local assumption environments, a subset of local environments, are mostly used in syntactic sugar:
 given $\Delta = \vec{(\assm{x_i}{t_i})}$, $\new{\prodctx{\Delta}{t}}$ is sugar for $\prod{x_1}{t_1}{\dots \prod{x_i}{t_i}{\dots t}}$, while $\new{\dom{\Delta}}$ is the sequence $\vec{x_i}$.
+Additionally, $\Delta^\infty$ denotes local assumption environments containing only full terms.
 
 We use $\new{x \in \Gamma}$, $\new{(\assm{x}{t}) \in \Gamma}$, and $\new{(\defn{x}{t}{e}) \in \Gamma}$
 to represent the presence of some declaration binding $x$, the given assumption, and the given definition in $\Gamma$, respectively,
@@ -94,21 +96,22 @@ For simplicity, throughout the judgements in this paper, we assume some fixed, i
 Global environments and signatures should be easily extendible to an interleaving of declarations and \coinductive definitions,
 which would be more representative of a real program.
 A mutual \coinductive definition
-$\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i}}}} \coloneqq
-\seq{\vec{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\dom{\Delta_p}}{\vec{t}_j}}}}}$
+$\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\Delta^\infty_i}{U_i}}}} \coloneqq
+\seq{\vec{\assm{c_j}{\prodctx{\Delta^\infty_j}{\app{I_j}{\dom{\Delta_p}}{\vec{t^\infty}_j}}}}}$
 consists of the following:
 \begin{itemize}
   \item $I_i$, the names of the defined \coinductive types;
   \item $\Delta_p$, the \textit{parameters} common to all $I_i$;
-  \item $\Delta_i$, the \textit{indices} of each $I_i$;
+  \item $\Delta^\infty_i$, the \textit{indices} of each $I_i$;
   \item $U_i$, the universe to which $I_i$ belongs;
   \item $c_j$, the names of the defined constructors;
-  \item $\Delta_j$, the arguments of each $c_j$;
+  \item $\Delta^\infty_j$, the arguments of each $c_j$;
   \item $I_j$, the \coinductive type to which $c_j$ belongs; and
-  \item $\vec{t}_j$, the indices to $I_j$.
+  \item $\vec{t^\infty}_j$, the indices to $I_j$.
 \end{itemize}
 
-Note that $I_j$ is the \coinductive type of the $j$th constructor, \emph{not} the $j$th \coinductive in the sequence $I_i$.
+We require that the index and argument types be \emph{full} types and terms.
+Note also that $I_j$ is the \coinductive type of the $j$th constructor, \emph{not} the $j$th \coinductive in the sequence $I_i$.
 We forgo the more precise notation $I_{i_j}$ for clarity and brevity.
 
 As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \rightarrow u}$ as syntactic sugar for $\prod{x}{t}{u}$) would be defined as:
@@ -216,16 +219,13 @@ $\upsilon \neg t \Leftrightarrow \subst{t}{\upsilon}{\hat{\upsilon}} \leq t$ hol
 Positivity and negativity are then used to indicate where position annotations are allowed to appear in the types of \cofixpoints,
 as we will see in the typing rules.
 
-\subsection{Typing Rules}\label{sec:typing:rules}
-
-We now present the typing rules of \lang.
-Note that these are type checking rules for \textit{sized} terms, whose annotations come from size inference in \autoref{sec:algorithm}.
+\subsection{Typing and Well-Formedness}\label{sec:typing:rules}
 
 \input{figures/well-formed.tex}
 
 We begin with the rules for well-formedness of local and global environments, presented in \autoref{fig:wf}.
-As mentioned earlier, we elide the definition of well-formedness of signatures,
-and assume that the ambient implicit signature is well-formed.
+As mentioned, this and the typing judgements implicitly contain a signature $\Sigma$, whose well-formedness is assumed.
+Additionally, we use $\any$ to omit irrelevant constructions for readability.
 
 \input{figures/sets.tex}
 
@@ -234,68 +234,57 @@ and assume that the ambient implicit signature is well-formed.
 \input{figures/typing.tex}
 
 The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
-Metafunctions that construct some important function types are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
+Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
 Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv} \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
-Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations are erased to bare.
-This is to preserve subject reduction without requiring size substitution during reduction, and is discussed further by~\citet{cic-hat-minus}.
+Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction,
+and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term.
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.
-If a variable or a constant is bound to a body in the local or global environment, it is annotated with a size substitution such that the body is well-typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
+If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well-typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
 Notably, each usage of a variable or a constant does not have to have the same size annotations.
 
-Before discussing typing \coinductive types, there are some indexing conventions to note.
-In Rules \refnorule{ind}, \refnorule{constr}, and \refnorule{case}, we use $i$ to range over the number of \coinductive types in a single mutual \coinductive definition, $j$ to range over the number of constructors of a given \coinductive type, $k$ for a specific index in the range $\vec{\imath}$, and $\ell$ for a specific index in the range $\vec{\jmath}$.
-In Rules \refnorule{fix} and \refnorule{cofix}, we use $k$ to range over the number of mutually-defined \cofixpoints and $m$ for a specific index in the range $\vec{k}$.
-Finally, we use $\any$ (underscore) to omit irrelevant constructions for readability.
-
-In \refrule{ind}, the type of a \coinductive type is a function type from its parameters $\Delta_p$ and its indices $\Delta_k$ to its universe $U_k$.
-The \coinductive type itself holds a single size annotation.
-
-In \refrule{constr}, the type of a constructor is a function type from its parameters $\Delta_p$ and its arguments $\Delta_\ell$ to its \coinductive type $I_\ell$ applied to the parameters and its indices $\vec{t}_\ell$.
-Size annotations appear in two places:
+Inductive types and constructors are typed mostly similar to CIC,
+with their types specified by \indtype and \constrtype.
+In \refrule{ind}, the \coinductive type itself holds a single size annotation.
+In \refrule{constr}, size annotations appear in two places:
 \begin{itemize}
     \item In the argument types of the constructor.
-      We annotate each occurrence of $I_\ell$ in $\Delta_\ell$ with a size expression $s$.
-    \item On the \coinductive type of the fully-applied constructor.
-      If the constructor belongs to the inductive type $I_\ell$, then it is annotated with the size expression $\hat{s}$.
+      We annotate each occurrence of $I_j$ in the arguments $\Delta^\infty_j$ with a size expression $s$.
+    \item On the \coinductive type of the fully-applied constructor,
+      which is annotated with the size expression $\hat{s}$.
       Using the successor guarantees that the constructor always constructs an object that is \textit{larger} than any of its arguments of the same type.
 \end{itemize}
 As an example, consider a possible typing of \text{VCons}:
 \begin{align*}
-\VCons &: (A: \Type{}) \to (n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n \to \Vector^{\hat{s}} ~ A ~ (\Succ ~ n)
+\mt, \mt \vdash \VCons &: \underbrace{(A: \Type{})}_{\text{parameter}} \to \underbrace{(n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n}_{\text{argument}} \to \underbrace{\Vector^{\hat{s}} ~ A ~ (\Succ ~ n)}_{\text{return type}}
 \end{align*}
-It has a single parameter $A$ and $\Succ ~ n$ corresponds to the index $\vec{t}_j$ of the constructor's inductive type.
+It has a single parameter $A$ and $\Succ ~ n$ corresponds to the index $\vec{t^\infty}_j$ of the constructor's inductive type.
 The input $\Vector$ has size $s$, while the output $\Vector$ has size $\hat{s}$.
 
-In \refrule{case}, a case expression has three important parts:
+In \refrule{case}, a case expression has three parts:
 \begin{itemize}
-    \item The \textbf{target} $e$.
-      It must have a \coinductive type $I_k$ with a successor size annotation $\hat{s}_k$ so that any constructor arguments of the same type can have the predecessor size annotation.
+    \item The \textbf{target} $e$ that is being destructed.
+      It must have a \coinductive type $I$ with a successor size annotation $\hat{s}_k$ so that recursive constructor arguments have the predecessor size annotation.
 
-    \item The \textbf{motive} $P$.
-      It is a function from the indices $\Delta_k$ of the target type $I_k$ and the target itself to the return type of the case expression.
-      Note that in the motive's type in \autoref{fig:metafunctions}, the parameter variables $\dom{\Delta_p}$ in the indices are bound to the parameters of the target type.
+    \item The \textbf{motive} $P$, which yields the return type of the case expression.
+      While it ranges over the \coinductive's indices,
+      the parameter variables $\dom{\Delta_p}$ in the indices' types are bound to the parameters of the target type.
+      As usual, the universe of the motive $U$ is restricted by the universe of the \coinductive $U'$ according to \Elims.
 
-      (This presentation follows CIC, but differs from that by~\citet{cic-hat-minus, cic-hat-l, cc-hat-omega}, where the case expression contains a return type in which the index and target variables are free and explicitly stated, in the syntactic form $\vec{y}.x.P$.)
+      (This presentation follows that of Coq, but differs from that by~\citet{cic-hat-minus, cic-hat-l, cc-hat-omega}, where the case expression contains a return type in which the index and target variables are free and explicitly stated, in the syntactic form $\vec{y}.x.P$.)
 
-    \item The \textbf{branches} $e_j$.
-      Each branch is associated with a constructor $c_j$ and is a function over the arguments $\Delta_j$ of the constructor, producing some term.
-      The type of each branch, listed in \autoref{fig:metafunctions}, is the motive $P$ applied to the indices $\vec{t}_j$ of that constructor's type and the constructor itself applied to the parameters and its arguments.
-
-      Note that, like in the type of constructors, we annotate each occurence of $c_j$'s \coinductive type $I_k$ in $\Delta_j$ with the size expression $s$.
-      The parameter variables in $\Delta_j$ and $\vec{t}_j$ are similarly bound to the parameters $\vec{p}$ of the target.
+    \item The \textbf{branches} $e_j$, one for each constructor $c_j$.
+      Again, the parameters of its type are fixed to $\vec{p}$, while ranging over the constructor arguments.
+      Note that like in the type of constructors, we annotate each occurrence of $c_j$'s \coinductive type $I$ in $\Delta_j$ with the size expression $s$.
 \end{itemize}
-
-The type of the entire case expression is then the motive applied to the target type's indices and the target itself.
-Notice that we also restrict the universe of this type based on the universe of the target type using \Elims.
 
 Finally, we have the typing of mutual \cofixpoints in rules \refnorule{fix} and \refnorule{cofix}.
 We take the annotated type $t_k$ of the $k$th \cofixpoint definition to be convertible to a function type containing a \coinductive type, as usual.
 However, instead of the guard condition, we ensure termination/productivity using size expressions.
 
 The main difficulty in these rules is supporting size preserving \cofixpoints.
-We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints, using the $\pos$ and $\neg$ judgments.
+We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints using the positivity and negativity judgments.
 For fixpoints, the type of the $n_k$th argument, the recursive argument, is an inductive type annotated with a size variable $v_k$.
 For cofixpoints, the return type is a coinductive type annotated with $v_k$.
 The positivity or negativity of $v_k$ in the rest of $t_k$ indicate where $v_k$ may occur other than in the \corecursive position.
@@ -303,24 +292,19 @@ For instance, supposing that $n = 1$,
 $\app{\List^\upsilon}{\Nat} \to \app{\List}{\Nat} \to \app{\List^\upsilon}{\Nat}$
 is a valid fixpoint type with respect to $\upsilon$, while
 $\app{\List^\upsilon}{\Nat} \to \app{\List^\upsilon}{\Nat} \to \app{\Stream^\upsilon}{\Nat}$
-is not, since $\upsilon$ appears negatively in $\Stream$ and must not appear at all in the parameter of the second $\List$ argument type.
-This is because $\upsilon_k$ indicates the types that are size-preserved.
-For fixpoints, it indicates not only the recursive argument but also which return types have size \textit{at most} that of the recursive argument.
-For cofixpoints, it indicates the arguments that have size \textit{at least} that of the return type.
-Therefore, it cannot appear on types of the incorrect recursivity, or on types not being (co)\-recurred upon.
+is not, since $\upsilon$ illegally appears negatively in $\Stream$ and must not appear at all in the parameter of the second $\List$ argument type.
+This restriction ensures the aforementioned monotonicity property of the \cofixpoints' types.
 
-As in \refrule{lam}, we cannot keep the size annotations.
-Instead, we mark \cofixpoint type annotations, which recall are position terms,
-as size-preserving using the erasure $|t_k|^{\upsilon_k}$ to replace size
-annotations in $t_k$ whose size variable is $\upsilon_k$ with $*$.
+As in \refrule{lam}, to maintain subject reduction, we cannot keep the size annotations, instead replacing them with position variables.
+The metafunction $\new{\erase{\ph}^\upsilon}$ replaces $\upsilon$ annotations with the position annotation $\ast$ and erases all other size annotations.
 
-Checking termination and productivity is relatively straightforward.
-If $t_k$ are well typed, then the \cofixpoint bodies should have type $t_k$ with a successor size in the local context where \cofixpoint names $f_k$ are bound to their types $t_k$.
-Intuitively, this tells us that the recursive calls to $f_k$ in fixpoint bodies are on smaller-sized arguments, and that corecursive bodies produce objects larger than those from the corecursive call to $f_k$.
-The type of the whole \cofixpoint is then the $m$th type $t_m$ with its size variable $v_m$ bound to some size expression $s$.
+Checking termination and productivity is then relatively straightforward.
+If $t_k$ are well typed, then the \cofixpoint bodies should have type $t_k$ with a successor size when $(\assm{f_k}{t_k})$ are in the local environment.
+This tells us that the recursive calls to $f_k$ in fixpoint bodies are on smaller-sized arguments, and that corecursive bodies produce objects with size larger than those from the corecursive call to $f_k$.
+The type of the $m$th \cofixpoint is then the $m$th type $t_m$ with some size expression $s$ substituted for the size variable $v_m$.
 
 In Coq, the indices of the recursive elements are rarely given, and there are no user-provided position annotations at all.
-In \autoref{sec:algorithm}, we present how we compute the indices and the position annotations during size inference.
+We show how indices and position annotations can be computed during size inference in \autoref{sec:algorithm}.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
