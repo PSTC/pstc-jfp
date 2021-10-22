@@ -53,7 +53,7 @@ It appears that there were also plans to implement sized types in Coq by \citet{
 For the purposes of size inferrability from unannotated code,
 the type systems from \lambdahat up to \CIChat and its variations treat sizes as merely annotations
 and feature only what can be considered as prenex size polymorphism.
-On the other hand, \citet{abel-diss} introduces \Fomegahat, a sized type system for System F$_\omega$ that treats sizes as a kind,
+On the other hand, \citet{abel-diss} introduces \Fomegahat, a sized type system for System F$_\omega$ that treats size as a kind,
 which therefore allows for higher-order size polymorphism via explicit quantification.
 While \Fomegahat subsumes \Fhat and uses the same size algebra,
 it uses recursive and corecursive type constructors ($\mu$- and $\nu$-types) rather than inductive (and coinductive) type definitions.
@@ -68,8 +68,8 @@ which are also implemented in MiniAgda.
 \cite{nbe} prove normalization of a higher-order sized dependent type theory with naturals, but without bounded size quantification.
 To our knowledge, this is the only formalization of higher-order sized dependent types in the literature.
 
-Sized types with higher-order bounded size quantification are implemented in Agda\footnote{For Agda's documentation on sized types, see \url{https://agda.readthedocs.io/en/latest/language/sized-types.html}.}.
-However, the implementation is known to be inconsistent\footnote{For a detailed discussion on the issue, see \url{https://github.com/agda/agda/issues/2820}.}.
+Sized types with higher-order bounded size quantification are implemented in Agda\footnote{For Agda's documentation on sized types, see \url{https://agda.readthedocs.io/en/latest/language/sized-types.html}.};
+however, it is known to be inconsistent\footnote{For a detailed discussion on the issue, see \url{https://github.com/agda/agda/issues/2820}.}.
 In short, it is possible to express the well-foundedness of sizes within Agda,
 but the infinite size $\infty$ itself is \emph{not} well-founded,
 as $\infty + 1 = \infty$ and $\infty < \infty$ hold,

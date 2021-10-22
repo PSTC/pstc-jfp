@@ -1,9 +1,49 @@
-\section{Conclusion}
+\section{Perspectives and the Future of Sized Types}
 \label{sec:conclusion}
-We have presented a design and implementation of sized types for Coq.
-Our work extends the core language and type checking algorithm of prior theoretical work on sized types for CIC with pragmatic features found in Coq, such as global definitions, and extends the inference algorithm to infer sizes over completely unannotated CIC terms to enable backward compatibility.
-We implement the design presented in this paper as an extension to Coq's kernel\blindimpl.
-The design and implementation can be used alone or in conjunction with syntactic guard checking to maximize typeability and compatibility.
+
+We have introduced \lang, a sized type system based on CIC and made to be compatible with Coq,
+more than a decade since (prenex, fully-inferrable) sized types for CIC were first introduced in \CIChat and \CIChatminus.
+And yet, despite good metatheoretical properties having been established for \CIChatminus,
+no functioning attempt at implementing sized types in Coq has previously been made.
+This we have done, finding significant performance problems caused by size inference for definitions yielding an explosion in size variables.
+
+This doesn't necessarily spell doom for \lang.
+The seasoned type system implementor may employ implementational tricks to improve performance in practice.
+Perhaps with some program analysis of how definitions are used, certain size variables known to be irrelevant could immediately be instantiated to the infinite size;
+maybe a dependency analysis would reveal which definitions need to be checked with the sized typing flag turned on.
+Our na\"ive implementation tries to be as general as possible to accept as many programs as possible,
+and heuristics could be used to guess where and why the user wants to use sized types,
+whittling down the number of open possibilities for size-inferred programs.
+
+But all of these feel like arbitrary and potentially fragile hacks --- and perhaps it's because they \emph{are}.
+We have discussed some more sensible solutions to not only the performance problems but also the theoretical ones:
+Why don't we explicitly quantify over the size variables of a definition to specify which ones are actually relevant?
+Why don't we require that all recursive arguments be marked?
+Why not solve the problem of nested inductives using polarities?,
+but we immediately shoot them down because they require additional work from the user's perspective and therefore violate the philosophy of backward compatibility.
+Perhaps this philosophy maintained for more than a decade of past work from \lambdahat to \CIChatsub is \emph{wrong}.
+
+So far, size inference seems to work for programs because the notion of programs were merely single terms.
+Inference was merely extracting hidden information already present in the term.
+The moment we introduce a little modularity with definitions,
+we don't have concrete information on how these definitions will be used,
+and by being as general as possible to accommodate all usages,
+we end up with terrible performance.
+Inference becomes a guessing game we are losing.
+
+If we make size quantification, abstraction, and application explicit,
+then there won't be any more size variables involved than are strictly necessary.
+To ease the tedious burden of all the extra annotations from the user,
+sizes that can be deduced could be marked as implicit and filled in by the elaborator, as is done for terms.
+In contrast to inference, elaboration merely deduces information already available,
+and fails as soon as more information is required,
+rather than trying to heuristically fill in the gaps itself.
+Another benefit of explicit sized types is that it can easily be extended to higher-order size quantification.
+This appears to be the best future direction for sized types;
+after all, Agda is still to date the only practical proof assistant with sized types.
+
+So is sized typing for Coq practical?
+Our answer is that it might be --- but only if we allow ourselves to ask users to put in a little work as well.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
