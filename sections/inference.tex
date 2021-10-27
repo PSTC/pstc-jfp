@@ -508,7 +508,10 @@ new size annotations are only introduced in $e$ in Rules \refnorule{a-ind} and \
 which introduce fresh size variables that are by definition not in $\SV{\Psi}$.
 \end{proof}
 
-Now we are ready to tackle the main theorems.
+Now we are ready to tackle the main theorems, in particular soundness of checking, inference, and well-formedness
+with respect to the typing rules.
+We leave completeness of checking and inference as a conjecture,
+but show that if it holds, then completeness of well-formedness will hold as well.
 
 \begin{theorem}[Soundness (check/infer)]\label{thm:soundness}
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, and $\Psi$ a generic local environment.
@@ -563,14 +566,17 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
     \end{displaymath}
     Let $\rho' \vDash \rho C$.
     We must show that $\Gamma_G, \rho' \Gamma_{\Psi} \vdash \rho' x^\rho : \rho' (\rho t)$ holds.
-    This follows from \refrule{var-def} if we can show that $\rho' \Gamma_{\Psi_1} \vdash \rho' (\rho e) : \rho' (\rho t)$ holds.
+    This follows from \refrule{var-def} if we can show the following hold:
+    \begin{itemize}
+      \item $\rho' \Gamma_{\Psi} \equiv \rho'\Gamma_{\Psi_1}(\defn{x}{t}{e})\rho'\Gamma_{\Psi_2}$; and
+      \item $\Gamma_G, \rho' \Gamma_{\Psi_1} \vdash \rho' (\rho e) : \rho' (\rho t)$.
+    \end{itemize}
+    The first is trivial by definition of applying size substitutions to environments.
     By \autoref{lem:constraint-subst}, we have $\rho' \circ \rho \vDash C$.
     Then by \ref{item:sound:psi}, we have that $\Gamma_G, \rho'(\rho \Gamma_{\Psi_1}) \vdash \rho' (\rho e) : \rho' (\rho t)$ holds.
     Since $\upsilon'_i \notin \SV(\Psi)$, $\rho \Gamma_{\Psi_1}$ is then simply $\Gamma_{\Psi_1}$,
-    which the judgement we need.
-    However, the definition in $\rho' \Gamma_{\Psi}$ is not $\defn{x}{\rho' (\rho t)}{\rho' (\rho e)}$ but rather $\defn{x}{\rho' t}{\rho' e}$,
-    so we are unable to apply \refrule{var-def}!
-    \stuck.
+    which yields the second.
+    \todo: What about well-formedness of the environments? I think I need to add their inference as premises.
     \item \refrule{a-const-def}.
     \begin{displaymath}
       \inferrule[]{
@@ -582,12 +588,12 @@ Suppose \ref{item:sound:wf} and \ref{item:sound:psi} hold.
         \gp \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
       }
     \end{displaymath}
-    Since the constraint set is empty, we must simply show that $\Gamma_G, \Gamma_{\Psi} \vdash x^\rho : (\rho t)$ holds.
+    Since the constraint set is empty, we must simply show that $\Gamma_G, \Gamma_{\Psi} \vdash x^\rho : \rho t$ holds.
     By well-formedness of $\Gamma_G$, we have that $\Gamma_{G1}, \mt \vdash e : t$,
     where $\Gamma_G \equiv \Gamma_{G1} (\Defn{x}{t}{e}) \Gamma_{G2}$.
     Since $\rho$ merely freshens all size variables, we also have $\Gamma_{G1}, \mt \vdash \rho e : \rho t$.
-    However, we cannot apply \refrule{const-def} because we do not have that $\WF{\Gamma_G, \Gamma_{\Psi}}$ holds.
-    \stuck.
+    Then by \refrule{const-def}, we have our goal.
+    \todo: What about well-formedness of the environments? I think I need to add their inference as premises.
     \item \refrule{a-let-in}.
     \begin{displaymath}
       \inferrule[]{

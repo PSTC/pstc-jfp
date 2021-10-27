@@ -160,17 +160,31 @@ $\Delta$\=/reduction (global definitions).
 
 \input{figures/reduction.tex}
 
-Capture-avoiding substitution is denoted with $\new{\subst{e}{x}{e'}}$,
-and simultaneous substitution with $\new{\substvec{e}{x_i}{e_i}}$.
-$\new{\rho e}$ denotes applying the substitutions $\substvec{e}{\upsilon_i}{s_i}$ for every $\upsilon_i \mapsto s_i$ in $\rho$,
-and similarly for $\new{\rho s}$ and $\new{\rho \Gamma}$ for every term in $\Gamma$.
-$\new{\ph \equiv \ph}$ is syntactic equality up to $\alpha$-equivalence (renaming),
-and $\new{\norm{\ph}}$ yields the cardinality of its argument (\eg sequence length, set size, \etc).
-
 In the case of \deltaDeltareduction, where the variable or constant has a size substitution annotation, we modify the usual rules.
 These reduction rules are important for supporting size inference with definitions.
 If the definition body contains \coinductive types (or other defined variables and constants), we can assign them fresh size variables for each distinct usage of the defined variable.
 Further details are discussed in \autoref{sec:algorithm}.
+
+Much of the reduction behaviour is expressed in terms of term and size substitution.
+Capture-avoiding substitution is denoted with $\new{\subst{e}{x}{e'}}$,
+and simultaneous substitution with $\new{\substvec{e}{x_i}{e_i}}$.
+$\new{\rho e}$ denotes applying the substitutions $\substvec{e}{\upsilon_i}{s_i}$ for every $\upsilon_i \mapsto s_i$ in $\rho$,
+and similarly for $\new{\rho s}$.
+
+This leaves applications of size substitutions to environments,
+and to size substitutions themselves when they appear as annotations on variables and constants.
+A variable $x^{\set{\vec{\upsilon \mapsto s}}}$ bound to $\defn{x}{t}{e}$ in the environment, for instance,
+can be thought of as a delayed application of the sizes $\vec{s}$,
+with the definition implicitly abstracting over all size variables $\vec{\upsilon}$.
+Therefore, the ``free size variables'' of the annotated variable are those in $\vec{s}$,
+and given some size substitution $\rho$,
+$\rho x^{\set{\vec{\upsilon \mapsto s}}} = x^{\set{\vec{\upsilon \mapsto \rho s}}}$.
+Meanwhile, we treat all $\vec{\upsilon}$ in the definition as \emph{bound},
+so that $\rho(\Gamma_1 \defn{x}{t}{e} \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
+skipping over all definitions, and similarly for global environments.
+
+Finally, $\new{\ph \equiv \ph}$ is syntactic equality up to $\alpha$-equivalence (renaming),
+and $\new{\norm{\ph}}$ yields the cardinality of its argument (\eg sequence length, set size, \etc).
 
 We define reduction ($\reduce$) as the congruent closure of the reductions,
 multi-step reduction ($\rhd^*$) in \autoref{fig:reductions} as the reflexive--transitive closure of $\rhd$,
@@ -181,7 +195,11 @@ Note that there are no explicit rules for symmetry and transitivity of convertib
 because these properties are derivable, as proven in\opcitt{conversion}
 
 \iffalse % TODO: Define \whnf as it comes up in the algorithm.
-We also use the metafunction \whnf to denote the reduction of a term to weak head normal form, which would have the form of a universe, a function type, an unapplied function, a \coinductive type (applied or unapplied), a constructor (applied or unapplied), an assumption variable (applied or unapplied), or an unapplied \cofixpoint, with arguments and inner terms unreduced.
+We also use the metafunction \whnf to denote the reduction of a term to weak head normal form,
+which would have the form of a universe, a function type, an unapplied function,
+a \coinductive type (applied or unapplied), a constructor (applied or unapplied),
+an assumption variable (applied or unapplied), or an unapplied \cofixpoint,
+with arguments and inner terms unreduced.
 \fi
 
 \subsection{Subtyping and Positivity}\label{subsec:typing:subtyping}
