@@ -3,132 +3,132 @@
 \small
 
 \begin{flushleft}
-\fbox{$\gp \vdash e^\circ \rightsquigarrow C, e \Rightarrow t$}
+\fbox{$C, \gg \vdash e^\circ \rightsquigarrow C, e \Rightarrow t$}
 \end{flushleft}
 
 \vspace{-4ex}
 
 \begin{mathpar}
 \inferrule[\defrule{a-var-assum}]{
-    (\assm{x}{t}) \in \Psi
+    (\assm{x}{t}) \in \Gamma
 }{
-    \gp \vdash x \rightsquigarrow \set{}, x \Rightarrow t
+    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
 }
 
 \inferrule[\defrule{a-const-assum}]{
     (\Assm{x}{t}) \in \Gamma_G
 }{
-    \gp \vdash x \rightsquigarrow \set{}, x \Rightarrow t
+    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
 }
 \\
 \inferrule[\defrule{a-var-def}]{
-    (C, x : t \coloneqq e) \in \Psi \and
-    \overline{\upsilon'_i} = \SV(e, t) \\\\
+    (\defn{x}{t}{e}) \in \Gamma \and
+    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(C) \\\\
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
     \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
 }{
-    \gp \vdash x \rightsquigarrow \rho C, x^\rho \Rightarrow \rho t
+    C, \gg \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
 }
 
 \inferrule[\defrule{a-const-def}]{
     (\Defn{x}{t}{e}) \in \Gamma_G \and
-    \overline{\upsilon'_i} = \SV(e, t) \\\\
+    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(C) \\\\
     \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
     \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
 }{
-    \gp \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
+    C, \gg \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
 }
 
 \inferrule[\defrule{a-univ}]{~}{
-    \gp \vdash U \rightsquigarrow \set{}, U \Rightarrow \axiom{U}
+    C, \gg \vdash U \rightsquigarrow \set{}, U \Rightarrow \axiom{U}
 }
 \hfill
 \inferrule[\defrule{a-prod}]{
-    \gp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U_1 \\\\
-    \gp (x:t) \vdash u^\circ \rightsquigarrow C_2, u \Rightarrow^* U_2
+    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U_1 \\\\
+    C \cup C_1, \gg (x:t) \vdash u^\circ \rightsquigarrow C_2, u \Rightarrow^* U_2
 }{
-    \gp \vdash \prod{x}{t^\circ\!}{u^\circ} \rightsquigarrow C_1 \cup C_2, \prod{x}{t}{u} \Rightarrow \rules{U_1}{U_2}
+    C, \gg \vdash \prod{x}{t^\circ\!}{u^\circ} \rightsquigarrow C_1 \cup C_2, \prod{x}{t}{u} \Rightarrow \rules{U_1}{U_2}
 }
 
 \inferrule[\defrule{a-abs}]{
-    \gp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\\\
-    \gp (x:t) \vdash e^\circ \rightsquigarrow C_2, e \Rightarrow u
+    \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\\\
+    \gg (x:t) \vdash e^\circ \rightsquigarrow C_2, e \Rightarrow u
 }{
-    \gp \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
+    \gg \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
 }
 \hfill
 \inferrule[\defrule{a-app}]{
-    \gp \vdash e_1^\circ \rightsquigarrow C_1, e_1 \Rightarrow^* \prod{x}{t}{u} \\\\
-    \gp \vdash e_2^\circ \Leftarrow t \rightsquigarrow C_2, e_2
+    C, \gg \vdash e_1^\circ \rightsquigarrow C_1, e_1 \Rightarrow^* \prod{x}{t}{u} \\\\
+    C, \gg \vdash e_2^\circ \Leftarrow t \rightsquigarrow C_2, e_2
 }{
-    \gp \vdash e_1^\circ ~ e_2^\circ \rightsquigarrow C_1 \cup C_2, e_1 ~ e_2 \Rightarrow u[x \coloneqq e_2]
+    C, \gg \vdash e_1^\circ ~ e_2^\circ \rightsquigarrow C_1 \cup C_2, e_1 ~ e_2 \Rightarrow u[x \coloneqq e_2]
 }
 
 \inferrule[\defrule{a-let-in}]{
-    \gp \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
-    \gp \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\\\
-    \gp (C_1 \cup C_2, x:t \coloneqq e_1) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
+    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
+    C, \gg \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\\\
+    C \cup C_1 \cup C_2, \gg (\defn{x}{t}{e_1}) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
 }{
-    \gp \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_1 \cup C_2 \cup C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
+    C, \gg \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_1 \cup C_2 \cup C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
 }
 
 \inferrule[\defrule{a-ind}]{
     \upsilon = \fresh{1}
 }{
-    \gp \vdash I \rightsquigarrow \set{}, I^\upsilon \Rightarrow \indtype{I}
+    C, \gg \vdash I \rightsquigarrow \set{}, I^\upsilon \Rightarrow \indtype{I}
 }
 
 \inferrule[\defrule{a-ind-star}]{
     \tau = \fresh{1} \and \mathcal{V}^* \coloneqq \mathcal{V}^* \cup \set{\tau}
 }{
-    \gp \vdash I^* \rightsquigarrow \set{}, I^\tau \Rightarrow \indtype{I}
+    C, \gg \vdash I^* \rightsquigarrow \set{}, I^\tau \Rightarrow \indtype{I}
 }
 
 \inferrule[\defrule{a-constr}]{
     \upsilon = \fresh{1}
 }{
-    \gp \vdash c \rightsquigarrow \set{}, c \Rightarrow \constrtype{c}{\upsilon}
+    C, \gg \vdash c \rightsquigarrow \set{}, c \Rightarrow \constrtype{c}{\upsilon}
 }
 
 \inferrule[\defrule{a-case}]{
-    \gp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow^* I_k^s ~ \overline{p} ~ \overline{a} \\
-    \gp \vdash P^\circ \rightsquigarrow C_2, P \Rightarrow t_p \\
+    C, \gg \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow^* I_k^s ~ \overline{p} ~ \overline{a} \\
+    C, \gg \vdash P^\circ \rightsquigarrow C_2, P \Rightarrow t_p \\
     \prodctx{\any}{\prodctx{\Delta_k}{U_k}} = \indtype{I_k} \\
     U = \decompose{t_p}{\norm{\Delta_k} + 1} \\
     \elim{U_k}{U}{I_k} \\
     \upsilon = \fresh{1} \\
-    \Gamma_G, \Gamma_{\Psi} \vdash t_p \constrain \motivetype{\overline{p}}{U}{I_k^{\hat{\upsilon}}} \rightsquigarrow C_3 \\
+    \gg \vdash t_p \constrain \motivetype{\overline{p}}{U}{I_k^{\hat{\upsilon}}} \rightsquigarrow C_3 \\
     \textrm{For each $j$:} \\
-    \Gamma_G, \Psi \vdash e^\circ_j \Leftarrow \branchtype{\overline{p}}{c_j}{\upsilon}{P} \rightsquigarrow C_{4j}, e_j \\
-    C = \casesize{I_k^s}{\hat{\upsilon}} \cup C_1 \cup C_2 \cup C_3 \cup (\textstyle\bigcup_j C_{4j})
+    C, \gg \vdash e^\circ_j \Leftarrow \branchtype{\overline{p}}{c_j}{\upsilon}{P} \rightsquigarrow C_{4j}, e_j \\
+    C_5 = \casesize{I_k^s}{\hat{\upsilon}} \cup C_1 \cup C_2 \cup C_3 \cup (\textstyle\bigcup_j C_{4j})
 }{
-    \gp \vdash \caseof{P^\circ}{e^\circ}{c_j}{e_j^\circ} \rightsquigarrow C, \caseof{|P|}{e}{c_j}{e_j} \Rightarrow P ~ \overline{a} ~ e
+    C, \gg \vdash \caseof{P^\circ}{e^\circ}{c_j}{e_j^\circ} \rightsquigarrow C_5, \caseof{|P|}{e}{c_j}{e_j} \Rightarrow P ~ \overline{a} ~ e
 }
 
 \inferrule[\defrule{a-fix}]{
     \textrm{For each $k$:} \\
-    \gp \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
-    \gp \vdash \setrecstars{t_k^\circ}{n_k} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
+    C, \gg \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
+    C, \gg \vdash \setrecstars{t_k^\circ}{n_k} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
     \prodctx{\Delta_k}{u_k} = \whnf{t_k} \and \prodctx{\Delta_k}{u'_k} = \shift{\prodctx{\Delta_k}{u_k}} \\
-    \gp \overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
-    \Gamma_G, \Gamma_{\Psi} \Delta_k \vdash u_k \constrain u'_k \rightsquigarrow C_{3k} \\
-    C_4 = \textstyle\bigcup_k C_{1k} \cup C_{2k} \cup C_{3k} \\
-    C_5 = \RecCheckLoop{C_4}{\overline{\getrecvar{t_k}{n_k}}}{\overline{t_k}}{\overline{e_k}}
+    \textstyle\bigcup_k C_{1k} \cup C, \gg \overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
+    \gg \Delta_k \vdash u_k \constrain u'_k \rightsquigarrow C_{3k} \\
+    C_4 = \textstyle\bigcup_k C_{1k} \cup C_{2k} \cup C_{3k} \cup C \\
+    C_5 = \RecCheckLoop{C_4}{\Gamma}{\overline{\getrecvar{t_k}{n_k}}}{\overline{t_k}}{\overline{e_k}}
 }{
-    \gp \vdash \fix{m}{f_k^{n_k}}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \fix{m}{f_k^{n_k}}{|t_k|^*}{e_k} \Rightarrow t_m
+    C, \gg \vdash \fix{m}{f_k^{n_k}}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \fix{m}{f_k^{n_k}}{|t_k|^*}{e_k} \Rightarrow t_m
 }
 
 \inferrule[\defrule{a-cofix}]{
     \textrm{For each $k$:} \\
-    \gp \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
-    \gp \vdash \setcorecstars{t_k^\circ} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
+    C, \gg \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
+    C, \gg \vdash \setcorecstars{t_k^\circ} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
     \prodctx{\Delta_k}{u_k} = \whnf{t_k} \and \prodctx{\Delta'_k}{u'_k} = \shift{\prodctx{\Delta_k}{u_k}} \\
-    \gp \overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta'_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
-    \gp \vdash \Delta'_k \constrain \Delta_k \rightsquigarrow C_{3k} \\
-    C_4 = \textstyle\bigcup_k C_{1k} \cup C_{2k} \cup C_{3k} \\
-    C_5 = \RecCheckLoop{C_4}{\Psi}{\overline{\getcorecvar{t_k}}}{\overline{t_k}}{\overline{e_k}}
+    \textstyle\bigcup_k C_{1k} \cup C, \gg \overline{(f_k : t_k)} \vdash e_k^\circ \Leftarrow \prodctx{\Delta'_k}{u'_k} \rightsquigarrow C_{2k}, e_k \\
+    \gg \vdash \Delta'_k \constrain \Delta_k \rightsquigarrow C_{3k} \\
+    C_4 = \textstyle\bigcup_k C_{1k} \cup C_{2k} \cup C_{3k} \cup C \\
+    C_5 = \RecCheckLoop{C_4}{\Gamma}{\overline{\getcorecvar{t_k}}}{\overline{t_k}}{\overline{e_k}}
 }{
-    \gp \vdash \cofix{m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \cofix{m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m
+    C, \gg \vdash \cofix{m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \cofix{m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m
 }
 \end{mathpar}
 \caption{Size inference algorithm: Inference}

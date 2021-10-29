@@ -45,7 +45,7 @@ This allows for strong normalization of cofixpoints in much the same way restric
 One way this can break subject reduction is by making the type of a case expression not be convertible before and after the cofixpoint reduction.
 As a concrete example, consider the following coinductive definition for conaturals.
 \begin{displaymath}
-  \defn{\Conat}{\Type{}}{\assm{\Succ}{\Conat \to \Conat}}
+  \seq{\assm{\Conat}{\Type{}}} \coloneqq {\seq{\assm{\Succ}{\Conat \to \Conat}}}
 \end{displaymath}
 For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
 \begin{align*}
@@ -98,7 +98,7 @@ This means that when defining a \coinductive type, it cannot recursively appear 
 For instance, the following definition $\nat$, while equivalent to $\Nat$,
 is disallowed due to the appearance of $\nat$ as a parameter of $\Box$.
 \begin{align*}
-  \defn{\nat}{\Type{}}{\seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}}
+  \seq{\assm{\nat}{\Type{}}} \coloneqq \seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}
 \end{align*}
 Notice that we have the subtyping relation $\nat^\upsilon \leq \nat^{\hat{\upsilon}}$,
 but by convertibility of parameters,

@@ -3,17 +3,17 @@
 \small
 
 \begin{flushleft}
-\fbox{$\gp \vdash e^\circ \Leftarrow t \rightsquigarrow C, e$}
+\fbox{$C, \gg \vdash e^\circ \Leftarrow t \rightsquigarrow C, e$}
 \end{flushleft}
 
 \vspace{-3ex}
 
 \begin{mathpar}
 \inferrule[\defrule{a-check}]{
-    \gp \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t \\
-    \Gamma_G, \Gamma_{\Psi} \vdash t \constrain u \rightsquigarrow C_2
+    C, \gg \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t \\
+    \gg \vdash t \constrain u \rightsquigarrow C_2
 }{
-    \gp \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup C_2, e
+    C, \gg \vdash e^\circ \Leftarrow u \rightsquigarrow C_1 \cup C_2, e
 }
 \end{mathpar}
 \caption{Size inference algorithm: Checking}
