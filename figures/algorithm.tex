@@ -51,10 +51,10 @@
 }
 
 \inferrule[\defrule{a-abs}]{
-    \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\\\
-    \gg (x:t) \vdash e^\circ \rightsquigarrow C_2, e \Rightarrow u
+    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\\\
+    C \cup C_1 \gg (x:t) \vdash e^\circ \rightsquigarrow C_2, e \Rightarrow u
 }{
-    \gg \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
+    C, \gg \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
 }
 \hfill
 \inferrule[\defrule{a-app}]{
