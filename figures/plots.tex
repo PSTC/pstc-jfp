@@ -1,27 +1,40 @@
 \begin{figure}
 \begin{subfigure}{0.475\textwidth}
-\includegraphics[width=0.9\textwidth]{images/least-squares.png}
-\caption{\solve, \RecCheck execution time vs. $\norm{V}\norm{C}$ (blue dots), linear model (orange line)}
-\label{fig:stats:linregress}
+\includegraphics[width=0.9\textwidth]{images/least-squares-solve.png}
+\caption{\solve execution time vs. $\norm{V}\norm{C}$ \\ (blue dots), linear model (orange line)}
+\label{fig:stats:linregress-solve}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.475\textwidth}
-\includegraphics[width=0.9\textwidth]{images/relative-residuals.png}
-\caption{Relative residuals plot (log scale)}
-\label{fig:stats:residuals}
+\includegraphics[width=0.9\textwidth]{images/least-squares-RecCheck.png}
+\caption{\RecCheck execution time vs. $\norm{V}\norm{C}$ \\ (blue dots), linear model (orange line)}
+\label{fig:stats:linregress-reccheck}
 \end{subfigure}
-\\ \hfill \\
+\\[3ex]
 \begin{subfigure}{0.475\textwidth}
-\includegraphics[width=0.9\textwidth]{images/residuals.png}
-\caption{Residuals plot, $\log(\norm{V}\norm{C}) < 8$ (log scale)}
-\label{fig:stats:residuals-zoom}
+\includegraphics[width=0.9\textwidth]{images/residuals-solve.png}
+\caption{\solve model residuals plot (log scale)}
+\label{fig:stats:residuals-solve}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.475\textwidth}
-\includegraphics[width=0.9\textwidth]{images/distribution.png}
-\caption{Distribution of $\norm{V}\norm{C}$, 25 bins (log scale)}
-\label{fig:stats:vcs-distr}
+\includegraphics[width=0.9\textwidth]{images/residuals-RecCheck.png}
+\caption{\RecCheck model residuals plot (log scale)}
+\label{fig:stats:residuals-reccheck}
 \end{subfigure}
-\caption{}
+\\[3ex]
+\begin{subfigure}{0.475\textwidth}
+\includegraphics[width=0.9\textwidth]{images/distribution-solve.png}
+\caption{$\norm{V}\norm{C}$ distribution in \solve, 10 bins}
+\label{fig:stats:distr-solve}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.475\textwidth}
+\includegraphics[width=0.9\textwidth]{images/distribution-RecCheck.png}
+\caption{$\norm{V}\norm{C}$ distribution in \RecCheck, 10 bins}
+\label{fig:stats:distr-reccheck}
+\end{subfigure}
+\\[2ex]
+\caption{Execution vs. $\norm{V}\norm{C}$, linear model residuals, and $\norm{V}\norm{C}$ distribution plots for \solve and \RecCheck}
 \label{fig:stats}
 \end{figure}

@@ -8,4 +8,5 @@
 *.out.ps
 *.pdf
 *.synctex.gz
+.ipynb_checkpoints/
 _minted-main
