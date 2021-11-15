@@ -1,33 +1,65 @@
 \section{Overview}\label{sec:overview}
 % Maybe this is more of an in-depth "related work" than an overview?
 
-As mentioned, \lang is an extension of \CIChat and \CIChatminus,
-which add sized types to CIC with the explicit philosophy of requiring no size annotations:
-a user would write bare CIC code, and the type checker would have the simultaneous task of inferring all the size annotations.
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\begin{table}
+\centering
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+\textbf{Feature} & \textit{\CIChat} & \textit{\CIChatminus} & \textit{Coq} & \textit{\lang} \\
+\hline
+Universe cumulativity & \xmark & \xmark & \cmark & \cmark \\
+Impredicative $\Prop$ & \xmark & \xmark & \cmark & \cmark \\
+Definitions           & \xmark & \xmark & \cmark & \cmark \\
+Parameter polarities  & \cmark & \cmark & \xmark & \xmark \\
+Nested \coinductives  & \cmark & \cmark & \cmark & \xmark \\
+Normalization proven? & \xmark & \cmark & ?      & \xmark \\
+Size inference algorithm & \cmark & \xmark & N/A & \cmark \\
+\hline
+\end{tabular}
+\caption{Comparison of the features in \CIChat, \CIChatminus, Coq, and \lang}
+\label{table:CICs}
+\end{table}
+
+Past work \CIChat, \CIChatminus, and \CChatomega add sized types to CIC with the explicit philosophy of requiring no size annotations:
+a user would write bare CIC code, and the type checker would have the simultaneous task of synthesizing and checking types,
+while also inferring all the size annotations.
 However, Coq's core calculus extends quite a bit beyond merely CIC,
 and the presentation of various analogous features differ subtly but nontrivially.
 The goal of \lang is to bring sized types in CIC a few steps closer to Coq,
 while keeping with the original philosphy.
 In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is viable
 --- for Coq's codebase itself is old, large, and intricate ---
-we must also discard some features from \CIChatminus.
+we must also discard some features from past work.
 In this section, we discuss what \lang has added or removed relative to past work and to Coq,
 and their implications on the metatheory and the implementation.
+These features and their presence or absence in the relevant works are summarized in \autoref{table:CICs}.
 
-\subsection{Commonalities and Minor Additions}
+\subsection{Comparison with Other Work}
 
-\lang and \CIChatminus are both extensions of CIC, with dependent functions, a universe hierarchy, inductive definitions, case expressions, and fixpoints.
-\lang adds coinductive definitions and cofixpoints, as well as mutually-defined \coinductives and \cofixpoints.
-It also adds universe cumulativity and an impredicative $\Prop$ universe,
-but not universe polymorphism or a strict $\Prop$,
-which are beyond our scope;
-all four of these are existing features of Coq.
+\CIChat and \CIChatminus are extensions of CIC, with dependent functions, a universe hierarchy, inductive definitions, case expressions, and fixpoints.
+\CChatomega dually has coinductive streams and cofixpoints instead.
+In terms of sized types, they add size expressions as annotations to \coinductive types,
+and a \cofixpoint $f$ is well-typed if all \corecursive calls in its body occurs on an argument of a smaller sizes,
+as we have seen with the simplified typing rule in \autoref{sec:intro}.
+Constructors construct constructions of a larger size than their \corecursive functions.
+
+\CIChat and \CIChatminus differ in that \CIChat includes a size inference algorithm but no proof of strong normalization,
+while \CIChatminus is proven to be strongly normalizing, with no size inference algorithm explicitly given.
+\CIChatminus also restricts where size variables may appear in terms.
+Since \lang does not have such restrictions, it can be thought of as an extension of \CIChat combined with \CChatomega,
+featuring sized (mutual) \coinductive types and (mutual) \cofixpoints,
+and further adding universe cumulativity and an impredicative $\Prop$ universe,
+which are existing features in Coq.
 Cumulativity and impredicativity complicate the set-theoretic model by \citet{cic-hat-minus}, but these issues are known: see, for instance, \citet{not-so-simple-cc}.
 
-In terms of sized types, \lang and \CIChatminus add to CIC size expressions as annotations to \coinductive types,
-and a \cofixpoint $f$ is well-typed if all \corecursive calls in its body occurs on an argument of a smaller size,
-as we have seen with the simplified typing rule in \autoref{sec:intro}.
-Constructors construct constructions of a larger size than their \corecursive arguments.
+The size inference algorithms for \CIChat and \lang both take terms without size annotations,
+which are in essence plain CIC terms, along with a local environment,
+and return an annotated term, its annotated size, and a set of size constraints that must be satisfied.
+Because \lang includes global definitions, its algorithm also takes a global environment.
+
+\iffalse
 Important to note is that size variables are not explicitly bound anywhere, and are effectively global.
 For instance, $\Nat^{\upsilon_1} \rightarrow \Nat^\infty \rightarrow \Nat^{\succ{\upsilon}_2}$ is a valid (and well-typed) term in an empty environment, with no relation between the sizes $\upsilon_1$ and $\succ{\upsilon}_2$.
 
@@ -37,15 +69,16 @@ The subsizing relation extends subtyping by inducing a covariant subtyping relat
 if $r \sqsubseteq s$ and $I$ is inductive, then $I^r \leq I^s$,
 and if $I$ is coinductive, then $I^s \leq I^r$.
 We examine the syntax and judgements of \lang in detail in \autoref{sec:typing}.
+\fi
 
 \subsection{Definitions}
 
-Coq's core calculus contains two types of variables:%
+Coq's core calculus contains two kinds of variables:%
 \footnote{It also has a third type of variable for section-level bindings;
 this is beyond the scope of \lang.}
 one for local bindings from functions, function types, and let expressions,
 and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Parameter} (which we call \textit{constants}).
-\lang adds let expressions and global declarations to \CIChatminus,
+\lang adds let expressions and global declarations to \CIChat,
 with separate local and global environments,
 and definitions in the environments in the style of a PTS with definitions~\citep[233--241]{pts}.
 
@@ -67,36 +100,35 @@ These and all other size annotations are inferrable, as detailed in \autoref{sec
 
 Having definitions and annotated variables and constants also means we need to now allow sizes to appear
 not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
-in contrast to \CIChatminus.
+in contrast to the restrictions of \CIChatminus.
 This complicates the set-theoretic interpretation of \lang terms,
 which we go into detail in \autoref{sec:metatheory}.
 
-\paragraph*{} While \CIChat's size inference algorithm takes a local environment and an unannotated term
-and returns a size-annotate term and its type along with a set of constraints on their size annotations,
-we need to handle inference of global declarations.
-Left with a constraint set after inference of a definition's body, we have two options:
-attach the constraints to the definition in the environment,
+\paragraph*{} Recall that the inference algorithm will return a size constraint set.
+To handle inference of global declarations, after the size inference of one declaration,
+we now have two options:
+pass the resulting constraints along to inference of subsequent declarations,
 or ``solve'' the constraints by reassigning size variables with sizes that satisfy those constraints.
-Global definitions in Coq are relatively independent in terms of type checking,
+Global definitions in Coq are independent of one another in terms of type checking,
 so we choose the second option for its modularity:
 constraints derived from previous definitions should not interfere with the size inference of the current definition.
-On the other hand, to reduce the overhead of solving constraints,
-we choose the first option for local definitions.
-The way constraints are added to the environment is inspired by \citet{universes},
-which infers universe levels that are prenex polymorphic at definitions.
+However, solving constraints introduces a nontrivial overhead,
+so we stick with the first option for local definitions.
 
 Unfortunately, even when only solving constraints for global declarations,
 our implementation of the size inference algorithm in the Coq codebase takes a rather significant performance hit.
 This is in part due to the proliferation of sizes in which the definitions are polymorphic,
-as the worst-case time complexity of solving is at least quadratic in the number of size variables.
+as the worst-case time complexity of solving is at least quadratic in the number of size variables,
+and every usage of each definition requires fresh size variables for it.
 We analyze the performance of our implementation and discuss possible solutions in \autoref{sec:impl}.
 
 \subsection{Polarities}
 
-\Coinductive definitions in \CIChatminus are also annotated with polarities for each of its parameters, augmenting the subtyping relation.
-For example, if the type parameter of the usual $\List$ type has positive polarity,
+\Coinductive definitions in \CIChatminus are also annotated with polarities for each of its parameters to augment the subtyping relation.
+For example, if the type parameter of the usual $\List$ type is given a positive polarity,
 then $\app{\List^r}{\Nat^s} \leq \app{\List^r}{\Nat^{\succ{s}}}$ holds
-because $\Nat^s \leq \Nat^{\succ{s}}$ holds.
+because $\Nat^s \leq \Nat^{\succ{s}}$ holds,
+which in turn holds because $\succ{s}$ is a larger size than $s$.
 It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
 so again in the name of backward compatibility, \lang does not have these annotations,
 and treats all parameters as invariant.
@@ -105,17 +137,17 @@ despite the presence of cumulativity where \coqinline{Set} is a subtype of \coqi
 
 Unfortunately, the invariance of parameters and subtyping of sized \coinductive types interferes with nested \coinductive types,
 where the type itself may appear as a parameter to another type in the type of its constructors.
-Subject reduction is violated quite severely: it becomes possible to have a well-typed term that becomes no longer well-typed after a reduction step.
+Subject reduction is violated: it becomes possible to have a well-typed term that becomes no longer well-typed after a reduction step.
 We give an example in \autoref{sec:metatheory} and discuss some solutions,
 but the approach \lang takes is to disallow nested \coinductives,
-removing them from \CIChatminus.
-However, the implementation has no such restriction on nested \coinductives,
-and it doesn't appear possible for size inference to produce the kind of annotations that break subject reduction.
+removing them from \CIChat.
 
+\iffalse
 \subsection{Position Size Annotations}
 
 Although users are not required to indicate the recursive argument when writing fixpoints in Coq,
 they are indicated in the core calculus because Coq's type checker will attempt determine which one it is when not explicitly indicated.
+This tells the guard predicate which argument should be checked for structural smallerness.
 Similarly, \lang has position annotations to indicate which argument is the recursive argument and whether the \cofixpoint preserves sizes or not,
 but they are entirely determined during size inference.
 This augments the inference algorithm for \CIChat,
@@ -127,6 +159,17 @@ separating what Coq already does from what there is to do to obtain sized types.
 In terms of the implementation, one downside of this approach is that not as many programs that \emph{could} pass type checking \emph{do},
 due to the existing architecture of the Coq type checker.
 We discuss this further in \autoref{sec:impl:recind}.
+\fi
+
+\subsection{Implementation}
+
+% Should the implementation just have a different name? Coq-hat-star?
+Whereas \lang can be seen as an extension of \CIChat and \CChatomega,
+its implementation is an extension of Coq:
+all features of Coq orthogonal to sized types remain untouched,
+such as universe polymorphism, strict $\Prop$, various primitives, modules, and so on.
+The implementation also retains Coq's nested \coinductives,
+especially as it doesn't appear possible for size inference to produce the kind of annotations that break subject reduction.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"

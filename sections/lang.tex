@@ -1,22 +1,24 @@
 \section{\titlelang}\label{sec:typing}
-In this section, we introduce and examine the syntax and judgements of \lang,
+In this section, we introduce the syntax and judgements of \lang,
 culminating in the typing and well-formedness judgements.
+Note that this is the core calculus, which is produced from plain CIC by the inference algorithm,
+introduced in \autoref{sec:algorithm}.
 
 \subsection{Syntax}
 
 \input{figures/syntax.tex}
 
 The syntax of \lang, environments, and signatures are described in \autoref{fig:syntax}.
-It is a standard CIC with expressions (or terms) consisting of Coq-style universes, dependent functions, definitions, \coinductives, case expressions, and mutual \cofixpoints.
+It is a standard CIC with expressions (or terms) consisting of cumulative universes, dependent functions, definitions, \coinductives, case expressions, and mutual \cofixpoints.
 Additions relevant to sized types are highlighted in grey,
 which we explain in detail shortly.
 Notation such as syntactic sugar or metafunctions and metarelations will also be highlighted in grey
 where they are first introduced in the prose.
 
-The overline $\seq{\ph}$ denotes a sequence of syntactic constructions.
+The brackets $\seq{\ph}$ denotes a sequence of syntactic constructions.
 We use 1-based indexing for sequences using subscripts;
 sequences only range over a single index unless otherwise specified.
-Ellipses may be used in place of the overline where it is clearer;
+Ellipses may be used in place of the brackets where it is clearer;
 for instance, the branches of a case expression are written as
 $\langle \vec{c_j \Rightarrow e_j} \rangle$ or
 $\langle c_1 \Rightarrow e_1, \dots, c_j \Rightarrow e_j, \dots \rangle$,
@@ -49,8 +51,8 @@ rather than ordinary \textit{sized terms}, we instead have \textit{bare terms} $
 This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
-\citet{cic-hat-minus} discusses the issue in further detail.
-Similarly, we use $t^\infty$ to denote \textit{full terms}, which will appear mainly in signatures.
+% \citet{cic-hat-minus} discusses the issue in further detail.
+Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear mainly in signatures.
 
 \subsubsection{Fixpoints and Cofixpoints}
 
@@ -194,7 +196,7 @@ which is presented informally in the Coq manual~\citep{coq} and formally (but pa
 Note that there are no explicit rules for symmetry and transitivity of convertibility
 because these properties are derivable, as proven in\opcitt{conversion}
 
-\iffalse % TODO: Define \whnf as it comes up in the algorithm.
+\iffalse
 We also use the metafunction \whnf to denote the reduction of a term to weak head normal form,
 which would have the form of a universe, a function type, an unapplied function,
 a \coinductive type (applied or unapplied), a constructor (applied or unapplied),

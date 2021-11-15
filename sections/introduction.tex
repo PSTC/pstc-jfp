@@ -103,7 +103,7 @@ Finally, if additional expressivity is needed, rather than using syntactic hacks
 
 \noindent That is the question we seek to answer in this paper.
 
-Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
+Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus,cc-hat-omega} for the Calculus of (Co)\-Inductive Constructions (CIC), Coq's underlying calculus, have some practical issues:
 
 \begin{itemize}
     \item They require nontrivial backward-incompatible additions to the surface language,
@@ -114,7 +114,7 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus} in the Ca
       defining type aliases for sized types.
 \end{itemize}
 
-To resolve these issues, we extend \CIChat~\citep{cic-hat} and \CIChatminus~\citep{cic-hat-minus-nat,cic-hat-minus} in our calculus \textbf{\lang} (``\emph{CIC-star-hat}''),
+To resolve these issues, we extend \CIChat~\citep{cic-hat}, \CIChatminus~\citep{cic-hat-minus-nat,cic-hat-minus}, and \CChatomega~\citep{cc-hat-omega} in our calculus \textbf{\lang} (``\emph{CIC-star-hat}''),
 and design a size inference algorithm from CIC to \lang,
 borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
 
@@ -146,7 +146,7 @@ and sized typing can be enabled by a flag that is off by default.
 This flag can be used in conjuction with or without the existing guard checking flag enabled.
 
 While sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
-We measure at least a $14\times$ increase in compilation time in some standard libraries.
+We measure at least a $5.5 \times$ increase in compilation time in some standard libraries.
 The performance cost seems to be intrinsic to the size inference algorithm, and thus intrinsic to attempting to maintain backward compatibility.
 We analyze the performance of our size inference algorithm and our implementation in detail.
 
