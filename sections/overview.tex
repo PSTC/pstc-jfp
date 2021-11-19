@@ -102,7 +102,7 @@ Having definitions and annotated variables and constants also means we need to n
 not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
 in contrast to the restrictions of \CIChatminus.
 This complicates the set-theoretic interpretation of \lang terms,
-which we go into detail in \autoref{sec:metatheory}.
+which we go into detail in \autoref{sec:metatheory:sn}.
 
 \paragraph*{} Recall that the inference algorithm will return a size constraint set.
 To handle inference of global declarations, after the size inference of one declaration,
@@ -140,7 +140,7 @@ despite the presence of cumulativity where \coqinline{Set} is a subtype of \coqi
 Unfortunately, the invariance of parameters and subtyping of sized \coinductive types interferes with nested \coinductive types,
 where the type itself may appear as a parameter to another type in the type of its constructors.
 Subject reduction is violated: it becomes possible to have a well-typed term that becomes no longer well-typed after a reduction step.
-We give an example in \autoref{sec:metatheory} and discuss some solutions,
+We give an example in \autoref{sec:metatheory:sub-red} and discuss some solutions,
 but the approach \lang takes is to disallow nested \coinductives,
 removing them from \CIChat.
 

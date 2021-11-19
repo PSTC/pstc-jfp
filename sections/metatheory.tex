@@ -9,6 +9,7 @@ so we provide only key lemmas and proof sketches.
 
 In short, \lang satisfies confluence and subject reduction, with the same caveats as in CIC for cofixpoints.
 Proofs of strong normalization and logical consistency for \lang remain future work.
+% TODO: Why a conjecture and not a proof? Because it hard.
 We conjecture how the proofs of strong normalization and consistency should proceed based on past work~\citep{cic-hat-minus,cc-hat-omega,cic-hat}.
 
 \subsection{Confluence}
@@ -27,12 +28,12 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
   It uses the Takahashi translation $e^\dagger$ of terms $e$,
   defined as the simultaneous single-step reduction of all
   $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.
-  The proof is relatively standard thanks to reduction being purely syntactic.
+  The proof is relatively standard thanks to reduction being purely syntactic and untyped.
   % Is it though?
 \end{proof}
 
 \subsection{Subject Reduction}
-\label{sec:meta:sub-red}
+\label{sec:metatheory:sub-red}
 
 Suject reduction does not hold in \lang or in Coq due to the way coinductives are presented.
 This is a well-known problem, discussed previously in a sized-types setting by \citet{cc-hat-omega},
@@ -66,7 +67,9 @@ Assuming both terms are well-typed, the former has type $\app{P}{(\cofix*{1}{\de
   \label{fig:reduction-alt}
 \end{figure}
 
-On the other hand, if we do allow unrestricted $\nu$-reduction as in \autoref{fig:reduction-alt}, subject reduction does hold.
+On the other hand, if we do allow unrestricted $\nu$-reduction as in \autoref{fig:reduction-alt}, subject reduction does hold,
+at the expense of normalization,
+as a cofixpoint on its own could reduce indefinitely.
 
 \begin{theorem}[Subject Reduction]
   \label{thm:metatheory:sr}
@@ -101,13 +104,12 @@ is disallowed due to the appearance of $\nat$ as a parameter of $\Box$.
   \seq{\assm{\nat}{\Type{}}} \coloneqq \seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}
 \end{align*}
 Notice that we have the subtyping relation $\nat^\upsilon \leq \nat^{\hat{\upsilon}}$,
-but by convertibility of parameters,
+but as all parameters are invariant for backward compatibility and need to be convertible,
 we do \emph{not} have $\app{\Box^\infty}{\nat^\upsilon} \leq \app{\Box^\infty}{\nat^{\hat{\upsilon}}}$.
-This convertibility due to the removal of polarity annotations on \coinductive definitions is what allows us to retain backward compatibility.
 But because case expressions on some target $\nat^{\hat{s}}$ force recursive arguments to have size $s$ exactly,
 and the target also has type $\nat^{\hat{\hat{s}}}$ by cumulativity,
 the argument of $\Succ$ could have both type $\app{\Box^\infty}{\nat^s}$ and $\app{\Box^\infty}{\nat^{\hat{s}}}$, violating convertibility.
-We can exploit this fact and break subject reduction explicitly with the following counterexample term.
+We exploit this fact and break subject reduction explicitly with the following counterexample term.
 \begin{displaymath}
 \begin{array}{l}
   \caseof*{\erase{\abs{\any}{\nat}{\nat^\infty}}}{\app{\Succ}{(\app{\MkBox}{\nat^{\hat{\upsilon}}}{\Zero})}}{\\
@@ -144,7 +146,7 @@ although perhaps at the expense of other desired metatheoretical properties,
 such as completeness of the algorithm with respect to the typing rules,
 which we discuss in the next subsection.
 
-\subsection{Strong Normalization and Logical Consistency}
+\subsection{Strong Normalization and Logical Consistency}\label{sec:metatheory:sn}
 
 Our ultimate goal and primary future work is to prove strong normalization and logical consistency of \lang.
 
