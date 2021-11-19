@@ -129,6 +129,8 @@ For example, if the type parameter of the usual $\List$ type is given a positive
 then $\app{\List^r}{\Nat^s} \leq \app{\List^r}{\Nat^{\succ{s}}}$ holds
 because $\Nat^s \leq \Nat^{\succ{s}}$ holds,
 which in turn holds because $\succ{s}$ is a larger size than $s$.
+Similarly, a negative polarity reverses the subtyping relation,
+while an invariant polarity induces no subtyping relation from the parameters at all.
 It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
 so again in the name of backward compatibility, \lang does not have these annotations,
 and treats all parameters as invariant.

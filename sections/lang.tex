@@ -32,9 +32,9 @@ A \coinductive with an \textit{infinite} $\infty$ size annotation is said to be 
 representing \coinductives of all sizes.
 Otherwise, an inductive with a \textit{noninfinite} size annotation $s$ represents inductives of size $s$ or \emph{smaller},
 while a coinductive with annotation $s$ represents coinductives of size $s$ or \emph{larger}.
-
 This captures the idea that an object of an inductive type has some amount of content to be consumed,
 while one of a coinductive type must produce some amount of content.
+
 As a concrete example, a list with $s$ elements has type $\app{\List^{s}}{t}$, because it has at most $s$ elements,
 but it also has type $\app{\List^{\succ{s}}}{t}$, necessarily having at most $\succ{s}$ elements as well.
 On the other hand, a stream producing at least $\succ{s}$ elements has type $\app{\Stream^{\succ{s}}}{t}$,
@@ -44,7 +44,7 @@ These ideas are formalized in the subtyping rules in an upcoming subsection.
 Variables bound by local definitions (introduced by let expressions) and constants bound by global definitions (introduced in global environments)
 are annotated with a \textit{size substitution} that maps size variables to size expressions.
 The substitutions are performed during their reduction.
-As mentioned in the previous section, this allows definitions to be used polymorphically over their sizes.
+As mentioned in the previous section, this makes definitions size polymorphic.
 
 In the type annotations of functions and let expressions, as well as the motive of case expressions,
 rather than ordinary \textit{sized terms}, we instead have \textit{bare terms} $t^\circ$.
@@ -52,7 +52,7 @@ This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
 % \citet{cic-hat-minus} discusses the issue in further detail.
-Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear mainly in signatures.
+Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
 
 \subsubsection{Fixpoints and Cofixpoints}
 
@@ -63,19 +63,20 @@ Instead of bare terms, fixpoint type annotations are \textit{position terms} $t^
 where size annotations are either removed or replaced with a \textit{position annotation} $\ast$.
 They occur on the inductive type of the recursive argument, as well as the return type if it is an inductive with the same or smaller size.
 For instance (using $\new{t \rightarrow u}$ as syntactic sugar for $\prod{\any}{t}{u}$),
-the recursive function $\cofix*{1}{\mathit{minus}^1 : \Nat^* \rightarrow \Nat \rightarrow \Nat^* \coloneqq \dots}$
+the recursive function $\fix*{1}{\mathit{minus}^1 : \Nat^* \rightarrow \Nat \rightarrow \Nat^* \coloneqq \dots}$
 has a position-annotated return type since the return value will not be any larger than that of the first argument.
 
-Mutual cofixpoints $\fix{m}{f_k}{t_k^*}{e_k}$ are similar, except cofixpoint definitions don't need $n_k$,
+Mutual cofixpoints $\cofix{m}{f_k}{t_k^*}{e_k}$ are similar, except cofixpoint definitions don't need $n_k$,
 as cofixpoints corecursively produce a coinductive rather than recursively consuming an inductive.
 Position annotations occur on the coinductive return type as well as any coinductive argument types with the same size or smaller.
-As an example, $\cofix*{1}{\mathit{dup}^1 : \prod{A}{\Set}{\app{\Stream^*}{A} \rightarrow \app{\Stream^*}{A}} \coloneqq \dots}$,
+As an example, $\cofix*{1}{\mathit{dup} : \prod{A}{\Set}{\app{\Stream^*}{A} \rightarrow \app{\Stream^*}{A}} \coloneqq \dots}$,
 a corecursive function that duplicates each element of a stream,
 has a position-annotated argument type since it returns a larger stream.
 
-Although the actual sizes of the \coinductives may differ up to subtyping,
-if a \cofixpoint has a position annotation on an argument type and the return type,
-we say that it is \textit{size-preserving}.
+Position annotations mark the size annotation locations in the type of the \cofixpoint where we are allowed to assign the \emph{same} size expression.
+This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\succ{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\succ{\upsilon}}$, for instance.
+In general, if a \cofixpoint has a position annotation on an argument type and the return type,
+we say that it is \textit{size-preserving} in that argument.
 Inuitively, $f$ is size-preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
 
 \subsubsection{Environments and Signatures}
@@ -85,16 +86,16 @@ They consist of \textit{declarations}, which can be either \textit{assumptions} 
 While local environments represent bindings introduced by functions and let expressions,
 global environments represent top-level declarations corresponding to Coq vernacular.
 We may also refer to global environments alone as \textit{programs}.
-Local assumption environments, a subset of local environments, are mostly used in syntactic sugar:
+Telescopes (that is, environments consisting only of local assumptions) are used in syntactic sugar:
 given $\Delta = \vec{(\assm{x_i}{t_i})}$, $\new{\prodctx{\Delta}{t}}$ is sugar for $\prod{x_1}{t_1}{\dots \prod{x_i}{t_i}{\dots t}}$, while $\new{\dom{\Delta}}$ is the sequence $\vec{x_i}$.
-Additionally, $\Delta^\infty$ denotes local assumption environments containing only full terms.
+Additionally, $\Delta^\infty$ denotes telescopes containing only full terms.
 
 We use $\new{x \in \Gamma}$, $\new{(\assm{x}{t}) \in \Gamma}$, and $\new{(\defn{x}{t}{e}) \in \Gamma}$
 to represent the presence of some declaration binding $x$, the given assumption, and the given definition in $\Gamma$, respectively,
 and similarly for $\Gamma_G$ and $\Delta$.
 
 Signatures consist of mutual \coinductive definitions.
-For simplicity, throughout the judgements in this paper, we assume some fixed, implicit $\Sigma$.
+For simplicity, throughout the judgements in this paper, we assume some fixed, implicit signature $\Sigma$.
 Global environments and signatures should be easily extendible to an interleaving of declarations and \coinductive definitions,
 which would be more representative of a real program.
 A mutual \coinductive definition
@@ -114,7 +115,7 @@ consists of the following:
 
 We require that the index and argument types be \emph{full} types and terms.
 Note also that $I_j$ is the \coinductive type of the $j$th constructor, \emph{not} the $j$th \coinductive in the sequence $I_i$.
-We forgo the more precise notation $I_{i_j}$ for clarity and brevity.
+We forgo the more precise notation $I_{i_j}$ for brevity.
 
 As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \rightarrow u}$ as syntactic sugar for $\prod{x}{t}{u}$) would be defined as:
 \begin{align*}
@@ -129,8 +130,8 @@ $\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\s
 
 As is standard, the well-formedness of \coinductive definitions depends not only on the well-typedness of its types but also on syntactic positivity conditions.
 We reproduce the \textit{strict positivity} conditions in \autoref{sec:wf-ind}, and refer the reader to clauses I1--I9 in \citet{cic-hat-minus}, clauses 1--7 in \mbox{\citet{cic-hat}}, and the Coq Manual~\citep{coq} for further details.
-\lang does not support nested \coinductives as they break subject reduction,
-so we don't need the corresponding notion of \textit{nested positivity}.
+As \lang does not support nested \coinductives,
+we don't need the corresponding notion of \textit{nested positivity}.
 Furthermore, we assume that our fixed, implicit signature is well-formed.
 
 \iffalse
@@ -313,7 +314,9 @@ $\app{\List^\upsilon}{\Nat} \to \app{\List}{\Nat} \to \app{\List^\upsilon}{\Nat}
 is a valid fixpoint type with respect to $\upsilon$, while
 $\app{\List^\upsilon}{\Nat} \to \app{\List^\upsilon}{\Nat} \to \app{\Stream^\upsilon}{\Nat}$
 is not, since $\upsilon$ illegally appears negatively in $\Stream$ and must not appear at all in the parameter of the second $\List$ argument type.
-This restriction ensures the aforementioned monotonicity property of the \cofixpoints' types.
+This restriction ensures the aforementioned monotonicity property of subtyping for the \cofixpoints' types,
+so that $u_k \leq \subst{u_k}{\upsilon_k}{\succ{\upsilon}_k}$ holds for fixpoints,
+and that $\subst{u}{\upsilon_k}{\succ{\upsilon}_k} \leq u$ for each type $u$ in $\Delta_k$ holds for cofixpoints.
 
 As in \refrule{lam}, to maintain subject reduction, we cannot keep the size annotations, instead replacing them with position variables.
 The metafunction $\new{\erase{\ph}^\upsilon}$ replaces $\upsilon$ annotations with the position annotation $\ast$ and erases all other size annotations.
@@ -323,7 +326,7 @@ If $t_k$ are well typed, then the \cofixpoint bodies should have type $t_k$ with
 This tells us that the recursive calls to $f_k$ in fixpoint bodies are on smaller-sized arguments, and that corecursive bodies produce objects with size larger than those from the corecursive call to $f_k$.
 The type of the $m$th \cofixpoint is then the $m$th type $t_m$ with some size expression $s$ substituted for the size variable $v_m$.
 
-In Coq, the indices of the recursive elements are rarely given, and there are no user-provided position annotations at all.
+In Coq, the indices of the recursive elements are often elided, and there are no user-provided position annotations at all.
 We show how indices and position annotations can be computed during size inference in \autoref{sec:algorithm}.
 
 %%% Local Variables:
