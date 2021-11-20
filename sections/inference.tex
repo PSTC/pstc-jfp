@@ -1,7 +1,8 @@
 \section{Size Inference}\label{sec:algorithm}
 
 In this section, we present a size inference algorithm, based on that of \CIChat~\citep{cic-hat}.
-Starting with completely bare terms, corresponding to terms in CIC,
+Starting with bare terms corresponding to terms in CIC
+(with no size annotations but with the recursive argument index marked on fixpoints),
 the algorithm assigns size annotations while collecting a set of subsizing constraints.
 Because the subsizing constraints that must be satisfied are based on the typing rules,
 this algorithm is also necessarily a type checking algorithm,
@@ -184,12 +185,14 @@ For instance, consider the following inductive type and bare let expression:
   \letin{b}{\app{\Box}{\Type{}}{\Nat}&}{\app{\MkBox}{\Type{}}{\Nat}}{\dots}
 \end{align*}
 
+\todo: Move the definition of $\Box$ to the metatheory section
+where it's used in the discussion of nested inductives,
+and make it consistent with what's used there.
 If we annotate the type as $\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}$ and size-infer the bound term as $\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}} : \app{\Box^{\upsilon_4}}{\Type{}}{\Nat^{\upsilon_3}}$, then we will have the constraint set \mbox{$\set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}$}.
 
 In Rules \refnorule{a-var-def} and \refnorule{a-const-def},
 we annotate variables and constants with a size substitution mapping size variables in the definition term and type to fresh size variables using \fresh,
 which generates the given number of variables and adds them to $\V$.
-\todo: Fix this example.
 Reusing the above example, if $C = \set{\upsilon_4 \sqsubseteq \upsilon_1, \upsilon_2 = \upsilon_3}$ and
 $$(\defn{b}{\app{\Box^{\upsilon_1}}{\Type{}}{\Nat^{\upsilon_2}}}{\app{\MkBox}{\Type{}}{\Nat^{\upsilon_3}}}) \in \Gamma$$
 then a use of $b$ might be annotated as $b^{\seq{\upsilon_1 \mapsto \upsilon_5, \upsilon_2 \mapsto \upsilon_6, \upsilon_3 \mapsto \upsilon_7}}$.
@@ -734,7 +737,7 @@ Then the following hold:
     \begin{itemize}
       \item $\rho' \vDash C$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $\Gamma_G, Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
+      \item $\Gamma_G, \Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
     \end{itemize}
   \item \label{thm:completeness:infer} If $\Gamma_G, \rho\Gamma \vdash e : t$,
     then there exist $C, \rho'$ such that:
