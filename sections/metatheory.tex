@@ -148,7 +148,8 @@ which we discuss in the next subsection.
 
 \subsection{Strong Normalization and Logical Consistency}\label{sec:metatheory:sn}
 
-Our ultimate goal and primary future work is to prove strong normalization and logical consistency of \lang.
+Following strong normalization and logical consistency for \CIChatminus and \CChatomega,
+we conjecture that they hold for \lang as well.
 
 \begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
   %
@@ -159,110 +160,58 @@ Our ultimate goal and primary future work is to prove strong normalization and l
 
 \begin{conjecture}[Logical Consistency]\label{thm:metatheory:lc}
   %
-  The type $\prod{p}{\Prop}{p}$ is uninhabited in \lang.
+  There is no $e$ such that $\mt, \mt \vdash e : \prod{p}{\Prop}{p}$.
   %
 \end{conjecture}
 
+In ongoing work%
+\footnote{To be submitted as an undergraduate thesis by Yufeng Li under the supervision of Bruno Barras.}
+on a variant of \lang called \langAnother,
+strong normalization has been proven with a set-theoretic model construction
+equipped with realisability candidates based on \citet{barras-thesis}.
+To simplify the presentation, \langAnother does not deal with mutual fixpoints,
+cofixpoints, local definitions, or global declarations;
+for the proof to work, \langAnother requires additional nontrivial changes relative to \lang:
 
-Taking inspiration from \citet{cic-hat-minus,cc-hat-omega,cic-hat},
-we conjecture that these statements are likely true.
-% Our proof attempt is still ongoing.
-
-In fact, we have proof that a formulation of CIC with sized types,
-alternative to \lang, is strongly normalizing.
-%
-This proof is uses a semantics-first set-theoretic model construction
-equipped with realisability candidates based on the works of
-\citet{barras-thesis}.
-%
-This alternative formulation differs from \lang in the following
-aspects:
-%
 \begin{itemize}
-  %
-  \item One requires size variables to be explicitly annotated, and
-  treat fixpoint recursor as binders for size variables.
-  %
-  That is, fixpoint recursors are now of the form such as
-  %
-  \begin{align*}
-    \left\{\kw{fix}^\upsilon ~ f : \prod{n}{\Nat^\upsilon}{u} \coloneqq e\right\}_s
-    \tag{$\star$}\label{eqn:new-fix}
-  \end{align*}
-  %
-  where $f$ is said to \emph{bind} the size variable $\upsilon$ in $e$
-  and the subscript size expression $s$ states that one may only call
-  the fixpoint recursor on inputs of size $s$ or less.
-  %
-  This explicit binding of size variables serves the purpose of
-  specifying which argument the recursion is happening on.
-  %
-  The fact that the fixpoint recursor is specialized to size $s$ is
-  reflected by the corresponding typing rule:
-  %
-  \begin{mathparpagebreakable}
-    \inferrule*[right=\defrule{fix-another}]
-    { \Gamma (f : \prod{n}{\Nat^\upsilon}{u}) \vdash e :
-      \prod{n}{\Nat^{\hat{\upsilon}}}{\subst{u}{\upsilon}{\hat{\upsilon}}} }
-    { \Gamma \vdash \left\{\kw{fix}^\upsilon ~ f : \prod{n}{\Nat^\upsilon}{u}\right\}_s \coloneqq e :
-      \prod{n}{\Nat^{s}}{\subst{u}{\upsilon}{s}} }
-  \end{mathparpagebreakable}
-  %
-  \item One only considers predicative W-types in order to alleviate
-  some syntactic burden of dealing with strict positivity conditions.
-  %
-  However, \citet{barras-thesis,polynomial-functors-w} have shown that
-  W-types are powerful enough to encode many strictly positive
-  inductive definitions, including nested inductive types and
-  inductive types with non-uniform parameters.
-  %
-  Including impredicative inductive types to the strong normalization
-  model, on the other hand, does pose several technical challenges
-  related to the realisability semantics.
-  %
-  \item As it is the case for most set-theoretic model constructions,
-  one uses a notion of typed reduction.
-  %
-  Additionally, the strong normalization model does not include let
-  statements or global or local contexts like \lang does.
-  %
+  \item Reduction, subtyping, and conversion are typed.
+    That is, each judgement requires the type of the terms,
+    and the derivation rules may have as typing judgements as premises.
+  \item Fixpoint type annotations require explicit size annotations
+    (\ie are no longer merely position terms),
+    explicitly abstract over a size variable,
+    and are explicitly applied to a size expression.
+    The typing rule no longer erases the type, and the size in the fixpoint type is fixed.
+    \begin{mathparpagebreakable}
+      \inferrule*[right=\defrule{fix-explicit}]
+      { \Gamma (f : t) \vdash e : \subst{t}{\upsilon}{\succ{\upsilon}} }
+      { \Gamma \vdash \fixE{\upsilon}{f}{t}{e}{s} : \subst{t}{\upsilon}{s}}
+    \end{mathparpagebreakable}
+    The reduction rule adds an additional substitution of the predecessor of the size expression,
+    in line with how $f$ may only be called in $e$ with a smaller size.
+    \begin{mathparpagebreakable}
+      \Gamma \vdash \app{\fixE{\upsilon}{f}{t}{e}{\succ{s}}\,}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
+      \rhd_\mu \app{\subst{\subst{e}{\upsilon}{s}}{f}{\fixE{\upsilon}{f}{t}{e}{s}}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
+    \end{mathparpagebreakable}
+  \item Rather than inductive definitions in general, only predicative W types are considered.
+    W types can be defined as a inductive type:
+    \begin{mathparpagebreakable}
+      \seq{\app{\W}{(\assm{A}{U})}{(\assm{B}{A \rightarrow U})}} \coloneqq
+      \seq{\assm{\Sup}{(\assm{a}{A}) \rightarrow (\assm{b}{\app{B}{a} \rightarrow \app{\W}{A}{B}}) \rightarrow \app{\W}{A}{B}}}
+    \end{mathparpagebreakable}
+    Predicative W types only allow $U$ to be $\Set$ or $\Type{}$,
+    while impredicative W types also allow it to be $\Prop$.
+    Including impredicative W types as well poses several technical challenges to the realisability semantics.
+  \item A new size-irrelevant typing judgement is needed, similar to that introduced by \citet{barras-thesis}.
 \end{itemize}
 
-As a consequence of treating fixpoint recursors as binders for size
-variables as in \eqref{eqn:new-fix}, when we reduce a fixpoint
-recursor, we need to replace the corresponding bound size variable in
-its body.
-%
-Work under some context $\Gamma$ and put as running example.
-%
-\begin{align*}
-  F \triangleq \left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e\right\}_{\hat{s}}
-  \label{eqn:fix-example}\tag{$\varheartsuit$}
-\end{align*}
-%
-Let $t$ be some $\Nat$ in constructor form where $t$ has size
-$\hat{s}$.
-%
-Then, as fixpoint recursors bind size variables, when we apply $F$ to
-$t$, we specialise $\upsilon$ to $\hat{s}$, so $\mu$-reduction should
-say
-%
-\begin{align*}
-  \app{F}{t} \rhd \app{\subst{\subst{e}{\upsilon}{s}}{f}{
-  \left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e\right\}_{s}
-  }}{t}
-  \label{eqn:mu-example}\tag{$\vardiamondsuit$}
-\end{align*}
-%
-In particular, note that we substitute $s$ instead of $\hat{s}$ for
-$\upsilon$ and we substitute for $f$ not $F$ but the fixpoint recursor
-specialized to stage $s$.
-%
-This corresponds to the sized typing rule for fixpoint recursors:
-$\left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon
-  \coloneqq e\right\}_{s}$ is a function taking inputs of size $s$, so
-on input $t$ of size $\hat{s}$, the body $e$ can recursively call
-itself, but only on inputs of size $s$.
+Because these changes violate backward compatibility, they cannot be adopted in \lang.
+The current literature suggests that \langAnother and \lang may be proven to be equivalent
+such that strong normalization (and therefore logical consistency) of \langAnother implies that they hold in \lang.
+More specifically, \cite{conversion} show that a typed and an untyped convertibility in a Martin--L\"of type theory (MLTT) imply each other;
+and \citet{w-types, polynomial-functors-w} show that W types in an extensional MLTT
+can encode well-formed inductive types, including nested inductive types
+(while \citet{hofmann} shows that extensional MLTT is a conservative extension of intensional MLTT).
 
 \subsubsection{Size-Irrelevance}
 %
