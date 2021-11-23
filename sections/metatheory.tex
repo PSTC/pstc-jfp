@@ -164,6 +164,19 @@ we conjecture that they hold for \lang as well.
   %
 \end{conjecture}
 
+Note that strong normalization is a stricter requirement than Coq, which is only \emph{weakly} normalizing:
+every well-typed term has \emph{some} finite reduction sequence.
+This relaxation enables more programs to pass the guard predicates while still being consistent.
+For instance, the first fixpoint definition is accepted, as \texttt{x} is never used,
+but the second is not.
+
+\begin{minted}{coq}
+Fixpoint f (u: unit): unit := let x := f u in tt.
+Fail Fixpoint f (u: unit): False := let x := f u in x.
+\end{minted}
+
+\subsubsection{Proof Attempts}
+
 In ongoing work%
 \footnote{To be submitted as an undergraduate thesis by Yufeng Li under the supervision of Bruno Barras.}
 on a variant of \lang called \langAnother,
@@ -194,7 +207,7 @@ for the proof to work, \langAnother requires additional nontrivial changes relat
       \rhd_\mu \app{\subst{\subst{e}{\upsilon}{s}}{f}{\fixE{\upsilon}{f}{t}{e}{s}}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
     \end{mathparpagebreakable}
   \item Rather than inductive definitions in general, only predicative W types are considered.
-    W types can be defined as a inductive type:
+    W types can be defined as an inductive type:
     \begin{mathparpagebreakable}
       \seq{\app{\W}{(\assm{A}{U})}{(\assm{B}{A \rightarrow U})}} \coloneqq
       \seq{\assm{\Sup}{(\assm{a}{A}) \rightarrow (\assm{b}{\app{B}{a} \rightarrow \app{\W}{A}{B}}) \rightarrow \app{\W}{A}{B}}}
@@ -263,7 +276,7 @@ starting from the initial approximation $\varphi_0 \in D_0$ and
 setting the $(\alpha+1)$-th approximation $\varphi_{\alpha+1}$ as
 $\varphi(\varphi_\alpha)$.
 %
-The typing rule for $F$ given by \refrule{fix-another} is sufficient
+The typing rule for $F$ given by \refrule{fix-explicit} is sufficient
 to ensure that each $\varphi_\alpha \in D_\alpha$.
 %
 However, this alone is not enough: we want the sequence
@@ -309,7 +322,7 @@ So, $e$ on input $x \in \McN^{\alpha+1}$ should not be able to
 distinguish between $\varphi_\alpha$ and $\varphi_\beta$, thus
 ensuring the above equality.
 %
-However, just from \refrule{fix-another}, it seems that one cannot
+However, just from \refrule{fix-explicit}, it seems that one cannot
 easily conclude that $e$ cannot tell apart $\varphi_\alpha$ and
 $\varphi_\beta$.
 
@@ -430,35 +443,6 @@ different closure ordinal than $\Nat$.
 %
 In fact, it turned out that computing $\Infty(M;\nu)_\rho^\pi$ was
 much more involved than initially expected.
-
-\subsubsection{Relation to \lang and Coq}
-
-\todo: Move this to end of beginning of subsection.
-
-%
-Let us conclude this section by recalling that Coq itself is not
-strongly normalizing, only weakly normalizing.
-%
-\footnote{At least, the
-  underlying calculus is not. The counterexample ``normalizes'' to a
-  stack overflow on machine with finite memory.}
-
-\begin{minted}{coq}
-Definition cbv_omega := fix f (n : nat) := let x := f n in O.
-\end{minted}
-
-This is a side-effect of relaxing the guard condition to enable more
-sound programs to type check.
-%
-Ideally, sufficiently expressive sized typing will allow us to replace
-the guard condition entirely and regain strong normalization in Coq.
-
-However, an intermediate goal may be to achieve only weak
-normalization of \lang.
-%
-This would also maintain backward compatibility with Coq, although it
-is unclear if counterexamples like the above are ever desired in user
-programs.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
