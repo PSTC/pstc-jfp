@@ -1,32 +1,30 @@
 \section{Size Inference}\label{sec:algorithm}
 
 In this section, we present a size inference algorithm, based on that of \CIChat~\citep{cic-hat}.
-Starting with bare terms corresponding to terms in CIC
+Starting with a program (that is, a global environment) consisting of bare global declarations,
+we want to obtain a program consisting of the corresponding size-annotated global declarations.
+Given bare terms corresponding to terms in CIC
 (with no size annotations but with the recursive argument index marked on fixpoints),
 the algorithm assigns size annotations while collecting a set of subsizing constraints.
 Because the subsizing constraints that must be satisfied are based on the typing rules,
 this algorithm is also necessarily a type checking algorithm,
 ensuring well-typedness of the size-annotated term.
-Then given a program consisting of bare global declarations,
-the algorithm produces sized and well-typed declarations (or fails),
-along with a set of constraints on the size variables involved.
+The algorithm then returns either a size-annotated and well-typed term along with the set of subsizing constraints, or fails.
 
-Before we add the declarations back into a sized global environment,
-we find a solution for the constraints first.
-That is, we find an assignment from size variables to size expressions
+Before proceeding to the next global declaration,
+we solve its constraints by finding an assignment from size variables to size expressions
 such that these size expressions satisfy all of the constraints.
-Then we perform the substitution of these assignments on the declarations,
-and lastly add them into the global environment.
+Then we perform the substitution of these assignments on the declaration.
 This lets us run the inference algorithm on each declaration independently,
 without needing to manipulate a constraint set every time a global declaration is used in a subsequent one.
 
-One of the most involved parts of the algorithm is the size inference and type checking of \cofixpoints.
-This uses the \RecCheck algorithm from \Fhat~\citep{f-hat}.
-We restate the algorithm in this section for convenience, but not the associated proofs of soundness and completeness.
+One of the most involved parts of the algorithm is the size inference and type checking of \cofixpoints,
+which adapts the \RecCheck algorithm from \Fhat~\citep{f-hat}.
 The other notably involved part of the algorithm is the \solve algorithm,
 which given a set of constraints produces a valid solution.
 Finally, we state soundness and completeness theorems for the algorithm as a whole,
 proving only soundness and leaving completeness as a conjecture.
+\todo: Figure out the correct statement of completeness and whether we want to keep it.
 
 \subsection{Preliminaries}
 
@@ -136,14 +134,15 @@ We define a number of additional metafunctions to translate the side conditions 
 They are introduced as needed.
 
 \paragraph*{} The entry point of the algorithm is the well-formedness judgement,
-whose rules are defined in \autoref{fig:algorithm-wf} and use the mutually-defined rules of the checking and inference judgements,
+which take and produce global environments representing whole programs.
+Its rules are defined in \autoref{fig:algorithm-wf} and use the mutually-defined rules of the checking and inference judgements,
 defined in \autoref{fig:algorithm-check} and \autoref{fig:algorithm} respectively.
-We begin with the latter two first in \autoref{subsec:algorithm:infer},
-followed by a detailed look at \RecCheck in \autoref{subsec:algorithm:reccheck}.
-Well-formedness is discussed in \autoref{subsec:algorithm:wf}.
-Finally, we make our way up to soundness and completeness with respect to the typing rules in \autoref{subsec:algorithm:metatheory}.
+We begin with the latter two first in \autoref{sec:algorithm:infer},
+followed by a detailed look at \RecCheck in \autoref{sec:algorithm:reccheck}.
+Well-formedness is discussed in \autoref{sec:algorithm:wf}.
+Finally, we make our way up to soundness and completeness with respect to the typing rules in \autoref{sec:algorithm:metatheory}.
 
-\subsection{Inference Algorithm}\label{subsec:algorithm:infer}
+\subsection{Inference Algorithm}\label{sec:algorithm:infer}
 
 Size inference begins with either a bare term or a position term. For the bare terms, even type annotations of \cofixpoints are bare, \ie
   $$e^\circ \Coloneqq \dots
@@ -158,9 +157,8 @@ and this position term itself is passed into the algorithm.
 Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
 We discuss this and other implementational issues in the next section.
 
-\input{figures/algorithm-subtyping.tex}
 \input{figures/algorithm-check.tex}
-\input{figures/algorithm.tex}
+\input{figures/algorithm-subtyping.tex}
 
 \paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
 It uses algorithmic subtyping in \autoref{fig:algorithm-subtyping} to ensure that the inferred type of the term is a subtype of given type.
@@ -169,8 +167,13 @@ we present only Rules \refnorule{a-st-ind} and \refnorule{a-st-coind},
 which shows the concrete subsizing constraints derived from comparing two \coinductive types.
 It may also fail if two terms are not subtypes and are inconvertible.
 
-\autoref{fig:algorithm} is the inference component of the algorithm. Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
-Note that after type annotations pass through inference to become sized types, they must be erased to bare types again.
+\input{figures/algorithm-core.tex}
+
+\autoref{fig:algorithm-core} is the first half of the inference component of the algorithm,
+presenting the rules for basic language constructs.
+Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
+Note that since type annotations need to be bare (to maintain subject reduction),
+they must be erased first before reconstructing the term.
 These rules use the metafunctions \axiom, \rules, and \elim, which correspond to the sets \Axioms, \Rules, and \Elims, defined in \autoref{fig:axruel}.
 The metafunction \axiom produces the type of a universe; \rules produces the type of a function type given the universes of its argument and return types; and \elim directly checks membership in \Elims and can fail.
 
@@ -199,6 +202,10 @@ then a use of $b$ might be annotated as $b^{\seq{\upsilon_1 \mapsto \upsilon_5, 
 Furthermore, the constraint set we return will include $\set{\upsilon_4 \sqsubseteq \upsilon_5, \upsilon_6 = \upsilon_7}$.
 If $b$ is $\delta$\=/reduced during inference, such as in a fixpoint type, then it is replaced by $\app{\MkBox}{\Type{}}{\Nat^{\upsilon_7}}$.
 
+\input{figures/algorithm-coind.tex}
+
+\autoref{fig:algorithm-coind} is the second half of inference,
+presenting the rules related to \coinductives and \cofixpoints.
 A position term from a position-annotated \cofixpoint type can be passed into the algorithm, so we deal with the possibilities separately in Rules \refnorule{a-ind} and \refnorule{a-ind-star}.
 In both rules, a bare \coinductive type is annotated with a size variable; in \refrule{a-ind-star}, it is also added to the set of position size variables $\V^*$.
 The position annotation of \coinductive types occurs in \refrule{a-fix} or \refrule{a-cofix}, which we discuss shortly.
@@ -250,7 +257,7 @@ The number of position size variables from the \cofixpoint type shrinks on every
 If no satisfiable set is found even when no positions are considered size preserving, termination/productivity checking and thus type inference has failed.
 An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref{fig:helpers}.
 
-\subsection{RecCheck}\label{subsec:algorithm:reccheck}
+\subsection{RecCheck}\label{sec:algorithm:reccheck}
 
 As in previous work on \CChatomega with coinductive streams~\citep{cc-hat-omega} and in \CIChat, we use the same \RecCheck algorithm from \Fhat~\citep{f-hat}.
 This algorithm attempts to ensure that the subsizing rules in \autoref{fig:subsizing} can be satisfied within a given set of constraints.
@@ -294,7 +301,7 @@ This comes from the negative-cycle finding in (\ref{item:reccheck:neg-cycles}) u
 
 \input{figures/algorithm-wf.tex}
 
-\subsection{Well-Formedness}\label{subsec:algorithm:wf}
+\subsection{Well-Formedness}\label{sec:algorithm:wf}
 
 A self-contained chunk of code, be it a file or a module, consists of a sequence of \coinductive definitions (signatures) and programs (global declarations).
 For our purposes, we assume that there is a singular well-formed signature defined independently.
@@ -347,7 +354,7 @@ The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$.
 As we will see in the following subsection,
 with soundness this implies that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
 
-\subsection{Metatheory}\label{subsec:algorithm:metatheory}
+\subsection{Metatheory}\label{sec:algorithm:metatheory}
 
 In this subsection, we focus on soundness and completeness theorems of various parts of the inference algorithm.
 We first need soundness and completeness of \RecCheck.

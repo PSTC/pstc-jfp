@@ -1,4 +1,4 @@
-\begin{figure*}[!ph]
+\begin{figure*}[h]
 \centering
 \small
 
@@ -9,68 +9,7 @@
 \vspace{-4ex}
 
 \begin{mathpar}
-\inferrule[\defrule{a-var-assum}]{
-    (\assm{x}{t}) \in \Gamma
-}{
-    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
-}
-
-\inferrule[\defrule{a-const-assum}]{
-    (\Assm{x}{t}) \in \Gamma_G
-}{
-    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
-}
-\\
-\inferrule[\defrule{a-var-def}]{
-    (\defn{x}{t}{e}) \in \Gamma \and
-    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(C) \\\\
-    \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-    \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
-}{
-    C, \gg \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
-}
-
-\inferrule[\defrule{a-const-def}]{
-    (\Defn{x}{t}{e}) \in \Gamma_G \and
-    \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(C) \\\\
-    \overline{\upsilon_i} = \fresh{\norm{\overline{\upsilon'_i}}} \and
-    \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
-}{
-    C, \gg \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
-}
-
-\inferrule[\defrule{a-univ}]{~}{
-    C, \gg \vdash U \rightsquigarrow \set{}, U \Rightarrow \axiom{U}
-}
-\hfill
-\inferrule[\defrule{a-prod}]{
-    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U_1 \\\\
-    C \cup C_1, \gg (x:t) \vdash u^\circ \rightsquigarrow C_2, u \Rightarrow^* U_2
-}{
-    C, \gg \vdash \prod{x}{t^\circ\!}{u^\circ} \rightsquigarrow C_1 \cup C_2, \prod{x}{t}{u} \Rightarrow \rules{U_1}{U_2}
-}
-
-\inferrule[\defrule{a-abs}]{
-    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\\\
-    C \cup C_1, \gg (x:t) \vdash e^\circ \rightsquigarrow C_2, e \Rightarrow u
-}{
-    C, \gg \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
-}
-\hfill
-\inferrule[\defrule{a-app}]{
-    C, \gg \vdash e_1^\circ \rightsquigarrow C_1, e_1 \Rightarrow^* \prod{x}{t}{u} \\\\
-    C, \gg \vdash e_2^\circ \Leftarrow t \rightsquigarrow C_2, e_2
-}{
-    C, \gg \vdash e_1^\circ ~ e_2^\circ \rightsquigarrow C_1 \cup C_2, e_1 ~ e_2 \Rightarrow u[x \coloneqq e_2]
-}
-
-\inferrule[\defrule{a-let-in}]{
-    C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U \\
-    C, \gg \vdash e_1^\circ \Leftarrow t \rightsquigarrow C_2, e_1 \\\\
-    C \cup C_1 \cup C_2, \gg (\defn{x}{t}{e_1}) \vdash e_2^\circ \rightsquigarrow C_3, e_2 \Rightarrow u
-}{
-    C, \gg \vdash \letin{x}{t^\circ}{e_1^\circ}{e_2^\circ} \rightsquigarrow C_1 \cup C_2 \cup C_3, \letin{x}{|t|}{e_1}{e_2} \Rightarrow u[x \coloneqq e_1]
-}
+\dots
 
 \inferrule[\defrule{a-ind}]{
     \upsilon = \fresh{1}
@@ -131,8 +70,8 @@
     C, \gg \vdash \cofix{m}{f_k}{t_k^\circ}{e_k^\circ} \rightsquigarrow C_5, \cofix{m}{f_k}{|t_k|^*}{e_k} \Rightarrow t_m
 }
 \end{mathpar}
-\caption{Size inference algorithm: Inference}
-\label{fig:algorithm}
+\caption{Size inference algorithm: Inference (2/2)}
+\label{fig:algorithm-coind}
 \end{figure*}
 
 %%% Local Variables:
