@@ -127,8 +127,16 @@ which mark size-preserving types by replacing position annotations,
 and we use $\tau$ for these position size variables.
 We define two related metafunctions: \PV returns all position size variables in a given term,
 while $\erase{\ph}^*$ erases position size variables to position annotations and all other annotations to bare.
+
 Finally, on the right-hand size of inference judgements, we use $e \Rightarrow^* t$ to mean $e \Rightarrow t' \wedge t = \whnf{t'}$.
-\todo: Explain what \whnf is.
+\whnf reduces a term until it is in \emph{weak head normal form} (WHNF),
+which allows us to syntactically match on and take apart the term.
+A term is in weak head normal form when no reduction rule can be applied to the entire term,
+when it has the form $\app{X}{\vec{a}}$ and $X$ is in WHNF,
+when it is a case expression whose target is in WHNF,
+or when it is an applied fixpoint whose arguments are in WHNF.
+For our purposes, the important thing is that we are able to tell whether or not a term is
+a universe, a function type, or an inductive type.
 
 We define a number of additional metafunctions to translate the side conditions from the typing rules into procedural form.
 They are introduced as needed.
