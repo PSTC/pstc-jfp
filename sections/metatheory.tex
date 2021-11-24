@@ -101,7 +101,8 @@ This means that when defining a \coinductive type, it cannot recursively appear 
 For instance, the following definition $\nat$, while equivalent to $\Nat$,
 is disallowed due to the appearance of $\nat$ as a parameter of $\Box$.
 \begin{align*}
-  \seq{\assm{\nat}{\Type{}}} \coloneqq \seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}
+  \seq{\assm{\app{\Box}{(\assm{A}{\Type{}})}}{\Type{}}} &\coloneqq \seq{\assm{\MkBox}{A \rightarrow \app{\Box}{A}}} \\
+  \seq{\assm{\nat}{\Type{}}} &\coloneqq \seq{\assm{\Zero}{\nat}, \assm{\Succ}{\app{\Box}{\nat} \to \nat}}
 \end{align*}
 Notice that we have the subtyping relation $\nat^\upsilon \leq \nat^{\hat{\upsilon}}$,
 but as all parameters are invariant for backward compatibility and need to be convertible,

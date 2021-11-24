@@ -279,7 +279,7 @@ In \refrule{constr}, size annotations appear in two places:
 \end{itemize}
 As an example, consider a possible typing of \text{VCons}:
 \begin{align*}
-\mt, \mt \vdash \VCons &: \underbrace{(A: \Type{})}_{\text{parameter}} \to \underbrace{(n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n}_{\text{argument}} \to \underbrace{\Vector^{\hat{s}} ~ A ~ (\Succ ~ n)}_{\text{return type}}
+\mt, \mt \vdash \VCons &: \underbrace{(A: \Type{})}_{\text{parameter}} \to \underbrace{(n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n}_{\text{arguments}} \to \underbrace{\Vector^{\hat{s}} ~ A ~ (\Succ ~ n)}_{\text{return type}}
 \end{align*}
 It has a single parameter $A$ and $\Succ ~ n$ corresponds to the index $\vec{t^\infty}_j$ of the constructor's inductive type.
 The input $\Vector$ has size $s$, while the output $\Vector$ has size $\hat{s}$.
