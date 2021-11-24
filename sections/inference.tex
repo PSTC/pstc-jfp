@@ -172,7 +172,7 @@ It may also fail if two terms are not subtypes and are inconvertible.
 \autoref{fig:algorithm-core} is the first half of the inference component of the algorithm,
 presenting the rules for basic language constructs.
 Rules \refnorule{a-var-assum}, \refnorule{a-const-assum}, \refnorule{a-univ}, \refnorule{a-prod}, \refnorule{a-abs}, and \refnorule{a-app} are all fairly straightforward.
-Note that since type annotations need to be bare (to maintain subject reduction),
+Note that since type annotations need to be bare (to maintain subject reduction, as discussed in \autoref{sec:metatheory:sr:bare}),
 they must be erased first before reconstructing the term.
 These rules use the metafunctions \axiom, \rules, and \elim, which correspond to the sets \Axioms, \Rules, and \Elims, defined in \autoref{fig:axruel}.
 The metafunction \axiom produces the type of a universe; \rules produces the type of a function type given the universes of its argument and return types; and \elim directly checks membership in \Elims and can fail.

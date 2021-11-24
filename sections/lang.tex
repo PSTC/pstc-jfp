@@ -6,7 +6,7 @@ introduced in \autoref{sec:algorithm}.
 
 \subsection{Syntax}
 
-\input{figures/syntax.tex}
+\input{figures/syntax.tex}\label{sec:typing:syntax}
 
 The syntax of \lang, environments, and signatures are described in \autoref{fig:syntax}.
 It is a standard CIC with expressions (or terms) consisting of cumulative universes, dependent functions, definitions, \coinductives, case expressions, and mutual \cofixpoints.
@@ -51,6 +51,7 @@ rather than ordinary \textit{sized terms}, we instead have \textit{bare terms} $
 This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
+We give an example of the loss of subject reduction when type annotations are not bare in \autoref{sec:metatheory:sr:bare}
 % \citet{cic-hat-minus} discusses the issue in further detail.
 Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
 
