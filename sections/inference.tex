@@ -232,19 +232,17 @@ Although the desired \cofixpoint is the $m$th one in the block of mutually-defin
 Rules \refnorule{a-fix} and \refnorule{a-cofix} first run the size inference algorithm on each of the \cofixpoint \emph{types}, ignoring the results, to ensure that any reduction on those types will terminate.
 Then we annotate the bare types with position annotations (using \setrecstars/\setcorecstars) and pass these position types through the algorithm to get sized types $\overline{t_k}$.
 Next, we check that the \cofixpoint bodies have the successor-sized types of $\overline{t_k}$ when the \cofixpoints have types $\overline{t_k}$ in the local environment.
-Lastly, we call \RecCheckLoop, and return the constraints it gives us, along with the $m$th \cofixpoint type.
-\todo: Explain what \RecCheckLoop is for.
 
 \input{figures/helpers.tex}
 
-Notice that \setrecstars and \setcorecstars optimistically annotate \textit{all} possible \coinductive types in the \cofixpoint type with position annotations, but not all \cofixpoints are size-preserving.
-\RecCheckLoop filters these annotations to generate the final constraint set.
-This is a recursive function that calls \RecCheck, which checks satisfiability of a given constraint set.
-If the set is unsatisfiable due to a bad position annotation, then \RecCheckLoop removes the annotation and tries again.
+Lastly, we need to check that the constraint set so far is satisfiable.
+However, \setrecstars and \setcorecstars optimistically annotate \textit{all} possible \coinductive types in the \cofixpoint type with position annotations, while not all \cofixpoints are size-preserving.
+Therefore, instead of calling \RecCheck directly to check satisfiability,
+\RecCheckLoop iteratively calls \RecCheck and discards incorrect position annotations at each iteration.
 
 More specifically, \RecCheck can fail raising \RecCheckFail, which contains a set $V$ of position size variables that must be set to infinity; since position size variables always appear on size-preserved types, they cannot be infinite.
-\RecCheckLoop then removes $V$ from the set of position size variables, allowing them to be set to infinity, and recursively calls itself.
-The number of position size variables from the \cofixpoint type shrinks on every iteration until no more can be removed.
+\RecCheckLoop then removes $V$ from the set of position size variables, allowing them to be set to infinity, and iterates.
+The number of position size variables from the \cofixpoint type shrinks on every iteration until \RecCheck passes or until no more position size variables can be removed.
 If no satisfiable set is found even when no positions are considered size preserving, termination/productivity checking and thus type inference has failed.
 An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref{fig:helpers}.
 

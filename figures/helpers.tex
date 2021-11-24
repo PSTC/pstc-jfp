@@ -4,15 +4,15 @@
 \begin{minted}[escapeinside=<>,mathescape=true]{ocaml}
 let rec RecCheckLoop <$C$> <$\Gamma$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$> =
   try let <$C'$> = <$\set{}$> in
-      let for i = 1 to k do
-          let pv<$_i$> = <$\PV$> <${t_i}$> in
-          let sv<$_i$> = (<$\SV$> <$\Gamma$> <$\cup$> <$\SV$> <$t_i$> <$\cup$> <$\SV$> <$e_i$>) <$\setminus$> pv<$_i$> in
-          <$C'$> := <$C'$> <$\cup$> RecCheck <$C$> <$\tau_i$> pv<$_i$> sv<$_i$>
-      done in <$C'$>
+    let for i = 1 to k do
+      let pv<$_i$> = <$\PV$> <${t_i}$> in (* noninfinite $V^{\ast}$ *)
+      let sv<$_i$> = (<$\SV$> <$\Gamma$> <$\cup$> <$\SV$> <$t_i$> <$\cup$> <$\SV$> <$e_i$>) <$\setminus$> pv<$_i$> in (* infinite $V^{\neq}$ *)
+      <$C'$> := <$C'$> <$\cup$> RecCheck <$C$> <$\tau_i$> pv<$_i$> sv<$_i$>
+    done in <$C'$>
   with RecCheckFail <$V$> ->
-      if (empty? <$V$>)
-      then raise RecCheckLoopFail
-      else <$\mathcal{V}^*$> := <$\mathcal{V}^* \setminus V$>; RecCheckLoop <$C$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$>
+    if (empty? <$V$>)
+    then raise RecCheckLoopFail
+    else <$\mathcal{V}^*$> := <$\mathcal{V}^* \setminus V$>; RecCheckLoop <$C$> <$\overline{\tau_k}$> <$\overline{t_k}$> <$\overline{e_k}$>
 \end{minted}
 
 \caption{Pseudocode implementation of \textsc{RecCheckLoop}}
