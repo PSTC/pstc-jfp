@@ -24,7 +24,6 @@ The other notably involved part of the algorithm is the \solve algorithm,
 which given a set of constraints produces a valid solution.
 Finally, we state soundness and completeness theorems for the algorithm as a whole,
 proving only soundness and leaving completeness as a conjecture.
-\todo: Figure out the correct statement of completeness and whether we want to keep it.
 
 \subsection{Preliminaries}
 
@@ -733,22 +732,20 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
 
 \begin{conjecture}[Completeness (check/infer)]\label{thm:completeness}
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Gamma$ a local environment, $C$ a constraint set, and $\rho \vDash C$ a solution to the constraint set.
-\todo: Update these to the version of checking/inference that take an input constraint set.
-Then the following hold:
 \begin{enumerate}
   \item \label{thm:completeness:check} If $\Gamma_G, \rho\Gamma \vdash e : \rho t$,
-    then there exist $C, \rho'$ such that:
+    then there exist $C', \rho'$ such that:
     \begin{itemize}
-      \item $\rho' \vDash C$;
+      \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $\Gamma_G, \Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C, e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
+      \item $C, \Gamma_G, \Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
     \end{itemize}
   \item \label{thm:completeness:infer} If $\Gamma_G, \rho\Gamma \vdash e : t$,
     then there exist $C, \rho'$ such that:
     \begin{itemize}
-      \item $\rho' \vDash C$;
+      \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and
-      \item $\Gamma_G, \Gamma \vdash \erase{e} \rightsquigarrow C, e' \Rightarrow t'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$ and $\Gamma_G, \Gamma \vdash \rho' t \leq t$.
+      \item $C, \Gamma_G, \Gamma \vdash \erase{e} \rightsquigarrow C', e' \Rightarrow t'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$ and $\Gamma_G, \Gamma \vdash \rho' t \leq t$.
     \end{itemize}
 \end{enumerate}
 \end{conjecture}
@@ -820,7 +817,6 @@ By cases on the well-formedness rules for global declarations.
         {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
     \end{displaymath}
     Follows from \autoref{thm:completeness} on the premise.
-    \todo: Reference well-typedness of types once that's in the metatheory section.
 \end{itemize}
 \end{proof}
 
