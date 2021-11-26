@@ -135,22 +135,6 @@ As \lang does not support nested \coinductives,
 we don't need the corresponding notion of \textit{nested positivity}.
 Furthermore, we assume that our fixed, implicit signature is well-formed.
 
-\iffalse
-\subsubsection{Metafunctions and Metarelations}
-
-We declare the following metafunctions, whose definitions are straightforward:
-
-\begin{itemize}
-    \item $\FV{\ph}, \SV{\ph}$ return the set of free term and size variables in a given term or environment, respectively;
-    \item $\floor{\ph}$ returns the size variable a given finite (\ie not $\infty$) size expression;
-    \item $\norm{\ph}$ returns the cardinality of its argument (\eg sequence length, set size, \etc);
-    \item $\erase{\ph}$ erases sized terms to bare terms; and
-    \item $\erase{\ph}^\upsilon$ replaces size annotations with size variable $\upsilon$ by $*$ and removes all other ones.
-\end{itemize}
-
-Note that the free size variables of a size substition $\rho$ are only those of the sizes that $\rho$ maps \emph{to}.
-\fi
-
 \subsection{Reduction and Convertibility}
 
 The reduction rules listed in \autoref{fig:reduction} are the usual ones for CIC with definitions:
@@ -197,14 +181,6 @@ The latter also includes $\eta$-convertibility,
 which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) in \citet{conversion}.
 Note that there are no explicit rules for symmetry and transitivity of convertibility
 because these properties are derivable, as proven in\opcitt{conversion}
-
-\iffalse
-We also use the metafunction \whnf to denote the reduction of a term to weak head normal form,
-which would have the form of a universe, a function type, an unapplied function,
-a \coinductive type (applied or unapplied), a constructor (applied or unapplied),
-an assumption variable (applied or unapplied), or an unapplied \cofixpoint,
-with arguments and inner terms unreduced.
-\fi
 
 \subsection{Subtyping and Positivity}\label{subsec:typing:subtyping}
 

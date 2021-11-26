@@ -86,17 +86,6 @@ as well as some useful related notation.
 \end{itemize}
 \end{definition}
 
-\iffalse
-\input{figures/contexts-gen.tex}
-Solutions of constraint sets are used when inferring sizes of global declarations.
-The constraint sets are generated when inferring sizes of terms.
-Each use of a definition must assign fresh size variables to its body; therefore, we must also propagate the constraints that enforce subsizing relations between those size variables.
-To this end, we introduce \emph{generic}%
-\footnote{This terminology is borrowed from \citet{universes}, who have similar environments in the context of universe level constraint collection in the presence of cumulativity.}
-environments in \autoref{fig:contexts-gen}, where definitions are associated with a constraint set.
-Given a generic local environment $\Psi$, we write $\Gamma$ to mean the local environment corresponding to $\Psi$ without its constraint sets.
-\fi
-
 We now define four judgements to represent \emph{algorithmic subtyping}, \emph{checking}, \emph{inference}, and \emph{well-formed\-ness}.
 They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs on the right.
 \begin{itemize}
