@@ -2,7 +2,7 @@
 
 Proof assistants based on dependent type theory rely on the termination of recursive functions and the productivity of corecursive functions to ensure two important properties: logical consistency, so that it is not possible to prove false propositions; and decidability of type checking, so that checking that a program proves a given proposition is decidable.
 
-In proof assistants such a Coq, termination and productivity are enforced by a \emph{guard predicate} on fixpoints and cofixpoints respectively.
+In proof assistants such as Coq, termination and productivity are enforced by a \emph{guard predicate} on fixpoints and cofixpoints respectively.
 For fixpoints, recursive calls must be \emph{guarded by destructors}; that is, they must be performed on structurally smaller arguments.
 For cofixpoints, corecursive calls must be \emph{guarded by constructors}; that is, they must be the structural arguments of a constructor.
 The following examples illustrate these structural conditions.
