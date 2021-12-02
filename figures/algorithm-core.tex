@@ -1,6 +1,5 @@
-\begin{figure*}[h]
+\begin{figure*}[ht]
 \centering
-\small
 
 \begin{flushleft}
 \fbox{$C, \gg \vdash e^\circ \rightsquigarrow C, e \Rightarrow t$}
@@ -15,12 +14,6 @@
     C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
 }
 
-\inferrule[\defrule{a-const-assum}]{
-    (\Assm{x}{t}) \in \Gamma_G
-}{
-    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
-}
-\\
 \inferrule[\defrule{a-var-def}]{
     (\defn{x}{t}{e}) \in \Gamma \and
     \overline{\upsilon'_i} = \SV(e, t) \setminus \SV(C) \\\\
@@ -28,6 +21,12 @@
     \rho = \set{\vec{\upsilon'_i \mapsto \upsilon_i}}
 }{
     C, \gg \vdash x \rightsquigarrow \set{}, x^\rho \Rightarrow \rho t
+}
+
+\inferrule[\defrule{a-const-assum}]{
+    (\Assm{x}{t}) \in \Gamma_G
+}{
+    C, \gg \vdash x \rightsquigarrow \set{}, x \Rightarrow t
 }
 
 \inferrule[\defrule{a-const-def}]{
@@ -42,7 +41,7 @@
 \inferrule[\defrule{a-univ}]{~}{
     C, \gg \vdash U \rightsquigarrow \set{}, U \Rightarrow \axiom{U}
 }
-\hfill
+
 \inferrule[\defrule{a-prod}]{
     C, \gg \vdash t^\circ \rightsquigarrow C_1, t \Rightarrow^* U_1 \\\\
     C \cup C_1, \gg (x:t) \vdash u^\circ \rightsquigarrow C_2, u \Rightarrow^* U_2
@@ -56,7 +55,7 @@
 }{
     C, \gg \vdash \abs{x}{t^\circ\!}{e^\circ} \rightsquigarrow C_1 \cup C_2, \abs{x}{|t|}{e} \Rightarrow \prod{x}{t}{u}
 }
-\hfill
+
 \inferrule[\defrule{a-app}]{
     C, \gg \vdash e_1^\circ \rightsquigarrow C_1, e_1 \Rightarrow^* \prod{x}{t}{u} \\\\
     C, \gg \vdash e_2^\circ \Leftarrow t \rightsquigarrow C_2, e_2
