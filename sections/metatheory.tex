@@ -148,44 +148,48 @@ which we discuss in the next subsection.
 
 \subsection{Strong Normalization and Logical Consistency}\label{sec:metatheory:sn}
 
-Two desirable properties of type systems are strong normalization and
-consistency.
+In ongoing work%
+\footnote{To be submitted as an undergraduate thesis by Yufeng Li
+  under the supervision of Bruno Barras.}  on a variant of \lang
+called \langAnother, strong normalization has been proven with a
+set-theoretic model construction equipped with realisability
+candidates based on \citet{barras-thesis}.
 %
-While we do not have a proof that \lang is strongly normalizing, we
-have shown that a formulation of CIC with sized types, alternative to
-\lang, is strongly normalizing.
+From challenges encountered during the strong normalization proof, we
+learnt that in order to build a set-theoretic model for normalization,
+formulation of sized types in CIC has to satisfy additional
+requirements.
 %
-In this section, we give an overview of the proof and some challenges
-encountered.
+This section explains what these additional requirements are by
+motivating each of them from necessities that arose out of the proof
+attempt.
 
 At a high level, the proof uses a semantics-first set-theoretic model
 construction equipped with realisability candidates based on the works
 of \citet{barras-thesis}.
 %
-In order for the proof attempt to go through, we had to differ from
-\lang in the following aspects:
+To simplify the presentation, \langAnother does not deal with the sort
+$\Set$, mutual fixpoints, cofixpoints, local definitions, or global
+declarations; for the proof to work, \langAnother requires additional
+nontrivial changes relative to \lang:
 %
 \begin{itemize}
   %
-  \item Size variables must be explicitly annotated, and we treat
-  fixpoint recursor as binders for size variables.
-  %
-  That is, fixpoint recursors are now of the form such as
+  \item Fixpoint type annotations require explicit size annotations
+  (\ie are no longer merely position terms), explicitly abstract over
+  a size variable, and are explicitly applied to a size expression:
   %
   \begin{align*}
     \left\{\kw{fix}^\upsilon ~ f : \prod{n}{\Nat^\upsilon}{u} \coloneqq e\right\}_s
     \tag{$\star$}\label{eqn:new-fix}
   \end{align*}
   %
-  where $f$ is said to \emph{bind} the size variable $\upsilon$ in $e$
+  Here, $f$ is said to \emph{bind} the size variable $\upsilon$ in $e$
   and the subscript size expression $s$ states that one may only call
   the fixpoint recursor on inputs of size $s$ or less.
   %
-  This explicit binding of size variables serves the purpose of
-  specifying which argument the recursion is happening on.
-  %
-  The fact that the fixpoint recursor is specialized to size $s$ is
-  reflected by the corresponding typing rule:
+  In correspondence, the typing rule no longer erases the type, and
+  the size in the fixpoint type is fixed:
   %
   \begin{mathparpagebreakable}
     \inferrule*[right=\defrule{fix-another}]
@@ -195,24 +199,42 @@ In order for the proof attempt to go through, we had to differ from
       \prod{n}{\Nat^{s}}{\subst{u}{\upsilon}{s}} }
   \end{mathparpagebreakable}
   %
-  \item Inductive types are replaced by predicative W-types in order
-  to alleviate some syntactic burden of dealing with strict positivity
-  conditions.
+  \item Rather than inductive definitions in general, only predicative
+  W-types are considered.
   %
-  However, \citet{barras-thesis,polynomial-functors-w} have shown that
-  W-types are powerful enough to encode many strictly positive
-  inductive definitions, including nested inductive types and
-  inductive types with non-uniform parameters.
+  W-types can be defined as an inductive type:
   %
-  Including impredicative inductive types to the strong normalization
-  model, on the other hand, does pose several technical challenges
-  related to the realisability semantics.
+  \begin{mathparpagebreakable}
+    \seq{\app{\W}{(\assm{A}{U})}{(\assm{B}{A \rightarrow U})}} \coloneqq
+    \seq{\assm{\Sup}{(\assm{a}{A}) \rightarrow (\assm{f}{\app{B}{a} \rightarrow \app{\W}{A}{B}})
+        \rightarrow \app{\W}{A}{B}}}
+  \end{mathparpagebreakable}
+  %
+  Predicative W-types only allow $U$ to be $\Type{i}$ (or $\Set$, but
+  \langAnother does not deal with $\Set$), while impredicative W types
+  also allow it to be $\Prop$.
+  %
+  Including impredicative W types as well poses several technical
+  challenges to the realisability semantics.
+  %
+  % Inductive types are replaced by predicative W-types in order
+  % to alleviate some syntactic burden of dealing with strict positivity
+  % conditions.
+  % %
+  % However, \citet{w-types,polynomial-functors-w,barras-thesis} have
+  % shown that W-types are powerful enough to encode many strictly
+  % positive inductive definitions, including nested inductive types and
+  % inductive types with non-uniform parameters.
+  % %
+  % Including impredicative inductive types to the strong normalization
+  % model, on the other hand, does pose several technical challenges
+  % related to the realisability semantics.
   %
   \item As it is the case for most set-theoretic model constructions,
-  one uses a notion of typed reduction.
+  reduction, subtyping, and conversion are typed.
   %
-  \item Additionally, the strong normalization model does not include
-  let statements or global or local contexts like \lang does.
+  That is, each judgement requires the type of the terms,
+  and the derivation rules may have as typing judgements as premises.
   %
 \end{itemize}
 
@@ -229,8 +251,8 @@ recursor as running example:
   \label{eqn:fix-example}\tag{$\varheartsuit$}
 \end{align*}
 %
-Let $t$ be some $\Nat$ in constructor form (i.e. $t = \Succ ~ n$ or
-$t = \Zero$ syntactically) where $t$ has size $\hat{s}$.
+Let $t$ be some $\Nat$ in constructor form (\ie $t = \Succ ~ n$ or
+$t = \Zero$) where $t$ has size $\hat{s}$.
 %
 Then, as fixpoint recursors bind size variables, when we apply $F$ to
 $t$, we specialise $\upsilon$ to $\hat{s}$, so $\mu$-reduction should
@@ -253,8 +275,20 @@ $\left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon
 on input $t$ of size $\hat{s}$, the body $e$ can recursively call
 itself, but only on inputs of size $s$.
 
-Even with a modified version of \lang, proving strong normalization
-was still not easy.
+Because these changes violate backward compatibility, they cannot be adopted in \lang.
+%
+The current literature suggests that \langAnother and \lang may be
+proven to be equivalent such that strong normalization (and therefore
+logical consistency) of \langAnother implies that they hold in \lang.
+More specifically, \cite{conversion} show that a typed and an untyped
+convertibility in a Martin--L\"of type theory (MLTT) imply each other;
+and \citet{w-types, polynomial-functors-w} show that W types in an
+extensional MLTT can encode well-formed inductive types, including
+nested inductive types (while \citet{hofmann} shows that extensional
+MLTT is a conservative extension of intensional MLTT).
+%
+But even with a modified version of \lang, proving strong
+normalization was still not easy.
 %
 The explanation is given as follows:
 %
@@ -279,15 +313,25 @@ The explanation is given as follows:
 
 \subsubsection{Size Irrelevance}\label{sec:size-irrel}
 %
-As we all know, the sized typing rule for fixpoint recursors is
-supposed to ensure termination.
+The sized typing rule for fixpoint recursors appears particularly
+syntactically appealing and is supposed to ensure termination.
 %
-So, in order to construct a strong-normalization model in set theory,
-the idea is to take advantage of the size typing rule to give a
-set-theoretic interpretation for fixpoint recursors.
+Intuitively, the key to why sized types ensure termination is because
+recursion happens on smaller elements.
 %
-Taking the situation of \eqref{eqn:fix-example} as example, this
-section tries to show why doing so is perhaps not completely
+Take the situation of \eqref{eqn:fix-example} as example.
+%
+Whenever the body $e$ recursively calls $f$, since we know that the
+recursive call happens on strictly smaller elements, if we replace
+instances of $f$ in the body $e$ with two functions $\varphi,\varphi'$
+that behave identically on smaller elements then $e$ should not be
+able to tell apart $\varphi,\varphi'$.
+%
+In order to construct a strong-normalization model in set theory, one
+would like to formalise this idea of $e$ not being able to tell apart
+functions that agree on smaller values.
+%
+This section tries to show why doing so is perhaps not completely
 straightforward.
 
 In the strong normalization model, we interpret terms and types as
