@@ -1,6 +1,5 @@
 \begin{figure*}[!tp]
 \centering
-\small
 
 \begin{flushleft}
 \fbox{$\gg \vdash e : t$}
@@ -10,7 +9,7 @@
 
 \begin{mathpar}
   \inferrule[\defrule{var-assum}]
-    {\WF{\gg} \and (x:t) \in \Gamma}
+    {\WF{\gg} \\\\ (x:t) \in \Gamma}
     {\gg \vdash x:t}
 
   \inferrule[\defrule{var-def}]
@@ -19,8 +18,10 @@
       \Gamma_G, \Gamma_1 \vdash \rho e : \rho t}
     {\gg \vdash x^\rho : \rho t}
 
+  \\
+
   \inferrule[\defrule{const-assum}]
-    {\WF{\gg} \and (\Assm{x}{t}) \in \Gamma_G}
+    {\WF{\gg} \\\\ (\Assm{x}{t}) \in \Gamma_G}
     {\gg \vdash x:t}
 
   \inferrule[\defrule{const-def}]

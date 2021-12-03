@@ -59,18 +59,6 @@ which are in essence plain CIC terms, along with a local environment,
 and return an annotated term, its annotated size, and a set of size constraints that must be satisfied.
 Because \lang includes global definitions, its algorithm also takes a global environment.
 
-\iffalse
-Important to note is that size variables are not explicitly bound anywhere, and are effectively global.
-For instance, $\Nat^{\upsilon_1} \rightarrow \Nat^\infty \rightarrow \Nat^{\succ{\upsilon}_2}$ is a valid (and well-typed) term in an empty environment, with no relation between the sizes $\upsilon_1$ and $\succ{\upsilon}_2$.
-
-Sizes may be related to one another by a subsizing relation, which is a reflexive partial order on sizes,
-with $s \sqsubseteq \succ{s}$ and the $\infty$ size being greater than all sizes.
-The subsizing relation extends subtyping by inducing a covariant subtyping relation on inductive types and a contravariant one on coinductive types; that is,
-if $r \sqsubseteq s$ and $I$ is inductive, then $I^r \leq I^s$,
-and if $I$ is coinductive, then $I^s \leq I^r$.
-We examine the syntax and judgements of \lang in detail in \autoref{sec:typing}.
-\fi
-
 \subsection{Definitions}
 
 Coq's core calculus contains two kinds of variables:%

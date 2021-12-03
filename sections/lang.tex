@@ -6,7 +6,7 @@ introduced in \autoref{sec:algorithm}.
 
 \subsection{Syntax}
 
-\input{figures/syntax.tex}
+\input{figures/syntax.tex}\label{sec:typing:syntax}
 
 The syntax of \lang, environments, and signatures are described in \autoref{fig:syntax}.
 It is a standard CIC with expressions (or terms) consisting of cumulative universes, dependent functions, definitions, \coinductives, case expressions, and mutual \cofixpoints.
@@ -51,6 +51,7 @@ rather than ordinary \textit{sized terms}, we instead have \textit{bare terms} $
 This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
+We give an example of the loss of subject reduction when type annotations are not bare in \autoref{sec:metatheory:sr:bare}
 % \citet{cic-hat-minus} discusses the issue in further detail.
 Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
 
@@ -134,22 +135,6 @@ As \lang does not support nested \coinductives,
 we don't need the corresponding notion of \textit{nested positivity}.
 Furthermore, we assume that our fixed, implicit signature is well-formed.
 
-\iffalse
-\subsubsection{Metafunctions and Metarelations}
-
-We declare the following metafunctions, whose definitions are straightforward:
-
-\begin{itemize}
-    \item $\FV{\ph}, \SV{\ph}$ return the set of free term and size variables in a given term or environment, respectively;
-    \item $\floor{\ph}$ returns the size variable a given finite (\ie not $\infty$) size expression;
-    \item $\norm{\ph}$ returns the cardinality of its argument (\eg sequence length, set size, \etc);
-    \item $\erase{\ph}$ erases sized terms to bare terms; and
-    \item $\erase{\ph}^\upsilon$ replaces size annotations with size variable $\upsilon$ by $*$ and removes all other ones.
-\end{itemize}
-
-Note that the free size variables of a size substition $\rho$ are only those of the sizes that $\rho$ maps \emph{to}.
-\fi
-
 \subsection{Reduction and Convertibility}
 
 The reduction rules listed in \autoref{fig:reduction} are the usual ones for CIC with definitions:
@@ -196,14 +181,6 @@ The latter also includes $\eta$-convertibility,
 which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) in \citet{conversion}.
 Note that there are no explicit rules for symmetry and transitivity of convertibility
 because these properties are derivable, as proven in\opcitt{conversion}
-
-\iffalse
-We also use the metafunction \whnf to denote the reduction of a term to weak head normal form,
-which would have the form of a universe, a function type, an unapplied function,
-a \coinductive type (applied or unapplied), a constructor (applied or unapplied),
-an assumption variable (applied or unapplied), or an unapplied \cofixpoint,
-with arguments and inner terms unreduced.
-\fi
 
 \subsection{Subtyping and Positivity}\label{subsec:typing:subtyping}
 
@@ -278,7 +255,7 @@ In \refrule{constr}, size annotations appear in two places:
 \end{itemize}
 As an example, consider a possible typing of \text{VCons}:
 \begin{align*}
-\mt, \mt \vdash \VCons &: \underbrace{(A: \Type{})}_{\text{parameter}} \to \underbrace{(n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n}_{\text{argument}} \to \underbrace{\Vector^{\hat{s}} ~ A ~ (\Succ ~ n)}_{\text{return type}}
+\mt, \mt \vdash \VCons &: \underbrace{(A: \Type{})}_{\text{parameter}} \to \underbrace{(n:\Nat^\infty) \to A \to \Vector^s ~ A ~ n}_{\text{arguments}} \to \underbrace{\Vector^{\hat{s}} ~ A ~ (\Succ ~ n)}_{\text{return type}}
 \end{align*}
 It has a single parameter $A$ and $\Succ ~ n$ corresponds to the index $\vec{t^\infty}_j$ of the constructor's inductive type.
 The input $\Vector$ has size $s$, while the output $\Vector$ has size $\hat{s}$.
