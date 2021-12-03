@@ -196,7 +196,7 @@ Fixpoint f (u: unit): unit := let x := f u in tt.
 Fail Fixpoint f (u: unit): False := let x := f u in x.
 \end{minted}
 
-\subsubsection{Proof Attempts}
+\subsubsection{Proof Attempt}
 
 In ongoing work%
 \footnote{To be submitted as an undergraduate thesis by Yufeng Li under the supervision of Bruno Barras.}
@@ -204,11 +204,12 @@ on a variant of \lang called \langAnother,
 strong normalization has been proven with a set-theoretic model construction
 equipped with realisability candidates based on \citet{barras-thesis}.
 To simplify the presentation, \langAnother does not deal with mutual fixpoints,
-cofixpoints, local definitions, or global declarations;
-for the proof to work, \langAnother requires additional nontrivial changes relative to \lang:
+cofixpoints, local definitions, or global declarations.
+For the proof to work, it requires additional nontrivial changes relative to \lang:
 
 \begin{itemize}
-  \item Reduction, subtyping, and conversion are typed.
+  \item As is the case for most set-theoretic models,
+    reduction, subtyping, and convertibility are typed.
     That is, each judgement requires the type of the terms,
     and the derivation rules may have as typing judgements as premises.
   \item Fixpoint type annotations require explicit size annotations
@@ -221,6 +222,7 @@ for the proof to work, \langAnother requires additional nontrivial changes relat
       { \Gamma (f : t) \vdash e : \subst{t}{\upsilon}{\succ{\upsilon}} }
       { \Gamma \vdash \fixE{\upsilon}{f}{t}{e}{s} : \subst{t}{\upsilon}{s}}
     \end{mathparpagebreakable}
+    The fixpoint above binds the size variable $\upsilon$ in $t$ and in $e$.
     The reduction rule adds an additional substitution of the predecessor of the size expression,
     in line with how $f$ may only be called in $e$ with a smaller size.
     \begin{mathparpagebreakable}
@@ -247,12 +249,29 @@ and \citet{w-types, polynomial-functors-w} show that W types in an extensional M
 can encode well-formed inductive types, including nested inductive types
 (while \citet{hofmann} shows that extensional MLTT is a conservative extension of intensional MLTT).
 
+Nevertheless, in the subsequent subsubsections we explain where these changes originate from
+and why they are necessary for the model.
+
+\subsubsection{Typed Reduction}
+% Rename the section based on whether it's more important that reduction or convertibility is typed bc idk
+
+\todo
+
+\subsubsection{Size-Annotated Fixpoints}
+
+\todo
+
 \subsubsection{Size Irrelevance}
 
-The intuition of restricting recursion on smaller-sized arguments is not so
-simple to capture set-theoretically.
-In the model, we interpret terms and types as their natural set-theoretic
-counterparts and size expressions as ordinals;
+Given a recursive call $f$ of some fixpoint whose body is $e'$
+and two functions $\psi_1, \psi_2$ of the same type as $f$,
+if they behave identically, then the model requires that
+$\subst{e'}{f}{\psi_1}$ and $\subst{e'}{f}{\psi_2}$ are indistinguishable.
+However, this cannot be shown with the current typing rules,
+which is why \emph{size irrelevance} is introduced.
+
+Formally, the set-theoretic model interpret terms and types as their natural
+set-theoretic counterparts and size expressions as ordinals;
 we call these their \emph{valuations}.
 Given some environment $\Gamma$ and a term $e$ that is well typed under
 $\Gamma$ with size variables $V = \SV(e)$,
@@ -298,8 +317,9 @@ the fixed point of $\varphi$, we expect that (\todo: Why?)
   \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x)
   \label{eqn:irrel}\tag{\textsc{irrel}}
 \end{align*}
-This expresses \emph{size irrelevance}: size variables bound by fixpoints
-merely restrict their domains and do not affect their computation.
+This is the formal statement of size irrelevance:
+size variables bound by fixpoints merely restrict their domains and do not
+affect their computation.
 It turns out that size irrelevance ensures that $\varphi_\alpha$
 converges at $\varphi_\omega$,
 so it suffices to prove \eqref{eqn:irrel}.
