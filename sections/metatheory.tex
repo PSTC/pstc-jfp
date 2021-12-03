@@ -585,6 +585,46 @@ different closure ordinal than $\Nat$.
 In fact, it turned out that computing $\Infty(M;\nu)_\rho^\pi$ was
 much more involved than initially expected.
 
+\subsubsection{Relation to \lang and Coq}
+%
+Let us conclude this section by recalling that Coq itself is not
+strongly normalizing, only weakly normalizing.
+%
+\footnote{At least, the
+  underlying calculus is not. The counterexample ``normalizes'' to a
+  stack overflow on machine with finite memory.}
+
+\begin{minted}{coq}
+Definition cbv_omega := fix f (n : nat) := let x := f n in O.
+\end{minted}
+
+This is a side-effect of relaxing the guard condition to enable more
+sound programs to type check.
+%
+Ideally, sufficiently expressive sized typing will allow us to replace
+the guard condition entirely and regain strong normalization in Coq.
+
+However, an intermediate goal may be to achieve only weak
+normalization of \lang.
+%
+This would also maintain backward compatibility with Coq, although it
+is unclear if counterexamples like the above are ever desired in user
+programs.
+
+Indeed, strong normalization is a stricter requirement than Coq, which
+is only \emph{weakly} normalizing: every well-typed term has
+\emph{some} finite reduction sequence.
+%
+This relaxation enables more programs to pass the guard predicates
+while still being consistent.  For instance, the first fixpoint
+definition is accepted, as \texttt{x} is never used, but the second is
+not.
+%
+\begin{minted}{coq}
+  Fixpoint f (u: unit): unit := let x := f u in tt.
+  Fail Fixpoint f (u: unit): False := let x := f u in x.
+\end{minted}
+
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
 %%% TeX-engine: default
