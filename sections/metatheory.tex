@@ -148,40 +148,27 @@ which we discuss in the next subsection.
 
 \subsection{Strong Normalization and Logical Consistency}\label{sec:metatheory:sn}
 
-Our ultimate goal and primary future work is to prove strong normalization and logical consistency of \lang.
-
-\begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
-  %
-  If $\gg \vdash e : t$ then $e$ contains no infinite
-  reduction sequences.
-  %
-\end{conjecture}
-
-\begin{conjecture}[Logical Consistency]\label{thm:metatheory:lc}
-  %
-  The type $\prod{p}{\Prop}{p}$ is uninhabited in \lang.
-  %
-\end{conjecture}
-
-
-Taking inspiration from \citet{cic-hat-minus,cc-hat-omega,cic-hat},
-we conjecture that these statements are likely true.
-% Our proof attempt is still ongoing.
-
-In fact, we have proof that a formulation of CIC with sized types,
-alternative to \lang, is strongly normalizing.
+Two desirable properties of type systems are strong normalization and
+consistency.
 %
-This proof is uses a semantics-first set-theoretic model construction
-equipped with realisability candidates based on the works of
-\citet{barras-thesis}.
+While we do not have a proof that \lang is strongly normalizing, we
+have shown that a formulation of CIC with sized types, alternative to
+\lang, is strongly normalizing.
 %
-This alternative formulation differs from \lang in the following
-aspects:
+In this section, we give an overview of the proof and some challenges
+encountered.
+
+At a high level, the proof uses a semantics-first set-theoretic model
+construction equipped with realisability candidates based on the works
+of \citet{barras-thesis}.
+%
+In order for the proof attempt to go through, we had to differ from
+\lang in the following aspects:
 %
 \begin{itemize}
   %
-  \item One requires size variables to be explicitly annotated, and
-  treat fixpoint recursor as binders for size variables.
+  \item Size variables must be explicitly annotated, and we treat
+  fixpoint recursor as binders for size variables.
   %
   That is, fixpoint recursors are now of the form such as
   %
@@ -208,8 +195,9 @@ aspects:
       \prod{n}{\Nat^{s}}{\subst{u}{\upsilon}{s}} }
   \end{mathparpagebreakable}
   %
-  \item One only considers predicative W-types in order to alleviate
-  some syntactic burden of dealing with strict positivity conditions.
+  \item Inductive types are replaced by predicative W-types in order
+  to alleviate some syntactic burden of dealing with strict positivity
+  conditions.
   %
   However, \citet{barras-thesis,polynomial-functors-w} have shown that
   W-types are powerful enough to encode many strictly positive
@@ -223,8 +211,8 @@ aspects:
   \item As it is the case for most set-theoretic model constructions,
   one uses a notion of typed reduction.
   %
-  Additionally, the strong normalization model does not include let
-  statements or global or local contexts like \lang does.
+  \item Additionally, the strong normalization model does not include
+  let statements or global or local contexts like \lang does.
   %
 \end{itemize}
 
@@ -233,15 +221,16 @@ variables as in \eqref{eqn:new-fix}, when we reduce a fixpoint
 recursor, we need to replace the corresponding bound size variable in
 its body.
 %
-Work under some context $\Gamma$ and put as running example.
+Work under some context $\Gamma$ and take the following fixpoint
+recursor as running example:
 %
 \begin{align*}
   F \triangleq \left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e\right\}_{\hat{s}}
   \label{eqn:fix-example}\tag{$\varheartsuit$}
 \end{align*}
 %
-Let $t$ be some $\Nat$ in constructor form where $t$ has size
-$\hat{s}$.
+Let $t$ be some $\Nat$ in constructor form (i.e. $t = \Succ ~ n$ or
+$t = \Zero$ syntactically) where $t$ has size $\hat{s}$.
 %
 Then, as fixpoint recursors bind size variables, when we apply $F$ to
 $t$, we specialise $\upsilon$ to $\hat{s}$, so $\mu$-reduction should
@@ -264,15 +253,43 @@ $\left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon
 on input $t$ of size $\hat{s}$, the body $e$ can recursively call
 itself, but only on inputs of size $s$.
 
-\subsubsection{Size-Irrelevance}
+Even with a modified version of \lang, proving strong normalization
+was still not easy.
 %
-Via this model construction, the main lesson learnt is
-that the intuition about how size types ensure termination by
-restricting recursion on smaller elements is perhaps not quite so
-straightforward to capture set-theoretically.
+The explanation is given as follows:
+%
+\begin{itemize}
+  %
+  \item The intuition that sized types ensure termination seems to be
+  difficult to formalize in a set-theoretic model without further
+  restrictions on the type-checking rule for fixpoint recursors.
+  %
+  This restriction is called size irrelevance and is explained in
+  \Cref{sec:size-irrel}.
+  %
+  \item In the expected sizes-as-ordinals interpretation, finding an
+  ordinal corresponding to the $\infty$ size in a given term seems to
+  be a task more involved than expected.
+  %
+  Such an ordinal interpretation of $\infty$ is significant to showing
+  $\mu$-reduction is set-theoretically sound, and is explained in
+  \Cref{sec:infty-compute}.
+  %
+\end{itemize}
 
-Take the situation of \eqref{eqn:fix-example} as example.
+\subsubsection{Size Irrelevance}\label{sec:size-irrel}
 %
+As we all know, the sized typing rule for fixpoint recursors is
+supposed to ensure termination.
+%
+So, in order to construct a strong-normalization model in set theory,
+the idea is to take advantage of the size typing rule to give a
+set-theoretic interpretation for fixpoint recursors.
+%
+Taking the situation of \eqref{eqn:fix-example} as example, this
+section tries to show why doing so is perhaps not completely
+straightforward.
+
 In the strong normalization model, we interpret terms and types as
 their natural set-theoretic counterparts and size variables as
 ordinals.
@@ -331,7 +348,7 @@ would expect that
   \label{eqn:size-irrel}\tag{\textsc{size-irrel}}
 \end{align*}
 %
-This expresses a condition of size-irrelevance: size variables bound
+This expresses a condition of size irrelevance: size variables bound
 by fixpoint recursors can only be used to restrict their domains, and
 should not be used to affect the value of computation.
 %
@@ -365,30 +382,47 @@ easily conclude that $e$ cannot tell apart $\varphi_\alpha$ and
 $\varphi_\beta$.
 
 This problem was encountered also by \citet{barras-thesis}, who solved
-it by introducing a special typing mode called size-irrelevance typing
-and syntactic marker for the $\Pi$-types of fixpoint recursors.
+it by introducing a special typing mode called size irrelevance typing
+and marker for the $\Pi$-types of fixpoint recursors.
 %
 We have used a similar solution to get around this problem in the
 strong normalization proof of the alternative formulation of \lang.
 %
-However, in the size-irrelevance typing of \citet{barras-thesis},
+However, in the size irrelevance typing of \citet{barras-thesis},
 there was the requirement that fixpoint recursors can never occur as
 arguments to other functions in their defining body.
 %
-For example, in order for $e$ to pass size-irrelevance typing, $e$
+For example, in order for $e$ to pass size irrelevance typing, $e$
 cannot contain a sub-expression of the form $(\app{M}{f})$.
+%
+\todo{
+  %
+  (The main idea I want to express is basically that we type the
+  bodies of fixpoint recursors in this size irrelevance mode.
+  %
+  And size
+  irrelevance is supposed to put on more restrictions in addition to
+  the existing sized typing rules.
+  %
+  So it seems natural to ask how restrictive is size irrelevance
+  typing compared to usual sized typing.
+  %
+  And it turns out that size irrelevance typing is not restrictive by
+  that much.)
+  %
+}
 %
 We were able to get rid of this requirement in the strong
 normalization proof of this alternative formulation of \lang.
 %
-In fact, the typing rules allowed for size-irrelevance typing can be
+In fact, the typing rules allowed for size irrelevance typing can be
 expanded to include counterparts for almost all of the ``normal''
 typing rules.
 
-An alternative approach seems to be to use a model involving PERs,
-where the PERs are designed to ensure size-irrelevance.
+An alternative approach seems uses a model involving PERs, where the
+PERs are designed to ensure size irrelevance.
 %
-In any case, it seems that an inherent restriction of size-irrelevance
+In any case, it seems that an inherent restriction of size irrelevance
 is one may not have a recursive function $F$ with behaviours such as
 $\app{F}{n} \approx \Nat^\upsilon \to ...n\text{ times}... \to
 \Nat^\upsilon$ or even $\app{F}{n} \approx \Nat^\upsilon$ where
@@ -396,20 +430,23 @@ $\upsilon$ is the size variable bound by $F$.
 %
 \citet{cic-hat-minus} has a similar restriction present in
 \CIChatminus, and this restriction matches the intuition of
-size-irrelevance.
+size irrelevance.
 %
 If $\app{F}{n} \approx \Nat^\upsilon$ then the value of $F$ on an
 input $n$ depends on the size $\upsilon$, which precisely the
-behaviour size-irrelevance aims to forbid.
+behaviour size irrelevance aims to forbid.
 %
 On the other hand, $\app{F}{n} \approx \Nat^\infty \to
-...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
+...n\text{ times}...\to\Nat^\infty$ does adhere to size irrelevance.
 
-\subsubsection{Computation of $\infty$}
+\subsubsection{Computation of $\infty$}\label{sec:infty-compute}
 %
-In the set-theoretic model, we also discovered that giving a
-set-theoretic interpretation of the $\infty$ size was more technically
-involved than one would expect.
+A second challenge in constructing the set-theoretic model is the
+problem of justifying $\mu$-reduction set-theoretically.
+%
+Due to the sizes-as-ordinal interpretation of sizes, this problem
+seems to be related to the ordinal interpretation of the $\infty$
+size.
 
 Take the $\mu$-reduction equation in \eqref{eqn:mu-example} as an
 example.
@@ -433,7 +470,8 @@ $\kappa \geq \omega$,
   }}{t})_\rho^\pi
 \end{align*}
 %
-By substitutivity, this is equivalent to showing that
+By substitutivity and the fact that $(\varphi_\alpha)_\alpha$ is
+constant beyond $\kappa$, this is equivalent to showing that
 %
 \begin{align*}
   \varphi_{\kappa+1}(\Val(t)_\rho^\pi) =
