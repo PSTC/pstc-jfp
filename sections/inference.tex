@@ -153,6 +153,8 @@ and this position term itself is passed into the algorithm.
 Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
 We discuss this and other implementational issues in the next section.
 
+\subsubsection{Checking}
+
 \input{figures/algorithm-check.tex}
 \input{figures/algorithm-subtyping.tex}
 
@@ -162,6 +164,8 @@ This subtyping is defined inductively over the rules of the subtyping judgement 
 we present only Rules \refnorule{a-st-ind} and \refnorule{a-st-coind},
 which shows the concrete subsizing constraints derived from comparing two \coinductive types.
 It may also fail if two terms are not subtypes and are inconvertible.
+
+\subsubsection{Inference: Part 1}
 
 \input{figures/algorithm-core.tex}
 
@@ -188,6 +192,8 @@ the type of the function might be inferred as
 $N^{\seq{\upsilon_1 \mapsto \upsilon_2}} \rightarrow N^{\seq{\upsilon_1 \mapsto \upsilon_3}}$,
 which by $\delta$-reduction is convertible with $\Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
 
+\subsubsection{Inference: Part 2}
+
 \input{figures/algorithm-coind.tex}
 
 \autoref{fig:algorithm-coind} is the second half of inference,
@@ -210,7 +216,9 @@ To obtain the motive type's return universe, we use \decompose.
 Given a type $t$ and a natural $n$, this metafunction reduces $t$ to a function type $\prodctx{\Delta}{u}$ where $\norm{\Delta} = n$, reduces $u$ to a universe $U$, and returns $U$.
 It can fail if $t$ cannot be reduced to a function type, if $\norm{\Delta} < n$, or if $u$ cannot be reduced to a universe.
 
-\paragraph*{} Finally, we come to size inference and termination/productivity checking for \cofixpoints.
+\subsubsection{Inference: \Cofixpoints}
+
+Finally, we come to size inference and termination/productivity checking for \cofixpoints.
 It uses the following metafunctions:
 \begin{itemize}
   \item \setrecstars, given a function type $t$ and an index $n$, decomposes $t$ into arguments and a return type, reduces the $n$th argument type to an inductive type, annotates that inductive type with position annotation $*$, annotates the return type with $*$ if it has the same inductive type, and rebuilds the function type.
@@ -296,15 +304,23 @@ This comes from the negative-cycle finding in (\ref{item:reccheck:neg-cycles}) u
 
 A self-contained chunk of code, be it a file or a module, consists of a sequence of \coinductive definitions (signatures) and programs (global declarations).
 For our purposes, we assume that there is a singular well-formed signature defined independently.
-Then we need to perform size inference on each declaration of $\Gamma_G$ in order.
-This is given by Rules \refnorule{a-global-nil}, \refnorule{a-global-assum}, and \refnorule{a-global-def} in \autoref{fig:algorithm-wf}.
+Then we need to perform size inference on each declaration of $\Gamma_G$ in order,
+as given by \autoref{fig:algorithm-wf}.
 
-In \refrule{a-global-def}, the \solve metafunction takes the constraint set $C_1 \cup C_2$
-and produces a size substitution that, when applied to the annotated term and type, 
-ensures that they form a well-typed judgement.
-In other words, we are guaranteed that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
+In \refrule{a-global-assum}, from a bare type $t^\circ$, inference gets us back
+a constraint set $C_1$, the annotated type $t$, and \emph{its} type $\varw$,
+such that $\Gamma_G, \mt \vdash t : w$ when the constraints in $C_1$ hold.
+Similarly, \refrule{a-global-def} gets back from inference a term $e$,
+its type $t$, and a constraint sets $C_1, C_2$,
+with $\Gamma_G, \mt \vdash e : t$ when the constraints in $C_1 \cup C_2$ hold.
+To rid ourselves of the constraint sets, we need to instantiate the size variables involved with size expressions that satisfy those constraints.
+This is done by \solve which, when given a constraint set, produces a substitution $\rho$ that performs the instantiation.
+Then given $\rho \vDash C_1 \cup C_2$, for instance, $\Gamma_G, \mt \vdash \rho e : \rho t$ holds unconditionally.
 
-Assuming for now that the corresponding constraint graph has no negative cycles, for every connected component,
+\subsubsection{Solving Constraints}
+
+Let $C$ be a constraint graph corresponding to some constraint set for which we want to produce a substitution.
+Supposing for now that it contains no negative cycles, for every connected component,
 the simplest solution is to assign size expressions to each size variable such that
 all of those size expressions have the same base size variable.
 For instance, given the constraint set $\set{\upsilon_1 \sqsubseteq \hat{\upsilon}_2, \hat{\upsilon_1} \sqsubseteq \upsilon_3}$,
@@ -348,12 +364,6 @@ the time complexity of all executions of \solvecomp is $O(\norm{V}\norm{C})$.
 This is also the time complexity of negative-cycle finding.
 These two dominate the time complexity of finding the connected components,
 which is $O(\norm{V} + \norm{C})$.
-
-The resulting size substitution $\rho$ will then satisfy $\rho \vDash C$.
-As we will see in the following subsection,
-with soundness this implies that $\Sigma, \Gamma_G, \mt \vdash \rho e : \rho t$ holds.
-
-\todo: What was the point?
 
 \subsection{Metatheory}\label{sec:algorithm:metatheory}
 
