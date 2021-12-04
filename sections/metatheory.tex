@@ -281,8 +281,9 @@ the valuation of $e$ is denoted by $\Val(e)_\rho^\pi$.
 
 Consider now the valuation of the following term that is well typed under
 $\Gamma$.
-$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{s}$$
-If $s = \infty$, intuitively the valuation of $e$ must be the fixed point of
+$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$$
+As the fixpoint is evaluated at the infinite size $\infty$,
+intuitively the valuation of $e$ must be the fixed point of
 $e'$ with respect to $f$.
 Then to compute $e$, we take an initial approximation of $e'$ and iterate until
 the fixed point has been reached.
@@ -320,8 +321,8 @@ the fixed point of $\varphi$, we expect that (\todo: Why?)
 This is the formal statement of size irrelevance:
 size variables bound by fixpoints merely restrict their domains and do not
 affect their computation.
-It turns out that size irrelevance ensures that $\varphi_\alpha$
-converges at $\varphi_\omega$,
+It turns out that size irrelevance ensures that $\psi_\alpha$
+converges at $\psi_\omega$,
 so it suffices to prove \eqref{eqn:irrel}.
 
 We proceed by induction on $\alpha$ and $\beta$.
@@ -329,8 +330,8 @@ Assuming \eqref{eqn:irrel} holds for some $\alpha$ and $\beta$,
 unfolding definitions, the goal is to show that
 %
 $$\forall x \in \McN^{\alpha+1} \subseteq \McN^{\beta+1},
-  \Val(e')_{\subst{\rho}{f}{\phi_\alpha}}^{\subst{\pi}{\upsilon}{\alpha}}(x) =
-  \Val(e')_{\subst{\rho}{f}{\phi_\beta}}^{\subst{\pi}{\upsilon}{\beta}}(x)$$
+  \Val(e')_{\subst{\rho}{f}{\psi_\alpha}}^{\subst{\pi}{\upsilon}{\alpha}}(x) =
+  \Val(e')_{\subst{\rho}{f}{\psi_\beta}}^{\subst{\pi}{\upsilon}{\beta}}(x)$$
 %
 Inductively, $\psi_\alpha$ and $\psi_\beta$ behave identically,
 but from \refrule{fix-explicit} we cannot easily conclude that $e'$ cannot tell
@@ -384,82 +385,79 @@ On the other hand, $\app{F}{n} \approx \Nat^\infty \to
 ...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
 \fi
 
-\subsubsection{Computation of $\infty$}
-%
-In the set-theoretic model, we also discovered that giving a
-set-theoretic interpretation of the $\infty$ size was more technically
-involved than one would expect.
+\subsubsection{Computation of the Infinite Size}
 
-Take the $\mu$-reduction equation in \eqref{eqn:mu-example} as an
-example.
-%
-Once again, assume $s=\infty$ and \eqref{eqn:size-irrel} holds, so that
-$(\varphi_\alpha)_\alpha$ is constant beyond $\omega$.
-%
-Then, by the previous discussion, the value of $F$ and of
-$\left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon
-  \coloneqq e\right\}_{s}$ are both taken to be
-$\varphi_\omega = \varphi_{\kappa}$ for all $\kappa \geq \omega$.
-%
-Then, by substitutivity, the $\mu$-reduction equation in
-\eqref{eqn:mu-example} should say, for sufficiently large
-$\kappa \geq \omega$,
-%
+An additional challenge in constructing the set-theoretic model is the
+justification of $\mu$-reduction,
+further complicated by the ordinal interpretation of the infinite size
+$\infty$.
+Consider for instance again the fixpoint
+$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$
+now applied to $\Zero$.
+Then $\app{e}{\Zero}$ $\mu$-reduces as follows:
+$$\app{\fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}}{\Zero}
+\rhd_\mu
+\app{\subst{\subst{e'}{\upsilon}{\infty}}{f}{e}}{\Zero}$$
+Let $\pi$ and $\rho$ be size and term variable valuations,
+define $\psi_\alpha$ as above, and recall that if $\alpha \geq \omega$,
+then $\psi_\alpha = \psi_\omega$.
+Suppose then that we have an ordinal $\kappa \geq \omega$ such that we have
+$\psi_{\kappa+1} = \psi_\kappa = \psi_\omega = \Val(e)_\rho^\pi$.
+To justify $\mu$-reduction, we need to show the following holds:
+$$\Val(\app{e}{\Zero})_\rho^\pi = \Val(\app{\subst{\subst{e'}{\upsilon}{\infty}}{f}{e}}{\Zero})_\rho^\pi$$
+Let $\mathcal{O} = \Val(\Zero)_\rho^\pi$.
+On the left-hand side, we have
 \begin{align*}
-  \Val(\app{F}{t})_\rho^\pi =
-  \Val(\app{\subst{\subst{e}{\upsilon}{\infty}}{f}{
-  \left\{\kw{fix}^\upsilon ~ f : \Nat^\upsilon \to \Nat^\upsilon \coloneqq e\right\}_{\infty}
-  }}{t})_\rho^\pi
+  \Val(\app{e}{\Zero})_\rho^\pi &= \Val(e)_\rho^\pi ~ \mathcal{O} \\
+  &= \psi_{\kappa}(\mathcal{O}) \\
+  &= \psi_{\kappa+1}(\mathcal{O}) &\text{since $\kappa \geq \omega$} \\
+  &= \phi_\kappa(\psi_\kappa)(\mathcal{O}) &\text{expanding $\psi_{\kappa+1}$} \\
+  &= \Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}} ~ \mathcal{O} &\text{by definition} \\
 \end{align*}
-%
-By substitutivity, this is equivalent to showing that
-%
+Meanwhile, on the right-hand side,
 \begin{align*}
-  \varphi_{\kappa+1}(\Val(t)_\rho^\pi) =
-  \Val(\subst{e}{\upsilon}{\infty})_{\subst{\rho}{f}{\varphi_\kappa}}^{\pi}(\Val(t)_\rho^\pi)
+  \Val(\app{\subst{\subst{e'}{\upsilon}{\infty}}{f}{e}}{\Zero})_\rho^\pi
+  &= \Val(\subst{\subst{e'}{\upsilon}{\infty}}{f}{e})_\rho^\pi ~ \mathcal{O} \\
+  &= \Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{\psi_\kappa}}^\pi ~ \mathcal{O} &\text{by substitutivity}
 \end{align*}
-%
-But
-$\varphi_{\kappa+1} =
-\Val(e)_{\subst{\rho}{f}{\varphi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}}$,
-to show the above equality, it remains to move the
-$\subst{e}{\nu}{\infty}$ in the syntax into the valuation
-$\subst{\pi}{\nu}{\kappa}$, for some large $\kappa$.
 
-More generally, it seems true that for all terms $M$ and valuations
-$\rho$ and $\pi$, and size variables $\nu$, there is some ordinal
-$\Infty(M;\nu)_\rho^\pi$ with the $\infty$-substitutivity property:
-%
-\begin{align*}
-  \kappa \geq \Infty(M;\nu)_\rho^\pi \text{ implies }
-  \Val(\subst{M}{\nu}{\infty})_\rho^\pi = \Val(M)_\rho^{\subst{\pi}{\nu}{\kappa}}
-  \label{eqn:infty-subst}\tag{$\infty$-subst}
-\end{align*}
-%
-This equality somehow expresses the idea that $\Infty(M;\nu)_\rho^\pi$
-closes off all inductive types annotated with $\nu$ in $M$, so
-$\Infty(M;\nu)_\rho^\pi$ is the denotation of $\infty$ for $\nu$ in
+Then all we need to show is that
+$\Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}}
+= \Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{\psi_\kappa}}^\pi$,
+moving the substitution by $\infty$ into the valuation as $\kappa$.
+More generally, for any term $e$ along with valuations $\pi$, $\rho$,
+there is some ordinal $\Infty(e; \upsilon)_\rho^\pi$ such that the following
+infinite-size subsitutivity property holds:
+$$\forall \kappa \geq \Infty(e; \upsilon)_\rho^\pi,
+  \Val(e)_{\rho}^{\subst{\pi}{\upsilon}{\kappa}}
+  = \Val(\subst{e}{\upsilon}{\infty})_{\rho}^{\pi}$$
+
+This equality expresses the idea that $\Infty(e;\upsilon)_\rho^\pi$
+closes off all inductive types annotated with $\upsilon$ in $e$, so
+$\Infty(e;\upsilon)_\rho^\pi$ is the denotation of $\infty$ for $\upsilon$ in
 $M$ under $\rho$ and $\pi$.
 %
-Intuitively, we know this ordinal $\Infty(M;\nu)_\rho^\pi$ exists,
+Intuitively, we know this ordinal $\Infty(e;\upsilon)_\rho^\pi$ exists,
 because the strict positivity condition ensures that by iterating the
 operator associated with an inductive type up to its closure ordinal,
 we eventually reach their fixpoints.
 %
-Since there can only be finitely many inductive types in $M$, an
-ordinal with the $\infty$-substitutivity property is just the
+Since there can only be finitely many inductive types in $e$, an
+ordinal with the infinite-size substitutivity property is the
 supremum of these closure ordinals.
 
-However, the computation of $\Infty(M;\nu)_\rho^\pi$ is complicated by
-the fact that in $M$, the size variable $\nu$ can be annotated to more
+However, the computation of $\Infty(e;\upsilon)_\rho^\pi$ is complicated by
+the fact that in $e$, the size variable $\upsilon$ can be annotated to more
 than one inductive type.
 %
-For example, in $M$, the size variable $\nu$ can be annotated to both
-$\Nat^\nu$ and $I^\nu$, where $I$ is some inductive type with a
+For example, in $e$, the size variable $\upsilon$ can be annotated to both
+$\Nat^\upsilon$ and $I^\upsilon$, where $I$ is some inductive type with a
 different closure ordinal than $\Nat$.
 %
-In fact, it turned out that computing $\Infty(M;\nu)_\rho^\pi$ was
+In fact, it turned out that computing $\Infty(e;\upsilon)_\rho^\pi$ was
 much more involved than initially expected.
+%
+\todo: This sentence sounds like the intro of a new paragraph, but it doesn't go anywhere...
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
