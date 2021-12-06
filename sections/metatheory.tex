@@ -253,9 +253,48 @@ Nevertheless, in the subsequent subsubsections we explain where these changes or
 and why they are necessary for the model.
 
 \subsubsection{Typed Reduction}
-% Rename the section based on whether it's more important that reduction or convertibility is typed bc idk
 
-\todo
+Recall from \autoref{sec:overview:comparison} that we add an impredicative $\Prop$ universe
+and universe cumulativity to the existing universe hierarchy in \CIChatminus.
+To handle this addition, we follow the set-theoretical model presented by \citet{not-so-simple-cc},
+where $\Prop$ is treated proof-irrelevantly:
+its set-theoretical interpretation is the set $\set{\set{\emptyset}, \emptyset}$,
+and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabitated propositions)
+or $\emptyset$ (representing false, uninhabited propositions).
+
+To handle impredicativity of function types, they are encoded using a \emph{trace encoding} \citep{aczel-trace}.
+First, the \emph{trace} of a (set-theoretical) function $f : A \to B$ is defined as
+$$\trace(f) = \set{(a, b) \mid a \in A, b \in f(a)}.$$
+Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
+$$\set{\trace(f) \mid f \in \set{(a, b) \mid a \in A, b \in B_a}}$$
+where $A$ is the interpretation of $t$ and $B_a$ is the interpretation of $u$ when $x = a$,
+while a function $\abs{x}{t}{e}$ is interpreted as
+$$\set{(a, b) \mid a \in A, b \in B_a}$$
+where $b$ is the interpretation of $e$ when $x = a$.
+
+To see that this definition satisfies impredicativity,
+suppose that $u$ is in $\Prop$.
+Then $B_a$ is either $\emptyset$ or $\set{\emptyset}$.
+If it is $\emptyset$, then there is no possible $b$ and therefore no possible $f$,
+making the interpretation of the function type itself $\emptyset$.
+If it is $\set{\emptyset}$, then $b = \emptyset$, $f = (a, \emptyset)$ for some $a$,
+and $\trace(f) = \emptyset$ since because $b$ is empty,
+making the interpretation of the function type itself $\set{\emptyset}$.
+
+Since reduction is untyped, it is perfectly fine for ill-typed terms to reduce.
+For instance, we can have the derivation
+$\mt, \mt \vdash \app{(\abs{x}{(\prod{p}{\Prop}{p \to p})}{x})}{\Prop} \rhd_\beta \Prop$
+even though the left-hand side is not well typed.
+However, to justify a convertibility (such as a reduction) in the model,
+we need to show that the set-theoretic interpretations of both sides are equal.
+For the example above, since $\prod{p}{\Prop}{p \to p}$ is in $\Prop$
+and is inhabited by $\abs{p}{\Prop}{\abs{x}{p}{x}}$,
+its interpretation must be $\set{\emptyset}$.
+Then the interpretation of the function on the left-hand side must be $\set{(\emptyset, \emptyset)}$.
+
+% The idea is that the interpretation of ill-typed terms makes no sense
+% especially when considering the convertibility (equality) or subtyping (subset) of interpretations,
+% so reduction, convertibility, and subtyping should all be typed to prevent senseless situations.
 
 \subsubsection{Size-Annotated Fixpoints}
 

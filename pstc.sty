@@ -14,6 +14,7 @@
 \newcommand{\kw}[1]{\mathtt{\textcolor{kwcolour}{#1}}}
 \newcommand{\const}[1]{\mathtt{\textcolor{constcolour}{#1}}}
 \newcommand{\meta}[1]{\texttt{\textcolor{metacolour}{#1}}}
+\newcommand{\model}[1]{\textsf{#1}}
 \newcommand{\new}[1]{
   \setlength{\fboxsep}{1pt}
   \mathchoice
@@ -61,6 +62,13 @@
 \newcommand{\C}{\mathcal{C}}
 \newcommand{\V}{\mathcal{V}}
 
+% set-theoretical model
+\newcommand{\Ord}{\model{Ord}}
+\newcommand{\Val}{\model{Val}}
+\newcommand{\Infty}{\model{Infty}}
+\newcommand{\trace}{\model{trace}}
+\newcommand{\McN}{\mathcal{N}}
+
 % metafunctions (for math envs)
 \newcounter{funargs}
 \newcommand{\commaseplist}[1]{
@@ -85,11 +93,6 @@
     {\: \apps}
     {\xspace}
 }
-
-\newcommand{\Ord}{\textsf{Ord}}
-\newcommand{\Val}{\textsf{Val}}
-\newcommand{\McN}{\mathcal{N}}
-\newcommand{\Infty}{\textsf{Infty}}
 
 \newcommand{\dom}{\metafun[1]{dom}}
 \newcommand{\codom}{\metafun[1]{codom}}
