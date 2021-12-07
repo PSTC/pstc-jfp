@@ -291,10 +291,21 @@ For the example above, since $\prod{p}{\Prop}{p \to p}$ is in $\Prop$
 and is inhabited by $\abs{p}{\Prop}{\abs{x}{p}{x}}$,
 its interpretation must be $\set{\emptyset}$.
 Then the interpretation of the function on the left-hand side must be $\set{(\emptyset, \emptyset)}$.
+By the definition of the interpretation of application,
+since the interpretation of $\Prop$ is not in the domain of the function,
+the left-hand side becomes $\emptyset$.
+Meanwhile, the right-hand side is $\set{\emptyset}$,
+and the interpretations of the two sides are not equal.
 
-% The idea is that the interpretation of ill-typed terms makes no sense
-% especially when considering the convertibility (equality) or subtyping (subset) of interpretations,
-% so reduction, convertibility, and subtyping should all be typed to prevent senseless situations.
+% I want to mention why the interpretation of application yields the empty set for senseless things
+% but it's starting to feel like we're digging too deep into the set-theoretic details...
+% Basically the trace encoding erases the domain, so you can't even look out for cases
+% where the domain doesn't line up with the argument.
+
+Ultimately, the set-theoretic interpretations of terms only make sense for well-typed terms,
+despite being definable for ill-typed ones as well.
+Therefore, to ensure that the interpretation is sensible,
+reduction (and therefore subtyping and convertibility) needs to be typed.
 
 \subsubsection{Size-Annotated Fixpoints}
 
