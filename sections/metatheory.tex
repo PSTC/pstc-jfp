@@ -343,7 +343,13 @@ $\Val(\Nat^\upsilon)_\rho^{\subst{\pi}{\upsilon}{\alpha}} = \McN^\alpha$,
 where given some ordered ordinals $\vec{\alpha}$,
 $\vec{\McN^\alpha}$ is a $\subseteq$-increasing sequence of sets constant
 beyond $\alpha = \omega$.
-Let $D_0$ be a well-chosen singleton set (\todo: Which? With what properties?)
+%
+Let $D_0$ be some well-chosen singleton set, which is often taken to
+be the singleton empty set (in general, its sole inhabitant is
+something that belongs to the values of all stages of the inductive
+type recursion is happening on)
+(\todo: Which? With what properties?)
+(\todo: Is this explanation fine?)
 and define the following:
 %
 \begin{align*}
@@ -361,9 +367,17 @@ $\psi_{\alpha + 1} = \varphi_\alpha(\psi_\alpha)$.
 however, we also need to ensure that for successive $\alpha$,
 $\psi_\alpha$ eventually converges.
 
-What would be a sufficient condition for convergence?
-As $\psi_\alpha$ is obtained by successively improving upon approximations of
-the fixed point of $\varphi$, we expect that (\todo: Why?)
+What would be a sufficient condition for convergence?  As
+$\psi_\alpha$ is obtained by successively improving upon
+approximations of the fixed point of $\varphi$, we expect that
+subsequent approximations to use the results of previous
+approximations.
+%
+(\todo: Why?)
+(\todo: Does this explain it?)
+%
+So, we would expect:
+%
 \begin{align*}
   \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x)
   \label{eqn:irrel}\tag{\textsc{irrel}}
@@ -500,14 +514,15 @@ However, the computation of $\Infty(e;\upsilon)_\rho^\pi$ is complicated by
 the fact that in $e$, the size variable $\upsilon$ can be annotated to more
 than one inductive type.
 %
-For example, in $e$, the size variable $\upsilon$ can be annotated to both
-$\Nat^\upsilon$ and $I^\upsilon$, where $I$ is some inductive type with a
-different closure ordinal than $\Nat$.
+For example, in $e$, the size variable $\upsilon$ can be annotated to
+both $J^\upsilon$ and $I^\upsilon$, where $I,J$ have different closure
+ordinals and $I$ may even contain $J$ as a parameter.
 %
-In fact, it turned out that computing $\Infty(e;\upsilon)_\rho^\pi$ was
-much more involved than initially expected.
+And so, to conclude, we would like to remark that computing
+$\Infty(e;\upsilon)_\rho^\pi$, despite seemingly obvious at first,
+turned out to be much more involved than initially expected.
 %
-\todo: This sentence sounds like the intro of a new paragraph, but it doesn't go anywhere...
+\todo: Is this conclusion fine?
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
