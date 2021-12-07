@@ -269,7 +269,7 @@ Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
 $$\bigg\{\trace(f) \mathbin{\big|} f \in A \times \bigcup_{a \in A} B_a \text{ and } \forall a \in A, f(a) \in B_a\bigg\}$$
 where $A$ is the interpretation of $t$ and $B_a$ is the interpretation of $u$ when $x = a$,
 while a function $\abs{x}{t}{e}$ is interpreted as
-$$\set{(a, b) \mid a \in A, b \in B_a}$$
+$\set{(a, b) \mid a \in A, b \in B_a}$
 where $b$ is the interpretation of $e$ when $x = a$.
 
 To see that this definition satisfies impredicativity,
@@ -304,7 +304,7 @@ and the interpretations of the two sides are not equal.
 
 Ultimately, the set-theoretic interpretations of terms only make sense for well-typed terms,
 despite being definable for ill-typed ones as well.
-Therefore, to ensure that the interpretation is sensible,
+Therefore, to ensure a sensible interpretation,
 reduction (and therefore subtyping and convertibility) needs to be typed.
 
 \subsubsection{Size Irrelevance}
@@ -523,7 +523,11 @@ both $I_1^\upsilon$ and $I_2^\upsilon$, where $I_1, I_2$ have different closure
 ordinals and $I_1$ may even contain $I_2$ as a parameter.
 %
 In this case, the interpretation of $\infty$ would be the maximum of their closure ordinals.
-% 
+%
+\todo: Verify w/ Michael.
+In general, $\Infty(e; \upsilon)_\rho^\pi$ is computed by induction on $e$,
+taking the maximum of the ordinals computed from all subterms.
+%
 \iffalse
 % tbh I don't think we even need any sort of concluding remark
 And so, to conclude, we would like to remark that computing
