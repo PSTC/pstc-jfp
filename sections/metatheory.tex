@@ -266,7 +266,7 @@ To handle impredicativity of function types, they are encoded using a \emph{trac
 First, the \emph{trace} of a (set-theoretical) function $f : A \to B$ is defined as
 $$\trace(f) = \set{(a, b) \mid a \in A, b \in f(a)}.$$
 Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
-$$\set{\trace(f) \mid f \in \set{(a, b) \mid a \in A, b \in B_a}}$$
+$$\bigg\{\trace(f) \mathbin{\big|} f \in A \times \bigcup_{a \in A} B_a \text{ and } \forall a \in A, f(a) \in B_a\bigg\}$$
 where $A$ is the interpretation of $t$ and $B_a$ is the interpretation of $u$ when $x = a$,
 while a function $\abs{x}{t}{e}$ is interpreted as
 $$\set{(a, b) \mid a \in A, b \in B_a}$$
@@ -275,10 +275,10 @@ where $b$ is the interpretation of $e$ when $x = a$.
 To see that this definition satisfies impredicativity,
 suppose that $u$ is in $\Prop$.
 Then $B_a$ is either $\emptyset$ or $\set{\emptyset}$.
-If it is $\emptyset$, then there is no possible $b$ and therefore no possible $f$,
+If it is $\emptyset$, then there is no possible $f(a)$,
 making the interpretation of the function type itself $\emptyset$.
-If it is $\set{\emptyset}$, then $b = \emptyset$, $f = (a, \emptyset)$ for some $a$,
-and $\trace(f) = \emptyset$ since because $b$ is empty,
+If it is $\set{\emptyset}$, then $f(a) = \emptyset$,
+and $\trace(f) = \emptyset$ since there is no $b \in f(a)$,
 making the interpretation of the function type itself $\set{\emptyset}$.
 
 Since reduction is untyped, it is perfectly fine for ill-typed terms to reduce.
