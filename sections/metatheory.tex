@@ -258,7 +258,7 @@ Recall from \autoref{sec:overview:comparison} that we add an impredicative $\Pro
 and universe cumulativity to the existing universe hierarchy in \CIChatminus.
 To handle this addition, we follow the set-theoretical model presented by \citet{not-so-simple-cc},
 where $\Prop$ is treated proof-irrelevantly:
-its set-theoretical interpretation is the set $\set{\set{\emptyset}, \emptyset}$,
+its set-theoretical interpretation is the set $\set{\emptyset, \set{\emptyset}}$,
 and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabitated propositions)
 or $\emptyset$ (representing false, uninhabited propositions).
 
@@ -294,7 +294,7 @@ Then the interpretation of the function on the left-hand side must be $\set{(\em
 By the definition of the interpretation of application,
 since the interpretation of $\Prop$ is not in the domain of the function,
 the left-hand side becomes $\emptyset$.
-Meanwhile, the right-hand side is $\set{\emptyset}$,
+Meanwhile, the right-hand side is $\set{\emptyset, \set{\emptyset}}$,
 and the interpretations of the two sides are not equal.
 
 % I want to mention why the interpretation of application yields the empty set for senseless things
@@ -306,10 +306,6 @@ Ultimately, the set-theoretic interpretations of terms only make sense for well-
 despite being definable for ill-typed ones as well.
 Therefore, to ensure that the interpretation is sensible,
 reduction (and therefore subtyping and convertibility) needs to be typed.
-
-\subsubsection{Size-Annotated Fixpoints}
-
-\todo
 
 \subsubsection{Size Irrelevance}
 
@@ -449,6 +445,14 @@ On the other hand, $\app{F}{n} \approx \Nat^\infty \to
 ...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
 \fi
 
+\subsubsection{Size-Annotated Fixpoints}
+
+As shown above, the set-theoretic interpretation of a fixpoint evaluated at some size $s$
+is the iteration of its corresponding operator up to $\alpha$ times,
+where $\alpha$ is the valuation of $s$.
+Without explicitly annotating the size, we would not know how many times to iterate,
+since $s$ is otherwise only found in the type of the fixpoint and not in the fixpoint term itself.
+
 \subsubsection{Computation of the Infinite Size}
 
 An additional challenge in constructing the set-theoretic model is the
@@ -514,15 +518,18 @@ However, the computation of $\Infty(e;\upsilon)_\rho^\pi$ is complicated by
 the fact that in $e$, the size variable $\upsilon$ can be annotated to more
 than one inductive type.
 %
-For example, in $e$, the size variable $\upsilon$ can be annotated to
-both $J^\upsilon$ and $I^\upsilon$, where $I,J$ have different closure
-ordinals and $I$ may even contain $J$ as a parameter.
+For example, a size variable $\upsilon$ can be annotated to
+both $I_1^\upsilon$ and $I_2^\upsilon$, where $I_1, I_2$ have different closure
+ordinals and $I_1$ may even contain $I_2$ as a parameter.
 %
+In this case, the interpretation of $\infty$ would be the maximum of their closure ordinals.
+% 
+\iffalse
+% tbh I don't think we even need any sort of concluding remark
 And so, to conclude, we would like to remark that computing
 $\Infty(e;\upsilon)_\rho^\pi$, despite seemingly obvious at first,
 turned out to be much more involved than initially expected.
-%
-\todo: Is this conclusion fine?
+\fi
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
