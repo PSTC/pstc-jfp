@@ -340,12 +340,8 @@ where given some ordered ordinals $\vec{\alpha}$,
 $\vec{\McN^\alpha}$ is a $\subseteq$-increasing sequence of sets constant
 beyond $\alpha = \omega$.
 %
-Let $D_0$ be some well-chosen singleton set, which is often taken to
-be the singleton empty set (in general, its sole inhabitant is
-something that belongs to the values of all stages of the inductive
-type recursion is happening on)
-(\todo: Which? With what properties?)
-(\todo: Is this explanation fine?)
+Let $D_0 = \set{\emptyset}$, the vacuous function space
+(representing $\McN^0 \to \McN^0$),
 and define the following:
 %
 \begin{align*}
@@ -367,15 +363,9 @@ What would be a sufficient condition for convergence?  As
 $\psi_\alpha$ is obtained by successively improving upon
 approximations of the fixed point of $\varphi$, we expect that
 subsequent approximations to use the results of previous
-approximations.
-%
-(\todo: Why?)
-(\todo: Does this explain it?)
-%
-So, we would expect:
-%
+approximations, and so that
 \begin{align*}
-  \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x)
+  \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x).
   \label{eqn:irrel}\tag{\textsc{irrel}}
 \end{align*}
 This is the formal statement of size irrelevance:
@@ -391,7 +381,7 @@ unfolding definitions, the goal is to show that
 %
 $$\forall x \in \McN^{\alpha+1} \subseteq \McN^{\beta+1},
   \Val(e')_{\subst{\rho}{f}{\psi_\alpha}}^{\subst{\pi}{\upsilon}{\alpha}}(x) =
-  \Val(e')_{\subst{\rho}{f}{\psi_\beta}}^{\subst{\pi}{\upsilon}{\beta}}(x)$$
+  \Val(e')_{\subst{\rho}{f}{\psi_\beta}}^{\subst{\pi}{\upsilon}{\beta}}(x).$$
 %
 Inductively, $\psi_\alpha$ and $\psi_\beta$ behave identically,
 but from \refrule{fix-explicit} we cannot easily conclude that $e'$ cannot tell
@@ -524,7 +514,6 @@ ordinals and $I_1$ may even contain $I_2$ as a parameter.
 %
 In this case, the interpretation of $\infty$ would be the maximum of their closure ordinals.
 %
-\todo: Verify w/ Michael.
 In general, $\Infty(e; \upsilon)_\rho^\pi$ is computed by induction on $e$,
 taking the maximum of the ordinals computed from all subterms.
 %
