@@ -45,6 +45,8 @@
 \newtheorem{conjecture}[theorem]{Conjecture}
 \newtheorem{corollary}[theorem]{Corollary}
 
+\renewenvironment{proof}[1][]{\par\addvspace{6pt}\noindent\textbf{Proof{\normalfont\xspace #1}.}\hskip5.5pt}{\par\addvspace{6pt}}
+
 \newmintinline[coqinline]{coq}{escapeinside=<>,mathescape=true}
 
 \begin{document}

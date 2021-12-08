@@ -216,7 +216,7 @@ To obtain the motive type's return universe, we use \decompose.
 Given a type $t$ and a natural $n$, this metafunction reduces $t$ to a function type $\prodctx{\Delta}{u}$ where $\norm{\Delta} = n$, reduces $u$ to a universe $U$, and returns $U$.
 It can fail if $t$ cannot be reduced to a function type, if $\norm{\Delta} < n$, or if $u$ cannot be reduced to a universe.
 
-\subsubsection{Inference: \Cofixpoints}
+\subsubsection{Inference: (Co)fixpoints}
 
 Finally, we come to size inference and termination/productivity checking for \cofixpoints.
 It uses the following metafunctions:

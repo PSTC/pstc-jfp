@@ -720,7 +720,7 @@
 
 \renewcommand{\rmdefault}{ptm}%
 \renewcommand{\sfdefault}{phv}%
-\usepackage{newtxmath}
+\usepackage{mathptmx}
 \definecolor{shadecolor}{cmyk}{0,0,0,.12}
 \definecolor{absshadecolor}{cmyk}{0,0,0,.12}
 
@@ -1252,7 +1252,7 @@
 %  \thm@preskip0pt
 %  \thm@postskip0pt}
 
-\renewenvironment{proof}[1][]{\par\addvspace{6pt}\noindent\textbf{Proof}\xspace#1\textbf{.}\hskip5.5pt}{\hfill$\blacksquare$\par\addvspace{6pt}}
+\renewenvironment{proof}{\par\addvspace{6pt}\noindent\textbf{Proof}\hskip5.5pt}{\hfill$\blacksquare$\par\addvspace{6pt}}
 
 \def\doitext{doi:}
 \def\voltext{vol.}
@@ -3240,7 +3240,7 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
    \markboth{\contentsname}{\contentsname}%
    \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
    \@starttoc{toc}%
-\UnicodeCharacter{13}{\ignorespaces}}%
+\UnicodeCharacter{13}{ \ignorespaces}}%
 %% LIST OF FIGURES%
 \newcommand\listoffigures{%
    \setlength\overfullrule{\z@}%
@@ -4183,7 +4183,7 @@ breaklinks=true}
    \markboth{\contentsname}{\contentsname}%
    \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
    \@starttoc{toc}%
-\UnicodeCharacter{13}{\ignorespaces}}%
+\UnicodeCharacter{13}{ \ignorespaces}}%
 
 \def\chapcontentfont{\fontsize{10}{12}\selectfont}%
 \def\chapcontentpagefont{\fontsize{10}{12}\bfseries\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%

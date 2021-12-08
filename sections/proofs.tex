@@ -36,7 +36,7 @@ Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \hat{\ups
   \item Let $\tau' \in V^*$. Note that $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$.
   Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'\tau' = \hat{\upsilon}^{w'}$, and $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\tau' = \succ{\rho\tau}^{w'}\!$.
   Since $\rho \vDash C$ and there is a path of weight $w'$ from $\tau$ to $\tau'$ in $C$,
-  we have $\succ{\rho\tau}^{w'}\! \sqsubseteq \rho\tau'$.
+  we have $\succ{\rho\tau}^{w'}\! \sqsubseteq \rho\tau'$. \qed
 \end{enumerate}
 \end{proof}
 
@@ -67,7 +67,7 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
   which satisfies $\infty \sqsubseteq \rho \upsilon'$.
   \item \autoref{item:reccheck:infty}: $\infty \sqsubseteq (\bigsqcup V^\neq \cap \bigsqcup V^\iota)$. Since $\rho V^\neq$ and $\rho V^\iota$ have different size variables by assumption,
   if a size variable $\upsilon'$ is in both $\bigsqcup V^\neq$ and $\bigsqcup V^\iota$,
-  it must be set to $\infty$, which satisfies $\infty \sqsubseteq \upsilon'$.
+  it must be set to $\infty$, which satisfies $\infty \sqsubseteq \upsilon'$. \qed
 \end{itemize}
 \end{proof}
 
@@ -84,7 +84,7 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
   \item \RecCheckLoop does a recursive call only when \RecCheck fails with a size variable set $V$, which by definition is a subset of $\PV(t_i)$ for some $t_i$.
   Since $V$ is removed from $\mathcal{V}^*$ every time, $\PV(\vec{t_k})$ is the decreasing measure of \RecCheckLoop.
   \item Again, $\mathcal{V}^*$ is only removed from, not added to, so the final set must be a subset of the initial set.
-  By inspection, $C$ is a union of the constraints returned by \RecCheck when they all succeed.
+  By inspection, $C$ is a union of the constraints returned by \RecCheck when they all succeed. \qed
 \end{enumerate}
 \end{proof}
 
@@ -99,7 +99,7 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
 \begin{enumerate}
   \item By \citet{clrs}, any constant shift ($w_{\max}$, in our case) of a shortest-path solution is a valid solution to the difference constraint problem.
   \item By the same reasoning for \RecCheck, any variables involved in negative cycles must be set to $\infty$ in a solution.
-  The remaining constraints are solved by \solvecomp.
+  Remaining constraints are solved by \solvecomp. \qed
 \end{enumerate}
 \end{proof}
 
@@ -115,7 +115,7 @@ Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \u
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}.
+By mutual induction on the positivity and negativity rules in \autoref{fig:posneg}. \qed
 \end{proof}
 
 \begin{lemma}[Completeness of positivity/negativity]\label{lem:subtyping-posneg}~\\[-4ex]
@@ -126,7 +126,7 @@ By mutual induction on the positivity and negativity rules in \autoref{fig:posne
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By induction on the subtyping rules in \autoref{fig:subtyping}.
+By induction on the subtyping rules in \autoref{fig:subtyping}. \qed
 \end{proof}
 
 \begin{lemma}[Soundness of algorithmic subtyping]\label{lem:subtyping}
@@ -136,7 +136,7 @@ Then $\Gamma_G, \rho \Gamma \vdash \rho t \leq \rho u$.
 \end{lemma}
 
 \begin{proof}[{[Sketch]}]
-By induction on the algorithmic subtyping rules in \autoref{fig:algorithm-subtyping}.
+By induction on the algorithmic subtyping rules in \autoref{fig:algorithm-subtyping}. \qed
 \end{proof}
 
 The following lemma and corollary asserting the absence of certain size variables
@@ -154,7 +154,7 @@ By mutual induction on the checking and inference rules of the algorithm.
 For checking, it follows by the induction hypothesis on the inference premise.
 For inference, most cases are straightforward applications of the induction hypothesis;
 new size annotations are only introduced in $e$ in Rules \refnorule{a-ind} and \refnorule{a-ind-star},
-which introduce fresh size variables that are by definition not in $\SV{\Gamma_G, \Gamma}$.
+which introduce fresh size variables that are by definition not in $\SV{\Gamma_G, \Gamma}$. \qed
 \end{proof}
 
 \begin{corollary}\label{lem:global-fresh-vars}
@@ -187,7 +187,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
 \begin{enumerate}
   \item By \refrule{a-check}, we have
   \begin{displaymath}
-    \inferrule[\defrule{a-check}]{
+    \inferrule[]{
       C, \gg \vdash e^\circ \rightsquigarrow C_1, e \Rightarrow t \\
       \Gamma_G, \Gamma \vdash t \constrain u \rightsquigarrow C_2
     }{
@@ -296,7 +296,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
       Finally, using \refrule{case}, we have our goal.
     \item \refrule{a-fix}.
       \begin{displaymath}
-        \inferrule[\defrule{a-fix}]{
+        \inferrule[]{
           \textrm{For each $k$:} \\
           C, \gg \vdash t_k^\circ \rightsquigarrow \any, \any \Rightarrow \any \\
           C, \gg \vdash \setrecstars{t_k^\circ}{n_k} \rightsquigarrow C_{1k}, t_k \Rightarrow^* U \\
@@ -350,7 +350,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
       while $\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho' \sqsubseteq \rho$ when applied to position variables.
       Since $\Delta_m$ contains no position variables, and all position variables appear positively in $u_m$, by \autoref{lem:posneg-subtyping},
       $\Gamma_G, \rho \Gamma \vdash (\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho') t_m \leq \rho t_m$.
-      The goal then follows by \refrule{conv} on \autoref{eqn:soundness:fix}.
+      The goal then follows by \refrule{conv} on \autoref{eqn:soundness:fix}. \qed
   \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -411,7 +411,8 @@ By cases on the size inference rules for global declarations.
     By \autoref{thm:solve}, we have that $\rho \vDash C_1 \cup C_2$.
     By the induction hypothesis, we have that $\WF{\Gamma_G, \mt}$.
     Then by \autoref{thm:soundness}, we have that $\Gamma_G, \mt \vdash \rho t : U$ and $\Gamma_G, \mt \vdash \rho e : \rho t$.
-    Finally, by \refrule{wf-global-def}, we conclude that $\WF{\Gamma_G(\Defn{x}{\rho t}{\rho e}), \mt}$.
+    Finally, by \refrule{wf-global-def}, we conclude $\WF{\Gamma_G(\Defn{x}{\rho t}{\rho e}), \mt}$.
+    \qed
 \end{itemize}
 \end{proof}
 
@@ -432,10 +433,10 @@ By cases on the well-formedness rules for global declarations.
     Follows from \autoref{thm:completeness} on the premise.
   \item \refrule{wf-global-def}.
     \begin{displaymath}
-      \inferrule[\defrule{wf-global-def}]
+      \inferrule[]
         {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
         {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
     \end{displaymath}
-    Follows from \autoref{thm:completeness} on the premise.
+    Follows from \autoref{thm:completeness} on the premise. \qed
 \end{itemize}
 \end{proof}

@@ -39,7 +39,7 @@
 
 % langs
 \newcommand{\lang}{CIC$\widehat{\ast}$\xspace}
-\newcommand{\langAnother}{\lang--Another\xspace}
+\newcommand{\langAnother}{\lang-Another\xspace}
 \newcommand{\impl}{Coq$\widehat{\ast}$\xspace}
 \newcommand{\titlelang}{\texorpdfstring{\lang}{CIC\^{}*}\xspace}
 \newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
@@ -202,6 +202,8 @@
 \renewcommand{\vec}[1]{\overline{#1}} % originally \overline
 \providecommand{\napprox}{\not\approx}
 \def\varw{w} % redefine \varw regardless
+\renewcommand{\phi}{\varphi} % clearly the superior phi
+\renewcommand{\qed}{\hfill$\blacksquare$}
 
 % common file and module names
 \newcommand{\msetlist}{\texttt{MSetList}\xspace}
@@ -231,8 +233,6 @@
 \newcommand{\etc}{\emph{etc.}\xspace}
 \newcommand{\opcitt}[1]{\defcitealias{#1}{\emph{op. cit.}}\citetalias{#1}\xspace}
 \newcommand{\opcitp}[1]{\defcitealias{#1}{\emph{op. cit.}}\citepalias{#1}\xspace}
-
-\renewcommand{\phi}{\varphi}
 
 % delimiters
 %\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
