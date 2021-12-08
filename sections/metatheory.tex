@@ -119,7 +119,7 @@ We exploit this fact and break subject reduction explicitly with the following c
 \end{array}
 \end{displaymath}
 By cumulativity, the target can be typed as $\nat^{\hat{\upsilon}^{3}}$ (that is, with size $\hat{\hat{\hat{\upsilon}}}$).
-By \refrule{case}, the second branch must then have type $\prod{x}{\app{\Box}{\nat^{\hat{\hat{\upsilon}}}}}{\nat^\infty}$ --- and so it does.
+By \refrule{case}, the second branch must then have type $\prod{x}{\app{\Box}{\nat^{\hat{\hat{\upsilon}}}}}{\nat^\infty}$ (and so it does).
 Then the case expression is well typed with type $\nat^\infty$.
 However, once we reduce the the case expression, we end up with a term that is no longer well typed.
 \begin{displaymath}
@@ -151,18 +151,18 @@ As mentioned in \autoref{sec:typing:syntax}, type annotations on functions and l
 as well as case expression motives and \cofixpoint types
 need to be bare terms (or position terms, for the latter) to maintain subject reduction.
 To see why, suppose they were not bare, and consider the term
-$\app{(\fix*{1}{\defn{f^1}{\Nat^\tau \rightarrow \Nat^\tau}{\abs{n}{\Nat^{\succ{\tau}}}{n}}})}{(\app{\Succ}{\Zero})}$.
-Under empty environments, the fixpoint argument is well-typed with type $\Nat^{\succ{\succ{s}}}$ for any size expression $s$,
+$\app{(\fix*{1}{\defn{f^1}{\Nat^\tau \rightarrow \Nat^\tau}{\abs{n}{\Nat^{\hat{\tau}}}{n}}})}{(\app{\Succ}{\Zero})}$.
+Under empty environments, the fixpoint argument is well-typed with type $\Nat^{\hat{\hat{s}}}$ for any size expression $s$,
 while the fixpoint itself is well-typed with type $\Nat^{r} \rightarrow \Nat^{r}$ for any size expression $r$.
-For the application to be well-typed, it must be that $r$ is $\succ{\succ{s}}$,
-and the entire term has type $\Nat^{\succ{\succ{s}}}$.
+For the application to be well-typed, it must be that $r$ is $\hat{\hat{s}}$,
+and the entire term has type $\Nat^{\hat{\hat{s}}}$.
 
-By the $\mu$-reduction rule, this steps to the term $\app{(\abs{n}{\Nat^{\succ{\tau}}}{n})}{(\app{\Succ}{\Zero})}$.
-Unfortunately, the term is no longer well-typed, as $\app{\Succ}{\Zero}$ cannot be typed with type $\Nat^{\succ{\tau}}$ as is required.
+By the $\mu$-reduction rule, this steps to the term $\app{(\abs{n}{\Nat^{\hat{\tau}}}{n})}{(\app{\Succ}{\Zero})}$.
+Unfortunately, the term is no longer well-typed, as $\app{\Succ}{\Zero}$ cannot be typed with type $\Nat^{\hat{\tau}}$ as is required.
 By erasing the type annotation of the function,
 there is no longer a restriction on what size the function argument must have,
 and subject reduction is no longer broken.
-An alternate solution is to substitute $\tau$ for $\succ{s}$ during $\mu$-reduction,
+An alternate solution is to substitute $\tau$ for $\hat{s}$ during $\mu$-reduction,
 but this requires typed reduction to know what the correct size to substitute is,
 violating backward compatibility with Coq,
 whose reduction and convertibility rules are untyped.
@@ -219,14 +219,14 @@ For the proof to work, it requires additional nontrivial changes relative to \la
     The typing rule no longer erases the type, and the size in the fixpoint type is fixed.
     \begin{mathparpagebreakable}
       \inferrule*[right=\defrule{fix-explicit}]
-      { \Gamma (f : t) \vdash e : \subst{t}{\upsilon}{\succ{\upsilon}} }
+      { \Gamma (f : t) \vdash e : \subst{t}{\upsilon}{\hat{\upsilon}} }
       { \Gamma \vdash \fixE{\upsilon}{f}{t}{e}{s} : \subst{t}{\upsilon}{s}}
     \end{mathparpagebreakable}
     The fixpoint above binds the size variable $\upsilon$ in $t$ and in $e$.
     The reduction rule adds an additional substitution of the predecessor of the size expression,
     in line with how $f$ may only be called in $e$ with a smaller size.
     \begin{mathparpagebreakable}
-      \Gamma \vdash \app{\fixE{\upsilon}{f}{t}{e}{\succ{s}}\,}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
+      \Gamma \vdash \app{\fixE{\upsilon}{f}{t}{e}{\hat{s}}\,}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
       \rhd_\mu \app{\subst{\subst{e}{\upsilon}{s}}{f}{\fixE{\upsilon}{f}{t}{e}{s}}}{\vec{b}}{(\app{c_\ell}{\vec{p}}{\vec{a}})}
     \end{mathparpagebreakable}
   \item Rather than inductive definitions in general, only predicative W types are considered.

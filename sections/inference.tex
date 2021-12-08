@@ -46,15 +46,15 @@ and they produce constraints representing subsizing judgements that need to hold
 However, in \RecCheck and in \solve we will need to view these constraints as a graph.
 We use $C$ to represent either the constraint set or the graph depending on the context.
 First, notice that any noninfinite size consists of a size variable and some concrete number $n$ of successor ``hats'';
-we will write this as $\succ{\upsilon}^n$ so that, for instance, $\succ{\succ{\succ{\upsilon}}}$ is instead $\succ{\upsilon}^3$.
+we will write this as $\hat{\upsilon}^n$ so that, for instance, $\hat{\hat{\hat{\upsilon}}}$ is instead $\hat{\upsilon}^3$.
 
 \begin{definition}
 A \textbf{subsizing constraint graph} (or simply \textbf{constraint graph}) $C$ of a constraint set is a weighted, directed graph whose vertices are size variables, edges are constraints, and weights are integers.
 
-Given a constraint \mbox{$\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$},
+Given a constraint \mbox{$\hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2}$},
 the constraint graph contains an edge from $\upsilon_1$ to $\upsilon_2$ with weight $n_2 - n_1$.
 Constraints of the form $s \sqsubseteq \infty$ are trivially true and aren't added to the graph.
-Constraints of the form $\infty \sqsubseteq \succ{\upsilon}^n$ correspond to an edge from $\infty$ to $\upsilon$ with weight $0$.
+Constraints of the form $\infty \sqsubseteq \hat{\upsilon}^n$ correspond to an edge from $\infty$ to $\upsilon$ with weight $0$.
 \end{definition}
 
 Given a constraint graph and some set of size variables $V$,
@@ -63,9 +63,9 @@ it's useful to know which variables in the graph can be reached from $V$ or will
 \begin{definition}[Transitive closures]~\\[-4ex]
 \begin{itemize}
   \item Given a set of size variables $V$, the \textbf{upward closure} $\bigsqcup V$ with respect to $C$ is the set of variables that can be reached from $V$ by travelling along the directed edges of $C$.
-  That is, $V \subseteq \bigsqcup V$, and if $\upsilon_1 \in \bigsqcup V$ and $\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$, then $\upsilon_2 \in \bigsqcup V$.
+  That is, $V \subseteq \bigsqcup V$, and if $\upsilon_1 \in \bigsqcup V$ and $\hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2}$, then $\upsilon_2 \in \bigsqcup V$.
   \item Given a set of size variables $V$, the \textbf{downward closure} $\bigsqcap V$ with respect to $C$ is the set of variables that can reach $V$ by travelling along the directed edges of $C$.
-  That is, $V \subseteq \bigsqcap V$, and if $\upsilon_2 \in \bigsqcap V$ and $\succ{\upsilon}_1^{n_1} \sqsubseteq \succ{\upsilon}_2^{n_2}$, then $\upsilon_1 \in \bigsqcap V$.
+  That is, $V \subseteq \bigsqcap V$, and if $\upsilon_2 \in \bigsqcap V$ and $\hat{\upsilon}_1^{n_1} \sqsubseteq \hat{\upsilon}_2^{n_2}$, then $\upsilon_1 \in \bigsqcap V$.
 \end{itemize}
 \end{definition}
 
@@ -276,7 +276,7 @@ It takes four arguments:
 The key idea of the algorithm is that if there is a negative cycle in $C$,
 then for any size variable $\upsilon$ in the cycle,
 supposing that the total weight going once around the cycle is $-n$,
-by transitivity we have the subsizing relation $\succ{\upsilon}^{n} \sqsubseteq \upsilon$,
+by transitivity we have the subsizing relation $\hat{\upsilon}^{n} \sqsubseteq \upsilon$,
 This relation can only hold if $\upsilon = \infty$,
 since $\succ{\infty} \sqsubseteq \infty$.
 The algorithm proceeds as follows:
@@ -437,8 +437,8 @@ Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \u
 
 \begin{lemma}[Completeness of positivity/negativity]~\\[-4ex]
 \begin{enumerate}
-  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\succ{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
-  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\succ{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.
+  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\hat{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
+  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\hat{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.
 \end{enumerate}
 \end{lemma}
 

@@ -31,7 +31,7 @@ Our size inference algorithm is based directly on that of \CIChat.
 We add to it global and local definitions and explicitly treat mutually-defined \coinductives and \cofixpoints,
 while removing polarities and subtyping based on these polarities.
 
-However, normalization of \CIChat is only a conjecture; it is later proven for the restricted language \CIChatminus by \citet{cic-hat-minus-nat} (with only naturals) and by \citet{cic-hat-minus} (with inductives in general).
+However, normalization of \CIChat is only a conjecture; it is later proven for the restricted language \CIChatminus by \citet{cic-hat-minus-nat} (with only naturals) and by \citet{cic-hat-minus} (with inductive types).
 The restrictions include disallowing size variables in the bodies of functions, in the arguments of applications, in the branches of case expressions, and in the indices of inductives; erasing the parameters to constructors; and disallowing strong elimination to types with size variables.
 We remove these restrictions to allow using sized definitions and for backward compatibility with Coq.
 

@@ -25,16 +25,16 @@ Let $V^\iota = \bigsqcap V^*$.
 Note that the constraints $\tau \sqsubseteq V^\iota$ are in $C^\iota$.
 Then we are able to compute the weights $w_i$ of the shortest paths from $\tau$ to $\bigsqcup V^\iota$ with respect to $C^\iota$.
 According to \citet{f-hat}, these weights are nonnegative.
-Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \succ{\upsilon}^{w_i} \mid \upsilon_i \in \bigsqcup V^\iota, \rho\upsilon_i \neq \infty}$.
+Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \hat{\upsilon}^{w_i} \mid \upsilon_i \in \bigsqcup V^\iota, \rho\upsilon_i \neq \infty}$.
 
 \begin{enumerate}
   \item The proof is more involved; see \citet{f-hat}.
   \item The shortest path from $\tau$ to itself is no path at all, so $\rho'\tau = \upsilon$.
-  \item Since $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$, for every $\upsilon_i \in V^*$, $\rho'\upsilon_i = \succ{\upsilon}^{w_i}$ where $w_i$ is the weight of the shortest path from $\upsilon$ to $\upsilon_i$, and its size variable is obviously $\upsilon$.
+  \item Since $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$, for every $\upsilon_i \in V^*$, $\rho'\upsilon_i = \hat{\upsilon}^{w_i}$ where $w_i$ is the weight of the shortest path from $\upsilon$ to $\upsilon_i$, and its size variable is obviously $\upsilon$.
   \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then $\infty \sqsubseteq \upsilon'$ must be in $C$, and therefore $\rho\upsilon' = \infty$, so $\rho'\upsilon' = \rho\upsilon'$. Otherwise, if $\upsilon' \notin \bigsqcup V^\iota$, we again have $\rho'\upsilon' = \rho\upsilon'$. Since $\upsilon$ is fresh, it could not be mapped to by $\rho$, so the size variable of $\rho\upsilon'$ cannot be $\upsilon$.
   \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho\upsilon' = \infty$. Therefore, $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\upsilon' = (\set{\upsilon \mapsto \rho\tau} \circ \rho)\upsilon' = \rho\upsilon'$.
   \item Let $\tau' \in V^*$. Note that $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$.
-  Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'\tau' = \succ{\upsilon}^{w'}$, and $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\tau' = \succ{\rho\tau}^{w'}\!$.
+  Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'\tau' = \hat{\upsilon}^{w'}$, and $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\tau' = \succ{\rho\tau}^{w'}\!$.
   Since $\rho \vDash C$ and there is a path of weight $w'$ from $\tau$ to $\tau'$ in $C$,
   we have $\succ{\rho\tau}^{w'}\! \sqsubseteq \rho\tau'$.
 \end{enumerate}
@@ -59,11 +59,11 @@ Since $\rho \vDash C'$, this means we need to show that $\rho$ satisfies every c
 We handle them step by step.
 Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variables involved in some negative cycle in $C'$.
 \begin{itemize}
-  \item \autoref{item:reccheck:smallest}: $\tau \sqsubseteq V^\iota$. Since we have $\rho \tau = \upsilon$ and $\rho V^* = \succ{\upsilon}^{n}$ for some $n$ by assumption,
+  \item \autoref{item:reccheck:smallest}: $\tau \sqsubseteq V^\iota$. Since we have $\rho \tau = \upsilon$ and $\rho V^* = \hat{\upsilon}^{n}$ for some $n$ by assumption,
   $\rho \tau \sqsubseteq \rho V^\iota$ holds.
   \item \autoref{item:reccheck:neg-cycles}: $\infty \sqsubseteq V^-$. For all size variables $\upsilon' \in V^-$,
-  since being in a negative cycle transitively implies a subsizing relation $\succ{\upsilon}'^{n} \sqsubseteq \upsilon'$ for some $n$,
-  the only way for $\rho \succ{\upsilon}'^{n} \sqsubseteq \rho \upsilon'$ to hold is if $\rho \upsilon' = \infty$,
+  since being in a negative cycle transitively implies a subsizing relation $\hat{\upsilon}'^{n} \sqsubseteq \upsilon'$ for some $n$,
+  the only way for $\rho \hat{\upsilon}'^{n} \sqsubseteq \rho \upsilon'$ to hold is if $\rho \upsilon' = \infty$,
   which satisfies $\infty \sqsubseteq \rho \upsilon'$.
   \item \autoref{item:reccheck:infty}: $\infty \sqsubseteq (\bigsqcup V^\neq \cap \bigsqcup V^\iota)$. Since $\rho V^\neq$ and $\rho V^\iota$ have different size variables by assumption,
   if a size variable $\upsilon'$ is in both $\bigsqcup V^\neq$ and $\bigsqcup V^\iota$,
@@ -120,8 +120,8 @@ By mutual induction on the positivity and negativity rules in \autoref{fig:posne
 
 \begin{lemma}[Completeness of positivity/negativity]\label{lem:subtyping-posneg}~\\[-4ex]
 \begin{enumerate}
-  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\succ{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
-  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\succ{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.
+  \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\hat{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
+  \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\hat{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.
 \end{enumerate}
 \end{lemma}
 
@@ -338,7 +338,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
         \item $\Gamma_G, (\rho \Gamma)\vec{(f_k : \rho' t_k)} \vdash \rho e_k : \rho' (\prodctx{\Delta_k}{u'_k})$; and
         \item $\Gamma_G, (\rho \Gamma)(\rho'\Delta_k) \vdash \rho' u_k \leq \rho' u'_k$.
       \end{itemize}
-      Notice that \shift only shifts position variables up by one, which means that by \ref{item:soundness:fix:2}, $\rho'u'_k = \set{\upsilon_i \mapsto \succ{\upsilon}_i}(\rho'u_k)$.
+      Notice that \shift only shifts position variables up by one, which means that by \ref{item:soundness:fix:2}, $\rho'u'_k = \set{\upsilon_i \mapsto \hat{\upsilon}_i}(\rho'u_k)$.
       Then by \autoref{lem:subtyping-posneg}, the last subtyping judgement implies that $\upsilon_k$ is positive in $\rho' u_k$.
       At last, we are able to apply \refrule{fix}, picking $s = \rho \tau_m$:
       \begin{equation}\label{eqn:soundness:fix}

@@ -36,8 +36,8 @@ This captures the idea that an object of an inductive type has some amount of co
 while one of a coinductive type must produce some amount of content.
 
 As a concrete example, a list with $s$ elements has type $\app{\List^{s}}{t}$, because it has at most $s$ elements,
-but it also has type $\app{\List^{\succ{s}}}{t}$, necessarily having at most $\succ{s}$ elements as well.
-On the other hand, a stream producing at least $\succ{s}$ elements has type $\app{\Stream^{\succ{s}}}{t}$,
+but it also has type $\app{\List^{\hat{s}}}{t}$, necessarily having at most $\hat{s}$ elements as well.
+On the other hand, a stream producing at least $\hat{s}$ elements has type $\app{\Stream^{\hat{s}}}{t}$,
 and also has type $\app{\Stream^{s}}{t}$ since it necessarily produces at least $s$ elements as well.
 These ideas are formalized in the subtyping rules in an upcoming subsection.
 
@@ -75,7 +75,7 @@ a corecursive function that duplicates each element of a stream,
 has a position-annotated argument type since it returns a larger stream.
 
 Position annotations mark the size annotation locations in the type of the \cofixpoint where we are allowed to assign the \emph{same} size expression.
-This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\succ{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\succ{\upsilon}}$, for instance.
+This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\hat{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\hat{\upsilon}}$, for instance.
 In general, if a \cofixpoint has a position annotation on an argument type and the return type,
 we say that it is \textit{size-preserving} in that argument.
 Inuitively, $f$ is size-preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
@@ -127,7 +127,7 @@ As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \righ
 
 As mentioned in the previous section, unlike \CIChat and \CIChatminus, our \coinductive definitions do not have parameter polarity annotations.
 In those languages, for $\Vector$'s parameter for instance, they might write $(\assm{A^+}{\Type{}})$, giving it positive polarity, so that 
-$\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\succ{s}}}{n}$.
+$\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\hat{s}}}{n}$.
 
 As is standard, the well-formedness of \coinductive definitions depends not only on the well-typedness of its types but also on syntactic positivity conditions.
 We reproduce the \textit{strict positivity} conditions in \autoref{sec:wf-ind}, and refer the reader to clauses I1--I9 in \citet{cic-hat-minus}, clauses 1--7 in \mbox{\citet{cic-hat}}, and the Coq Manual~\citep{coq} for further details.
@@ -197,10 +197,10 @@ In other words, they extend those of \CIChat, \CIChatminus, and \CChatomega with
 Inductive types are \emph{covariant} in their size annotations with respect to subsizing (\refrule{st-ind}),
 while coinductive types are \emph{contravariant} (\refrule{st-coind}).
 Coming back to the examples in the previous section, this means that
-$\app{\List^{s}}{t} \leq \app{\List^{\succ{s}}}{t}$ holds as we expect,
-since a list with $s$ elements has no more than $\succ{s}$ elements;
-dually, $\app{\Stream^{\succ{s}}}{t} \leq \app{\Stream^{s}}{t}$ holds as well,
-since a stream producing $\succ{s}$ elements also produces no fewer than $s$ elements.
+$\app{\List^{s}}{t} \leq \app{\List^{\hat{s}}}{t}$ holds as we expect,
+since a list with $s$ elements has no more than $\hat{s}$ elements;
+dually, $\app{\Stream^{\hat{s}}}{t} \leq \app{\Stream^{s}}{t}$ holds as well,
+since a stream producing $\hat{s}$ elements also produces no fewer than $s$ elements.
 
 Rules \refnorule{st-prod} and \refnorule{st-app} differ from past work in their variance, but correspond to those in Coq.
 As \coinductive definitions have no polarity annotations,
@@ -292,8 +292,8 @@ is a valid fixpoint type with respect to $\upsilon$, while
 $\app{\List^\upsilon}{\Nat} \to \app{\List^\upsilon}{\Nat} \to \app{\Stream^\upsilon}{\Nat}$
 is not, since $\upsilon$ illegally appears negatively in $\Stream$ and must not appear at all in the parameter of the second $\List$ argument type.
 This restriction ensures the aforementioned monotonicity property of subtyping for the \cofixpoints' types,
-so that $u_k \leq \subst{u_k}{\upsilon_k}{\succ{\upsilon}_k}$ holds for fixpoints,
-and that $\subst{u}{\upsilon_k}{\succ{\upsilon}_k} \leq u$ for each type $u$ in $\Delta_k$ holds for cofixpoints.
+so that $u_k \leq \subst{u_k}{\upsilon_k}{\hat{\upsilon}_k}$ holds for fixpoints,
+and that $\subst{u}{\upsilon_k}{\hat{\upsilon}_k} \leq u$ for each type $u$ in $\Delta_k$ holds for cofixpoints.
 
 As in \refrule{lam}, to maintain subject reduction, we cannot keep the size annotations, instead replacing them with position variables.
 The metafunction $\new{\erase{\ph}^\upsilon}$ replaces $\upsilon$ annotations with the position annotation $\ast$ and erases all other size annotations.
