@@ -250,7 +250,8 @@ can encode well-formed inductive types, including nested inductive types
 (while \citet{hofmann} shows that extensional MLTT is a conservative extension of intensional MLTT).
 
 Nevertheless, in the subsequent subsubsections we explain where these changes originate from
-and why they are necessary for the model.
+and why they are necessary for the model,
+as well as notable difficulties that arise in the construction.
 
 \subsubsection{Typed Reduction}
 
@@ -443,12 +444,11 @@ where $\alpha$ is the valuation of $s$.
 Without explicitly annotating the size, we would not know how many times to iterate,
 since $s$ is otherwise only found in the type of the fixpoint and not in the fixpoint term itself.
 
-\subsubsection{Computation of the Infinite Size}
+\subsubsection{Interpretation of the Infinite Size}
 
-An additional challenge in constructing the set-theoretic model is the
-justification of $\mu$-reduction,
-further complicated by the ordinal interpretation of the infinite size
-$\infty$.
+An additional challenge in constructing the set-theoretic model is
+the justification of $\mu$-reduction
+and the ordinal interpretation of the infinite size $\infty$.
 Consider for instance again the fixpoint
 $e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$
 now applied to $\Zero$.
@@ -504,25 +504,15 @@ Since there can only be finitely many inductive types in $e$, an
 ordinal with the infinite-size substitutivity property is the
 supremum of these closure ordinals.
 
-However, the computation of $\Infty(e;\upsilon)_\rho^\pi$ is complicated by
-the fact that in $e$, the size variable $\upsilon$ can be annotated to more
-than one inductive type.
-%
-For example, a size variable $\upsilon$ can be annotated to
-both $I_1^\upsilon$ and $I_2^\upsilon$, where $I_1, I_2$ have different closure
-ordinals and $I_1$ may even contain $I_2$ as a parameter.
-%
-In this case, the interpretation of $\infty$ would be the maximum of their closure ordinals.
-%
-In general, $\Infty(e; \upsilon)_\rho^\pi$ is computed by induction on $e$,
+However, a single size variable $\upsilon$ could be annotated to more than one
+inductive type.
+For example, a term could contain both $I_1^\upsilon$ and $I_2^\upsilon$ where
+$I_1, I_2$ are different inductive types with different closure ordinals,
+and one may even be applied to the other as a parameter.
+In this case, the interpretation of $\infty$ with respect to $\upsilon$ would
+be the maximum of the two closure ordinals,
+and in general, $\Infty(e; \upsilon)_\rho^\pi$ is computed by induction on $e$,
 taking the maximum of the ordinals computed from all subterms.
-%
-\iffalse
-% tbh I don't think we even need any sort of concluding remark
-And so, to conclude, we would like to remark that computing
-$\Infty(e;\upsilon)_\rho^\pi$, despite seemingly obvious at first,
-turned out to be much more involved than initially expected.
-\fi
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
