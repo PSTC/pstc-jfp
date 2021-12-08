@@ -35,7 +35,7 @@ However, normalization of \CIChat is only a conjecture; it is later proven for t
 The restrictions include disallowing size variables in the bodies of functions, in the arguments of applications, in the branches of case expressions, and in the indices of inductives; erasing the parameters to constructors; and disallowing strong elimination to types with size variables.
 We remove these restrictions to allow using sized definitions and for backward compatibility with Coq.
 
-Our typing rules and inference algorithm for coinductives and cofixpoints are based off of \CChatomega~\citep{cc-hat-omega},
+Our typing rules and inference algorithm for coinductives and cofixpoints are based on \CChatomega~\citep{cc-hat-omega},
 which extends CoC with sized coinductive streams.
 Further extensions to the size algebra are linear sized types in \CIChatl~\citep{cic-hat-l},
 which adds constant multiplication to a sized CoC with naturals and streams;

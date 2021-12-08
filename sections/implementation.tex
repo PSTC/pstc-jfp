@@ -7,9 +7,8 @@ Naturally, the full core language of Coq has more features (irrelevant for sized
 and the implementation has to interact with these as well as other proof assistant features such as elaboration and the vernacular.
 Furthermore, many details of the sized typing algorithm are left underspecified.
 In this section, we take a take a brief look at these details,
-% TODO From William: This is true, but not really the point,
-% really we're analyzing whether the complexity is a problem in practice.
 verify the time complexity of the implementation against the theoretical complexities from the previous section,
+determine its impact on performance as a whole,
 and discuss the practical feasibility of the implementation as well as the problems that were encountered.
 
 \subsection{Architecture of the Coq Kernel}
@@ -107,10 +106,9 @@ with \msetlist's compilation time at $15.122 \pm 0.073$ seconds and \msetlistsiz
 \label{table:timing}
 \end{table}
 
-% TODO From William: Not an interesting hypothesis; really, we want to know this is intrinsic to total size inference,
-% and not some mere slowdown because we’re bad at implementing the inference
-To identify the source of the slowdown and test our hypothesis that it is due to sized typing,
-we profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
+To identify the source of the slowdown and test our hypothesis that the majority of it
+is intrinsically due to size inference,
+we first profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
 We divide these functions into five groups: the \solve and \RecCheck functions,
 the \texttt{foldmap}%
 \footnote{This is the \texttt{foldmap\_annots} function in \texttt{coq/kernel/Constr.ml}.}
@@ -120,17 +118,17 @@ the functions in \texttt{State}, the functions in \texttt{SMap}, and the functio
 The differences in execution times of the functions in each group are all statistically significant ($p \ll 0.001$ for all of the $t$-statistics).
 % meaning that the differences between the sized and unsized times are statistically significant.
 
-More than three quarters of the compilation time in \msetlistsized is taken up by \solve and \RecCheck.
+$77.2\%$ of the total compilation time in \msetlistsized is taken up by \solve and \RecCheck.
 Other \texttt{Sized}-related overhead is smaller, although not insignificant,
 especially \texttt{Constraint} operations, which form a proportion slightly larger than that of \RecCheck.
-We conjecture that some of this overhead can be reduced with more clever implementations.
+We conjecture that some of this other overhead can be reduced with more clever implementations.
 For instance, instead of explicitly performing size substitutions, the sizes can be looked up as needed;
 or instead of explicitly passing around a size state, we could use a state monad or a mutable global state;
 or constraints could be stored in a data structure incrementally checked for negative cycles,
 similar to the current implementation of universe level constraints.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
 
-\subsubsection{Confirming Time Complexity of \titlesolve and \titleRecCheck}
+\subsubsection{Time Complexity of \titlesolve and \titleRecCheck}
 
 As shown in \autoref{sec:algorithm}, given a constraint graph from constraint graph $C$ with size variables $V$,
 the time complexities of \solve and \RecCheck are $O(\norm{V}\norm{C})$.
@@ -152,22 +150,24 @@ but residuals increase in magnitude as $\norm{V}\norm{C}$ increases,
 indicating some additional behaviour unexplained by the model.
 Similarly, for \RecCheck, the model also appears to be a good fit at first,
 but then follow a downward curving pattern,
-also indicating additional behaviour unexplained by the model (such as the two outliers.)
+also indicating additional behaviour unexplained by the model (such as the two outliers).
+
+Although there might be additional smaller factors influencing the time complexities of \solve and \RecCheck beyond the number of variables and constraints,
+we can at least reasonably conclude that execution time increases with $\norm{V}\norm{C}$.
+Since this time complexity is intrinsic to the algorithms and are not due to mere implementational details,
+and more than three-fourths of the total compilation time is due to $\solve$ and $\RecCheck$,
+the majority of the slowdown is therefore intrinsic and unavoidable.
 
 \include{figures/plots.tex}
 
 \subsubsection{An Explosion of Size Variables}
 
-Although there might be additional factors influencing the time complexities of \solve and \RecCheck beyond the number of variables and constraints,
-we can at least reasonably conclude that execution time increases with $\norm{V}\norm{C}$.
-% TODO From William: Not very interesting; the algorithmic bounds told us that.
-% The key is that the degradation almost fits perfectly the algorithmic bounds,
-% so it’s not a mere implementation issue
-The distributions of $\norm{V}\norm{C}$ in calls to \solve and \RecCheck shown in \autoref{fig:stats:distr-solve} and \autoref{fig:stats:distr-reccheck}
-show that despite most calls involving small values of $\norm{V}\norm{C}$,
+As $\solve$ and $\RecCheck$ contribute so much to the compilation time
+and their complexities depend on $\norm{V}\norm{C}$,
+there must be a significant number of calls involving large numbers of variables and constraints.
+Indeed, \autoref{fig:stats:distr-solve} and \autoref{fig:stats:distr-reccheck}
+show that despite most calls during compilation of \msetlist involving small values of $\norm{V}\norm{C}$,
 the number of calls with large values of $\norm{V}\norm{C}$ is not trivial.
-% TODO From William: And this point. The algorithmic bounds dominate,
-% AND the numbers are large enough in practice to matter a lot.
 
 Of course, the presence of large numbers of variables and constraints of only \msetlist with sized typing
 doesn't tell us whether this is a common property of Coq files on average,
