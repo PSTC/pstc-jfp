@@ -447,11 +447,11 @@ since $s$ is otherwise only found in the type of the fixpoint and not in the fix
 \subsubsection{Interpretation of the Infinite Size}
 
 An additional challenge in constructing the set-theoretic model is
-the justification of $\mu$-reduction
-and the ordinal interpretation of the infinite size $\infty$.
-Consider for instance again the fixpoint
+the justification of $\mu$-reduction, which seems to require
+the ordinal interpretation of the infinite size $\infty$.
+Consider for instance the fixpoint
 $e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$
-now applied to $\Zero$.
+but instantiated to the $\infty$ size and applied to $\Zero$.
 Then $\app{e}{\Zero}$ $\mu$-reduces as follows:
 $$\app{\fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}}{\Zero}
 \rhd_\mu
@@ -470,7 +470,7 @@ On the left-hand side, we have
   &= \psi_{\kappa}(\mathcal{O}) \\
   &= \psi_{\kappa+1}(\mathcal{O}) &\text{since $\kappa \geq \omega$} \\
   &= \phi_\kappa(\psi_\kappa)(\mathcal{O}) &\text{expanding $\psi_{\kappa+1}$} \\
-  &= \Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}} ~ \mathcal{O} &\text{by definition} \\
+  &= \Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}} ~ \mathcal{O} &\text{by definition}
 \end{align*}
 Meanwhile, on the right-hand side,
 \begin{align*}
@@ -484,8 +484,8 @@ $\Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}}
 = \Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{\psi_\kappa}}^\pi$,
 moving the substitution by $\infty$ into the valuation as $\kappa$.
 More generally, for any term $e$ along with valuations $\pi$, $\rho$,
-there is some ordinal $\Infty(e; \upsilon)_\rho^\pi$ such that the following
-infinite-size subsitutivity property holds:
+one would like to have ordinal $\Infty(e; \upsilon)_\rho^\pi$ such that the
+following infinite-size subsitutivity property holds:
 $$\forall \kappa \geq \Infty(e; \upsilon)_\rho^\pi,
   \Val(e)_{\rho}^{\subst{\pi}{\upsilon}{\kappa}}
   = \Val(\subst{e}{\upsilon}{\infty})_{\rho}^{\pi}$$
@@ -504,15 +504,145 @@ Since there can only be finitely many inductive types in $e$, an
 ordinal with the infinite-size substitutivity property is the
 supremum of these closure ordinals.
 
-However, a single size variable $\upsilon$ could be annotated to more than one
-inductive type.
-For example, a term could contain both $I_1^\upsilon$ and $I_2^\upsilon$ where
-$I_1, I_2$ are different inductive types with different closure ordinals,
-and one may even be applied to the other as a parameter.
-In this case, the interpretation of $\infty$ with respect to $\upsilon$ would
-be the maximum of the two closure ordinals,
-and in general, $\Infty(e; \upsilon)_\rho^\pi$ is computed by induction on $e$,
-taking the maximum of the ordinals computed from all subterms.
+However, the actual situation is more complicated.
+%
+To see the complication, let us first consider the case where we want to compute
+$\Infty(\prod{x}{A}{B};\upsilon)_\rho^\pi$.
+%
+The infinite-size substitutivity property requires that for
+$\kappa \geq \Infty(\prod{x}{A}{B};\upsilon)_\rho^\pi$,
+%
+\begin{align*}
+  \Val(\prod{x}{A}{B})_\rho^{\subst{\pi}{\upsilon}{\kappa}} =
+  \Val(\prod{x}{\subst{A}{\upsilon}{\infty}}{\subst{B}{\upsilon}{\infty}};\upsilon)_\rho^\pi
+\end{align*}
+%
+which is just
+%
+\begin{align*}
+  \setprod_{a \in \Val(A)_\rho^{\subst{\pi}{\upsilon}{\kappa}}}
+  {\Val(B)_{\subst{\rho}{x}{a}}^{\subst{\pi}{\upsilon}{\kappa}}}
+  =
+  \setprod_{a \in \Val(\subst{A}{\upsilon}{\infty})_\rho^\pi}
+  {\Val(\subst{B}{\upsilon}{\infty})_{\subst{\rho}{x}{a}}^{\pi}}
+\end{align*}
+%
+Inductively, $\kappa \geq \Infty(A;\upsilon)$ means we have equality of domains:
+$\Val(A)_\rho^{\subst{\pi}{\upsilon}{\kappa}} = \Val(\subst{A}{\nu}{\infty})_\rho^\pi$.
+%
+So it just remains to show equality of each codomain (\todo: ``each
+codomain'' somehow sounds funny, better to say ``each fibre''?)
+$\Val(B)_{\subst{\rho}{x}{a}}^{\subst{\pi}{\upsilon}{\kappa}} =
+\Val(\subst{B}{\upsilon}{\infty})_{\subst{\rho}{x}{a}}^{\pi}$, where
+$a$ ranges over
+$a \in \Val(A)_\rho^{\subst{\pi}{\upsilon}{\kappa}} =
+\Val(\subst{A}{\nu}{\infty})_\rho^\pi$.
+%
+And so by induction we want
+$\kappa \geq \Infty(A;\upsilon)_{\subst{\rho}{x}{a}}^\pi$ for each
+$a$.
+%
+This shows that we can take
+%
+\begin{align*}
+  \Infty(\prod{x}{A}{B};\upsilon)_\rho^\pi =
+  \sup_{a \in \Val(\subst{A}{\upsilon}{\infty})_\rho^\pi}\{
+  \Infty(A;\upsilon)_\rho^\pi, \Infty(B;\upsilon)_{\subst{\rho}{x}{a}}^\pi
+  \}
+\end{align*}
+
+The key to note here is that we have taken the supremum of an infinite set.
+%
+In general, to compute $\Infty(e;\upsilon)_\rho^\pi$, despite
+$\upsilon$ only appearing in finitely many places, it may not be
+sufficient to take the supremum (maximum) of a finite set of ordinals.
+%
+In fact, in the above calculation, we have taken the supremum of (at
+most) $\card{\Val(\subst{A}{\upsilon}{\infty})_\rho^\pi}+1$ many
+ordinals, and the value of $\prod{x}{A}{B}$ also depends on (at most)
+$\card{\Val(\subst{A}{\upsilon}{\infty})_\rho^\pi}+1$ many values.
+%
+(\todo: this example of $\Pi$ is really just to first give a simple
+intuition on how computing $\Infty$ needs to take into account the
+dependencies of different $\Infty$s. Not sure if this example is
+helping anything.)
+
+One now considers the case where one is computing
+$\Infty(e;\upsilon)_\rho^\pi$ for
+$e = \fixE{\upsilon}{f}{\Nat^\nu \rightarrow \Nat^\nu}{e'}{s}$.
+%
+Put $\kappa$ an ordinal and take each $\phi(\kappa)_\alpha$ as the
+$\alpha$-th iteration of the operator
+$\Val(e')_{\subst{\rho}{f}{-}}^{\subst{\subst{\pi}{\upsilon}{\kappa}}{\nu}{\alpha}}
+=
+\Val(e')_{\subst{\rho}{f}{-}}^{\subst{\subst{\pi}{\nu}{\alpha}}{\upsilon}{\kappa}}$
+so that
+$\Val(e)_\rho^{\subst{\pi}{\upsilon}{\kappa}} =
+\lim_\alpha \phi(\kappa)_\alpha$.
+%
+Let each $\psi_\alpha$ be the $\alpha$-th iteration of
+$\Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}$
+so that
+$\Val(\subst{e}{\upsilon}{\infty})_\rho^{\pi} =
+\lim_\alpha \psi_\alpha$.
+%
+The property of infinite-size substitutivity then says
+$\lim_\alpha \phi(\kappa)_\alpha = \lim_\alpha \psi_\alpha$
+for large $\kappa$.
+%
+This is somewhat reminiscent of the $\Pi$-types situation, where we
+wanted each codomain (\todo: fibre) to be equal.
+%
+Here, we might want each $\phi(\kappa)_\alpha=\psi_\alpha$,
+which is the same as saying
+$\Val(e')_{\subst{\rho}{f}{-}}^{\subst{\subst{\pi}{\nu}{\alpha}}{\upsilon}{\kappa}}
+=
+\Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}$.
+%
+Clearly, for fixed $\alpha$ this is possible for
+$\kappa \geq \Infty(e';\upsilon)_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}$.
+%
+In the $\Pi$ case we took the supremum of the $\Infty$s over the
+domain.
+%
+But in this case if one were to do the same thing, one would
+do $\sup_{\alpha \in \Ord}
+{\Infty(e';\upsilon)_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}}$.
+%
+Since $\Ord$ is a proper class, the resulting supremum is not
+necessarily an ordinal, unless
+$\Infty(e';\upsilon)_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}$
+is constant for $\alpha \geq \beta$ for some $\beta$.
+
+However, taking a closer look, we see that $\alpha$ is the
+interpretation of the size $\nu$.
+%
+So when $\alpha$ and $\kappa$ are both large, it is reasonable to
+expect
+$\phi(\kappa)_\alpha
+\Val(e')_{\subst{\rho}{f}{-}}^{\subst{\subst{\pi}{\nu}{\alpha}}{\upsilon}{\kappa}}
+=
+\Val(\subst{\subst{e'}{\upsilon}{\infty}}{\nu}{\infty})_{\subst{\rho}{f}{-}}^{\pi}$
+and
+$\psi_\alpha =
+\Val(\subst{e'}{\upsilon}{\infty})_{\subst{\rho}{f}{-}}^{\subst{\pi}{\nu}{\alpha}}
+=
+\Val(\subst{\subst{e'}{\upsilon}{\infty}}{\nu}{\infty})_{\subst{\rho}{f}{-}}^{\pi}$.
+%
+And so one sees that one has pushed both $\nu,\upsilon$ to $\infty$.
+%
+Formalising the idea, it turns out that the key to the solution of
+computing the $\infty$ size is to compute
+$\Infty(e;\upsilon{\upsilon_i}_{i=1}^n)_\rho^\pi$ for a set of size
+variables.
+%
+That is, we compute an ordinal
+$\Infty(e;\upsilon{\upsilon_i}_{i=1}^n)_\rho^\pi$ such that
+if each $\kappa_i \geq \Infty(e;\{\upsilon_i\}_{i=1}^n)_\rho^\pi$
+then
+$\Val(\subst{e}{\upsilon_i}{\infty}_{i=1}^n)_\rho^\pi
+=
+\Val(e)_\rho^{\subst{\pi}{\upsilon_i}{\kappa_i}_{i=1}^n}$.
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"

@@ -134,6 +134,7 @@
 \newcommand{\Type}[1]{\const{Type}_{#1}}
 \newcommand{\abs}[3]{\lambda #1 : #2 \mathpunct{.} #3}
 \newcommand{\app}{\apps}
+\let\setprod\prod
 \renewcommand{\prod}[3]{\Pi #1 \mathbin{:} #2 \mathpunct{.} #3} % originally Π but really big
 \newcommand{\prodctx}[2]{\Pi #1 \mathpunct{.} #2}
 \newcommand{\letin}[4]{\kw{let}\ #1 \mathbin{:} #2 \coloneqq #3\ \kw{in}\ #4}
@@ -231,6 +232,8 @@
 \newcommand{\opcitt}[1]{\defcitealias{#1}{\emph{op. cit.}}\citetalias{#1}\xspace}
 \newcommand{\opcitp}[1]{\defcitealias{#1}{\emph{op. cit.}}\citepalias{#1}\xspace}
 
+\renewcommand{\phi}{\varphi}
+
 % delimiters
 %\DeclarePairedDelimiter{\svs}{\llbracket}{\rrbracket}
 \DeclarePairedDelimiter{\set}{\{}{\}}
@@ -240,6 +243,7 @@
 \DeclarePairedDelimiter{\erase}{|}{|}
 \DeclarePairedDelimiter{\br}{(}{)}
 \DeclarePairedDelimiter{\sqbr}{[\![}{]\!]}
+\DeclarePairedDelimiter{\card}{|}{|}
 
 % editing
 \newcommand{\JC}[1]{\textcolor{magenta}{#1}}
