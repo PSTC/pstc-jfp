@@ -86,19 +86,6 @@ Both compilations are run five times each.
 The compilation times are significantly different ($t = 463.94$, $p \ll 0.001$),
 with \msetlist's compilation time at $15.122 \pm 0.073$ seconds and \msetlistsized's at $82.660 \pm 0.286$ seconds.
 
-% TODO From William: Not an interesting hypothesis; really, we want to know this is intrinsic to total size inference,
-% and not some mere slowdown because we’re bad at implementing the inference
-To identify the source of the slowdown and test our hypothesis that it is due to sized typing,
-we profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
-We divide these functions into five groups: the \solve and \RecCheck functions,
-the \texttt{foldmap}%
-\footnote{This is the \texttt{foldmap\_annots} function in \texttt{coq/kernel/Constr.ml}.}
-function common to all operations manipulating size annotations on the AST (such as applying size substitutions),
-the functions in \texttt{State}, the functions in \texttt{SMap}, and the functions in \texttt{Constraints}.
-\autoref{table:timing} summarizes the results, as well as the relative time spent in the functions in \msetlistsized.
-The differences in execution times of the functions in each group are all statistically significant ($p \ll 0.001$ for all of the $t$-statistics).
-% meaning that the differences between the sized and unsized times are statistically significant.
-
 \begin{table}
 \centering
 \begin{tabular}{| l | r | r | r | r |}
@@ -120,6 +107,19 @@ The differences in execution times of the functions in each group are all statis
 \label{table:timing}
 \end{table}
 
+% TODO From William: Not an interesting hypothesis; really, we want to know this is intrinsic to total size inference,
+% and not some mere slowdown because we’re bad at implementing the inference
+To identify the source of the slowdown and test our hypothesis that it is due to sized typing,
+we profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
+We divide these functions into five groups: the \solve and \RecCheck functions,
+the \texttt{foldmap}%
+\footnote{This is the \texttt{foldmap\_annots} function in \texttt{coq/kernel/Constr.ml}.}
+function common to all operations manipulating size annotations on the AST (such as applying size substitutions),
+the functions in \texttt{State}, the functions in \texttt{SMap}, and the functions in \texttt{Constraints}.
+\autoref{table:timing} summarizes the results, as well as the relative time spent in the functions in \msetlistsized.
+The differences in execution times of the functions in each group are all statistically significant ($p \ll 0.001$ for all of the $t$-statistics).
+% meaning that the differences between the sized and unsized times are statistically significant.
+
 More than three quarters of the compilation time in \msetlistsized is taken up by \solve and \RecCheck.
 Other \texttt{Sized}-related overhead is smaller, although not insignificant,
 especially \texttt{Constraint} operations, which form a proportion slightly larger than that of \RecCheck.
@@ -129,8 +129,6 @@ or instead of explicitly passing around a size state, we could use a state monad
 or constraints could be stored in a data structure incrementally checked for negative cycles,
 similar to the current implementation of universe level constraints.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
-
-\include{figures/plots.tex}
 
 \subsubsection{Confirming Time Complexity of \titlesolve and \titleRecCheck}
 
@@ -156,6 +154,8 @@ Similarly, for \RecCheck, the model also appears to be a good fit at first,
 but then follow a downward curving pattern,
 also indicating additional behaviour unexplained by the model (such as the two outliers.)
 
+\include{figures/plots.tex}
+
 \subsubsection{An Explosion of Size Variables}
 
 Although there might be additional factors influencing the time complexities of \solve and \RecCheck beyond the number of variables and constraints,
@@ -176,21 +176,6 @@ for an explosion in size variables and constraints to be a significant barrier t
 In fact, this behaviour is easily reproducible with the artificial but comparatively small and simple example in \autoref{fig:nats}.
 \autoref{table:nats-stats} lists the number of size variables present in the types and bodies of these definitions,
 along with the elapsed type checking time reported by Coq.
-
-\begin{figure}[h]
-\begin{minted}{coq}
-Unset Guard Checking.
-Set Sized Typing.
-Time Definition nats1  := (nat, nat, nat, nat, nat, nat, nat, nat).
-Time Definition nats2  := (nats1, nats1, nats1, nats1).
-Time Definition nats3  := (nats2, nats2, nats2, nats2).
-Time Definition nats4  := (nats3, nats3, nats3, nats3).
-Time Definition nats5  := (nats4, nats4, nats4, nats4).
-Time Definition nats6  := (nats5, nats5, nats5, nats5).
-\end{minted}
-\caption{Coq definitions with an explosion in size variables and elapsed time}
-\label{fig:nats}
-\end{figure}
 
 \begin{table}
 \centering
@@ -253,7 +238,7 @@ local definitions in scope at the fixpoint may not yet known to be size-preservi
 thus causing the check to fail.
 As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size-preserving,
 even though it ought to be, which causes the recursive call on the smaller argument wrapped in \coqinline{id} to not pass type checking.
-
+%
 \begin{minted}{coq}
 let id (x : nat) := x in
   fix f (n : nat) :=
@@ -262,7 +247,7 @@ let id (x : nat) := x in
     | S k => f (id k)
     end
 \end{minted}
-
+%
 This suggests that size inference should be done during the pretyping phase:
 size inference could be viewed as part of the elaboration step from the surface CIC to the core \lang.
 This, too, is beyond the scope of this paper, especially as there is no past work on the interaction between size inference and elaboration to build on.
