@@ -7,16 +7,20 @@ Naturally, the full core language of Coq has more features (irrelevant for sized
 and the implementation has to interact with these as well as other proof assistant features such as elaboration and the vernacular.
 Furthermore, many details of the sized typing algorithm are left underspecified.
 In this section, we take a take a brief look at these details,
+% TODO From William: This is true, but not really the point,
+% really we're analyzing whether the complexity is a problem in practice.
 verify the time complexity of the implementation against the theoretical complexities from the previous section,
 and discuss the practical feasibility of the implementation as well as the problems that were encountered.
 
 \subsection{Architecture of the Coq Kernel}
 
-The core type checking algorithm is found in Coq's \emph{kernel}.
+The core type checking/inference algorithm is found in Coq's \emph{kernel}.
 Before reaching the kernel, terms go through a round of \emph{pretyping}
 where existential metavariables (essentially typed holes) are solved for
 and the recursive indices of fixpoints are determined.
-Size inference is implemented as an augmentation of the existing type inference algorithm.
+Size inference is implemented as an augmentation of the existing type checking/inference algorithm,
+making use of the recursive indices and assuming that there are no more metavariables.
+
 \autoref{fig:kernel} summarizes the relevant file/module structure.
 Most of the added code specifically for size inference is in the new \texttt{Sized} and \texttt{Subsizing} modules;
 the remaining structure remains the same as that of Coq 8.13's codebase~\citep{coq}.
@@ -56,8 +60,7 @@ $$\coqinline{Set Sized Typing. Unset Guard Checking.}$$
 will enable sized typing only.
 If both are set, then guard checking will only occur if sized typing fails.
 When sized typing is not set, size annotations are still added, but constraints are not collected,
-meaning that things such as type aliases that are checked with sized typing off will still behave as expected in code checked with sized typing on,
-but global definitions checked with sized typing off will never be size preserving.
+meaning that global definitions checked in this state will never be marked as size-preserving.
 
 \subsection{Analysis of Performance Degradation}
 
@@ -65,11 +68,15 @@ When compiling parts of the Coq standard library with sized typing on, we notice
 This is bad news if we hope to replace guard checking with sized typing,
 or even if we simply wish to use sized typing as the primary method of termination or productivity checking throughout.
 In particular, we examine compilation of the \texttt{Coq.MSets.MSetList} library%
-\footnote{This file can be found in the artifact at \texttt{coq/theories/MSets/MSetList.v}.}.
+\footnote{This file can be found in the artifact at \texttt{coq/theories/MSets/MSetList.v}.},
+which is an implementation of finite sets using ordered lists
+that contains a fair amount of both fixpoints and proof terms
+and that happens to compile successfully with sized typing on.
 In this file alone, we find a $5.5\times$ increase in compilation time with \texttt{coqc}.
 Other files may have even worse degredation; for an earlier version of the algorithm,
 there was a $15\times$ increase in compilation time for \texttt{Coq.setoid\_ring.Field\_theory}%
-\footnote{This file can be found in the artifact at \texttt{coq/theories/setoid\_ring/Field\_theory.v}.}.
+\footnote{This file can be found in the artifact at \texttt{coq/theories/setoid\_ring/Field\_theory.v}.},
+which is about twice as large as \msetlist and contains mostly proofs.
 We investigate possible causes of the performance degredation and discuss potential solutions.
 
 \subsubsection{Profiling \texttt{Sized} Functions}
@@ -79,6 +86,8 @@ Both compilations are run five times each.
 The compilation times are significantly different ($t = 463.94$, $p \ll 0.001$),
 with \msetlist's compilation time at $15.122 \pm 0.073$ seconds and \msetlistsized's at $82.660 \pm 0.286$ seconds.
 
+% TODO From William: Not an interesting hypothesis; really, we want to know this is intrinsic to total size inference,
+% and not some mere slowdown because we’re bad at implementing the inference
 To identify the source of the slowdown and test our hypothesis that it is due to sized typing,
 we profile the performance of functions relevant to the \texttt{Sized} module during the compilation.
 We divide these functions into five groups: the \solve and \RecCheck functions,
@@ -151,9 +160,14 @@ also indicating additional behaviour unexplained by the model (such as the two o
 
 Although there might be additional factors influencing the time complexities of \solve and \RecCheck beyond the number of variables and constraints,
 we can at least reasonably conclude that execution time increases with $\norm{V}\norm{C}$.
+% TODO From William: Not very interesting; the algorithmic bounds told us that.
+% The key is that the degradation almost fits perfectly the algorithmic bounds,
+% so it’s not a mere implementation issue
 The distributions of $\norm{V}\norm{C}$ in calls to \solve and \RecCheck shown in \autoref{fig:stats:distr-solve} and \autoref{fig:stats:distr-reccheck}
 show that despite most calls involving small values of $\norm{V}\norm{C}$,
 the number of calls with large values of $\norm{V}\norm{C}$ is not trivial.
+% TODO From William: And this point. The algorithmic bounds dominate,
+% AND the numbers are large enough in practice to matter a lot.
 
 Of course, the presence of large numbers of variables and constraints of only \msetlist with sized typing
 doesn't tell us whether this is a common property of Coq files on average,
@@ -235,9 +249,9 @@ Because termination checking is inextricably tied to type checking,
 the entire fixpoint needs to be type checked to verify whether the current set of indices is correct,
 and this type checking in the kernel can fail if the fixpoint still contains unsolved metavariables.
 Furthermore, because we only have access to the bare environments (\ie with no sizes inferred),
-local definitions in scope at the fixpoint may not yet known to be size preserving,
+local definitions in scope at the fixpoint may not yet known to be size-preserving,
 thus causing the check to fail.
-As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size preserving,
+As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size-preserving,
 even though it ought to be, which causes the recursive call on the smaller argument wrapped in \coqinline{id} to not pass type checking.
 
 \begin{minted}{coq}
