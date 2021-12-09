@@ -71,15 +71,15 @@ which is an implementation of finite sets using ordered lists
 that contains a fair amount of both fixpoints and proof terms
 and that happens to compile successfully with sized typing on.
 In this file alone, we find a $5.5\times$ increase in compilation time with \texttt{coqc}.
-Other files may have even worse degredation; for an earlier version of the algorithm,
+Other files may have even worse degradation; for an earlier version of the algorithm,
 there was a $15\times$ increase in compilation time for \texttt{Coq.setoid\_ring.Field\_theory}%
 \footnote{This file can be found in the artifact at \texttt{coq/theories/setoid\_ring/Field\_theory.v}.},
 which is about twice as large as \msetlist and contains mostly proofs.
-We investigate possible causes of the performance degredation and discuss potential solutions.
+We investigate possible causes of the performance degradation and discuss potential solutions.
 
 \subsubsection{Profiling \texttt{Sized} Functions}
 
-To measure the performance degredation, we compare compiling \msetlist against itself with sized typing on and guard checking off, which we refer to as \msetlistsized.
+To measure the performance degradation, we compare compiling \msetlist against itself with sized typing on and guard checking off, which we refer to as \msetlistsized.
 Both compilations are run five times each.
 The compilation times are significantly different ($t = 463.94$, $p \ll 0.001$),
 with \msetlist's compilation time at $15.122 \pm 0.073$ seconds and \msetlistsized's at $82.660 \pm 0.286$ seconds.
