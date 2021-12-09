@@ -1114,6 +1114,30 @@ FUNCTION {unpublished}
   fin.entry
 }
 
+FUNCTION {software}
+{ output.bibitem
+  format.authors "author" output.check
+  author format.key output
+  format.date "year" output.check
+  date.block
+  format.title "title" output.check
+  new.sentence
+  publisher output
+  format.url output
+  fin.entry
+}
+
+FUNCTION {online}
+{ output.bibitem
+  format.authors "author" output.check
+  author format.key output
+  format.date "year" output.check
+  format.title "title" output.check
+  new.sentence
+  format.url output
+  fin.entry
+}
+
 FUNCTION {default.type} { misc }
 
 READ
