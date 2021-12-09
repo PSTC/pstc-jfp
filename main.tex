@@ -1,8 +1,7 @@
 \documentclass[online]{jfp}
 
-% jfp.cls uses newtxmath which defines \Bbbk, but amssymb also defines \Bbbk
-\let\Bbbk\relax
-
+\usepackage{newtxmath}
+\let\Bbbk\relax % amssymb tries to define \Bbbk
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{mathtools}
