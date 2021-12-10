@@ -127,6 +127,9 @@ or constraints could be stored in a data structure incrementally checked for neg
 similar to the current implementation of universe level constraints.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
 
+% TODO: Don't flow this manually...
+\include{figures/plots.tex}
+
 \subsubsection{Time Complexity of \titlesolve and \titleRecCheck}
 
 As shown in \autoref{sec:algorithm}, given a constraint graph from constraint graph $C$ with size variables $V$,
@@ -144,9 +147,6 @@ we fit the data to linear models using least-square regressions (shown as orange
 and examine the residuals plots in \autoref{fig:stats:residuals-solve} and \autoref{fig:stats:residuals-reccheck}
 for \solve and \RecCheck, respectively.
 (Note the logarithmic horizontal scale used for clarity, as there are more calls with fewer variables and constraints).
-
-% TODO: Don't flow this manually...
-\include{figures/plots.tex}
 
 For \solve, the model appears to be a good fit at first,
 but residuals increase in magnitude as $\norm{V}\norm{C}$ increases,

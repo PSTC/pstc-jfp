@@ -216,8 +216,8 @@ These changes include:
     introduced by \citet{barras-thesis}. While \lang is probably size
     irrelevant, this is not clear in the model without an explicit judgment.
   \item Fixpoint type annotations require explicit size annotations
-    (\ie are no longer merely position terms), explicitly abstract over a size
-    variable, and are explicitly applied to a size expression.
+    (\ie are no longer merely position terms) and explicitly abstract over a size
+    variable, and fixpoints are explicitly applied to a size expression.
     The typing rule no longer erases the type, and the size in the fixpoint type
     is fixed.
     \begin{mathparpagebreakable}
@@ -260,7 +260,6 @@ We leave this line of inquiry as future work\footnote{In fact, ongoing work by
   candidates based on \citet{barras-thesis}. (Private
   communication, Dec. 2021).}, since we have other reasons to believe backwards
 incompatible changes are necessary in \lang to make sized typing practical.
-
 Nevertheless, we next explain where each these changes originate and why they
 seem necessary for the model, as well as notable difficulties that arise in the
 construction.
