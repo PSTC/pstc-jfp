@@ -266,13 +266,13 @@ construction.
 
 Recall from \autoref{sec:overview:comparison} that we add an impredicative $\Prop$ universe
 and universe cumulativity to the existing universe hierarchy in \CIChatminus.
-To handle this addition, we follow the set-theoretical model presented by \citet{not-so-simple-cc},
+We follow the set-theoretical model presented by \citet{not-so-simple-cc},
 where $\Prop$ is treated proof-irrelevantly:
 its set-theoretical interpretation is the set $\set{\emptyset, \set{\emptyset}}$,
 and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabitated propositions)
 or $\emptyset$ (representing false, uninhabited propositions).
 
-To handle impredicativity of function types, they are encoded using a \emph{trace encoding} \citep{aczel-trace}.
+Impredicativity of function types are encoded using a \emph{trace encoding} \citep{aczel-trace}.
 First, the \emph{trace} of a (set-theoretical) function $f : A \to B$ is defined as
 $$\trace(f) = \set{(a, b) \mid a \in A, b \in f(a)}.$$
 Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
