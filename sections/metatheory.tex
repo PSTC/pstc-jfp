@@ -212,6 +212,7 @@ These changes include:
     reduction, subtyping, and convertibility are typed.
     That is, each judgement requires the type of the terms,
     and the derivation rules may have as typing judgements as premises.
+  \item A new size irrelevant typing judgement is needed, similar to that introduced by \citet{barras-thesis}.
   \item Fixpoint type annotations require explicit size annotations
     (\ie are no longer merely position terms),
     explicitly abstract over a size variable,
@@ -238,7 +239,6 @@ These changes include:
     Predicative W types only allow $U$ to be $\Set$ or $\Type{}$,
     while impredicative W types also allow it to be $\Prop$.
     Including impredicative W types as well poses several technical challenges to the realisability semantics.
-  \item A new size irrelevant typing judgement is needed, similar to that introduced by \citet{barras-thesis}.
 \end{itemize}
 
 Because these changes violate backward compatibility, they cannot be adopted in \lang.
