@@ -77,8 +77,8 @@ has a position-annotated argument type since it returns a larger stream.
 Position annotations mark the size annotation locations in the type of the \cofixpoint where we are allowed to assign the \emph{same} size expression.
 This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\hat{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\hat{\upsilon}}$, for instance.
 In general, if a \cofixpoint has a position annotation on an argument type and the return type,
-we say that it is \textit{size-preserving} in that argument.
-Inuitively, $f$ is size-preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
+we say that it is \textit{size preserving} in that argument.
+Inuitively, $f$ is size preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
 
 \subsubsection{Environments and Signatures}
 
@@ -239,7 +239,7 @@ Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations n
 and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term.
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.
-If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well-typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
+If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
 Notably, each usage of a variable or a constant does not have to have the same size annotations.
 
 Inductive types and constructors are typed mostly similar to CIC,
@@ -281,7 +281,7 @@ Finally, we have the typing of mutual \cofixpoints in rules \refnorule{fix} and 
 We take the annotated type $t_k$ of the $k$th \cofixpoint definition to be convertible to a function type containing a \coinductive type, as usual.
 However, instead of the guard condition, we ensure termination/productivity using size expressions.
 
-The main difficulty in these rules is supporting size preserving \cofixpoints.
+The main difficulty in these rules is supporting size-preserving \cofixpoints.
 We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints using the positivity and negativity judgments.
 For fixpoints, the type of the $n_k$th argument, the recursive argument, is an inductive type annotated with a size variable $v_k$.
 For cofixpoints, the return type is a coinductive type annotated with $v_k$.

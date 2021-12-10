@@ -102,10 +102,10 @@ They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs 
 \end{itemize}
 
 In checking and inference, the input constraint set represents the constraints that must be satisfied
-for the local environment to be well-formed.
+for the local environment to be well formed.
 Algorithmic subtyping does not need this constraint set since subtyping does not rely on well-formedness of the environments.
 The output constraint set represents \emph{additional} constraints that must be satisfied
-for the input term(s) to be well-typed.
+for the input term(s) to be well typed.
 
 The algorithm is implicitly parameterized over a fixed signature $\Sigma$,
 as well as two mutable sets of size variables $\V, \V^*$, such that $\V^* \subseteq \V$.
@@ -148,7 +148,7 @@ Notice that fixpoints still have the indices $n$ of the recursive arguments, whe
 To produce these indices, we do what Coq currently does: brute-force search.
 We try the algorithm on every combination of indices from left to right.
 This continues until one combination works, or fails if none do.
-Then the type annotations are initially position-annotated on as many types as possible,
+Then the type annotations are initially position annotated on as many types as possible,
 and this position term itself is passed into the algorithm.
 Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
 We discuss this and other implementational issues in the next section.
@@ -222,7 +222,7 @@ Finally, we come to size inference and termination/productivity checking for \co
 It uses the following metafunctions:
 \begin{itemize}
   \item \setrecstars, given a function type $t$ and an index $n$, decomposes $t$ into arguments and a return type, reduces the $n$th argument type to an inductive type, annotates that inductive type with position annotation $*$, annotates the return type with $*$ if it has the same inductive type, and rebuilds the function type.
-    This is how fixpoint types obtain their position annotations without being user-provided; the algorithm will remove other position annotations if size-preservation fails.
+    This is how fixpoint types obtain their position annotations without being user-provided; the algorithm will remove other position annotations if size preservation fails.
 
     Similarly, \setcorecstars annotates the coinductive return type first, then the argument types with the same coinductive type.
     Both of these can fail if the $n$th argument type or the return type respectively are not \coinductive types.
@@ -241,7 +241,7 @@ Next, we check that the \cofixpoint bodies have the successor-sized types of $\o
 \input{figures/helpers.tex}
 
 Lastly, we need to check that the constraint set so far is satisfiable.
-However, \setrecstars and \setcorecstars optimistically annotate \textit{all} possible \coinductive types in the \cofixpoint type with position annotations, while not all \cofixpoints are size-preserving.
+However, \setrecstars and \setcorecstars optimistically annotate \textit{all} possible \coinductive types in the \cofixpoint type with position annotations, while not all \cofixpoints are size preserving.
 Therefore, instead of calling \RecCheck directly to check satisfiability,
 \RecCheckLoop iteratively calls \RecCheck and discards incorrect position annotations at each iteration.
 A simplification of the algorithm, not handling mutual \cofixpoints and removing single position annotations at a time,
@@ -250,10 +250,10 @@ The size variable $\upsilon_i$ highlighted in grey corresponds to turning the po
 
 More precisely, \RecCheck either returns a new constraint set,
 or it fails with some set $V$ of position size variables that must be set to infinity
-and therefore mark arguments that are not size-preserving.
+and therefore mark arguments that are not size preserving.
 If $V$ is empty, then \RecCheckLoop fails overall: this indicates that the overall constraint set is unsatisfiable.
 If $V$ is not empty, then we can try \RecCheck again after removing the size variables in $V$ from our set of position size variables,
-thus no longer enforcing that they must be size-preserving.
+thus no longer enforcing that they must be size preserving.
 An OCaml-like pseudocode implementation of \RecCheckLoop is provided by \autoref{fig:helpers}.
 
 \subsection{RecCheck}\label{sec:algorithm:reccheck}
@@ -265,7 +265,9 @@ It takes four arguments:
 
 \begin{itemize}
   \item A constraint set $C$, which we treat as a constraint graph.
-  \item The size variable $\tau$ of the annotation on the type of the recursive argument (for fixpoints) or on the return type (for cofixpoints). While the return type (for fixpoints) or the types of other arguments (for cofixpoints) may optionally be marked as size-preserving, each \cofixpoint type requires at \textit{least} $\tau$ for the primary \corecursive type.
+  \item The size variable $\tau$ of the annotation on the type of the recursive argument (for fixpoints) or on the return type (for cofixpoints).
+    While the return type (for fixpoints) or the types of other arguments (for cofixpoints) may optionally be marked as size preserving,
+    each \cofixpoint type requires at \textit{least} $\tau$ for the primary \corecursive type.
   \item A set of size variables $V^*$ that must be set to some non-infinite size.
     These are the size annotations in the \cofixpoint type that have position size variables.
     Note that $\tau \in V^*$.

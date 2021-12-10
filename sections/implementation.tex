@@ -58,7 +58,7 @@ $$\coqinline{Set Sized Typing. Unset Guard Checking.}$$
 will enable sized typing only.
 If both are set, then guard checking will only occur if sized typing fails.
 When sized typing is not set, size annotations are still added, but constraints are not collected,
-meaning that global definitions checked in this state will never be marked as size-preserving.
+meaning that global definitions checked in this state will never be marked as size preserving.
 
 \subsection{Analysis of Performance Degradation}
 
@@ -203,7 +203,7 @@ in particular the ones involving \cofixpoints where they will be most useful.
 Then for all other definitions, since no constraints are collected,
 calls to \solve will be trivial regardless of how many size variables they contain.
 
-However, a \cofixpoint might require that some non-\corecursive definition with many size variables be size-preserving,
+However, a \cofixpoint might require that some non-\corecursive definition with many size variables be size preserving,
 which means that that definition also needs to be checked with sized typing on,
 or the \cofixpoint itself may have a large number of size variables.
 Furthermore, there's no clear indication of which definitions might have a large number of size variables and which don't,
@@ -235,9 +235,9 @@ Because termination checking is inextricably tied to type checking,
 the entire fixpoint needs to be type checked to verify whether the current set of indices is correct,
 and this type checking in the kernel can fail if the fixpoint still contains unsolved metavariables.
 Furthermore, because we only have access to the bare environments (\ie with no sizes inferred),
-local definitions in scope at the fixpoint may not yet known to be size-preserving,
+local definitions in scope at the fixpoint may not yet known to be size preserving,
 thus causing the check to fail.
-As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size-preserving,
+As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size preserving,
 even though it ought to be, which causes the recursive call on the smaller argument wrapped in \coqinline{id} to not pass type checking.
 %
 \begin{minted}{coq}

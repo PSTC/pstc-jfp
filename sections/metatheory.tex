@@ -53,7 +53,7 @@ For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
   &\caseof*{\erase{P}}{\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}}}{\seq{\Succ \Rightarrow e}} \rhd_\nu \\
   &\caseof*{\erase{P}}{\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}}{\seq{\Succ \Rightarrow e}}
 \end{align*}
-Assuming both terms are well-typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
+Assuming both terms are well typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
 
 \begin{figure}
   \fbox{$\gg \vdash e \reduce_{\beta\zeta\delta\Delta\iota\mu\nu'} e$} \hfill
@@ -152,13 +152,13 @@ as well as case expression motives and \cofixpoint types
 need to be bare terms (or position terms, for the latter) to maintain subject reduction.
 To see why, suppose they were not bare, and consider the term
 $\app{(\fix*{1}{\defn{f^1}{\Nat^\tau \rightarrow \Nat^\tau}{\abs{n}{\Nat^{\hat{\tau}}}{n}}})}{(\app{\Succ}{\Zero})}$.
-Under empty environments, the fixpoint argument is well-typed with type $\Nat^{\hat{\hat{s}}}$ for any size expression $s$,
-while the fixpoint itself is well-typed with type $\Nat^{r} \rightarrow \Nat^{r}$ for any size expression $r$.
-For the application to be well-typed, it must be that $r$ is $\hat{\hat{s}}$,
+Under empty environments, the fixpoint argument is well typed with type $\Nat^{\hat{\hat{s}}}$ for any size expression $s$,
+while the fixpoint itself is well typed with type $\Nat^{r} \rightarrow \Nat^{r}$ for any size expression $r$.
+For the application to be well typed, it must be that $r$ is $\hat{\hat{s}}$,
 and the entire term has type $\Nat^{\hat{\hat{s}}}$.
 
 By the $\mu$-reduction rule, this steps to the term $\app{(\abs{n}{\Nat^{\hat{\tau}}}{n})}{(\app{\Succ}{\Zero})}$.
-Unfortunately, the term is no longer well-typed, as $\app{\Succ}{\Zero}$ cannot be typed with type $\Nat^{\hat{\tau}}$ as is required.
+Unfortunately, the term is no longer well typed, as $\app{\Succ}{\Zero}$ cannot be typed with type $\Nat^{\hat{\tau}}$ as is required.
 By erasing the type annotation of the function,
 there is no longer a restriction on what size the function argument must have,
 and subject reduction is no longer broken.
@@ -212,7 +212,7 @@ These changes include:
     most set-theoretic models.
     That is, each judgement requires the type of the terms,
     and the derivation rules may have as typing judgements as premises.
-  \item A new size irrelevant typing judgement is needed, similar to that
+  \item A new size-irrelevant typing judgement is needed, similar to that
     introduced by \citet{barras-thesis}. While \lang is probably size
     irrelevant, this is not clear in the model without an explicit judgment.
   \item Fixpoint type annotations require explicit size annotations
@@ -322,7 +322,7 @@ reduction (and therefore subtyping and convertibility) needs to be typed.
 \subsubsection{Size Irrelevance}
 
 In the model, we need to know that functions cannot make computational decisions
-based on the value of a size variable, \ie, that computation is size irrelevant.
+based on the value of a size variable, \ie that computation is size irrelevant.
 This is necessary to model functions as set-theoretic functions, since sizes are
 ordinals and (set-theoretic) functions quantifying over ordinals may be too
 large to be proper sets.
@@ -332,9 +332,9 @@ expressions are second class and size variables are implicitly quantified, it is
 no longer true in the model, when sizes are modeled as expressions and size
 variables must be explicitly quantified.
 As a result, we follow \citet{barras-thesis} in creating two typing modes in
-\langAnother---normal, and size irrelevant---and two function spaces---normal,
-and sized---which allows proving that functions are well defined in the model.
-The sized function space and size irrelevant mode enforce that the size of the
+\langAnother (normal and size irrelevant) and two function spaces (normal
+and sized) which allows proving that functions are well-defined in the model.
+The sized function space and size-irrelevant mode enforce that the size of the
 function's domain is irrelevant during typing, and this is use to type check
 fixpoints.
 
@@ -422,49 +422,6 @@ who resolves it using a new size-irrelevant judgement.
 We use a similar judgement for \langAnother,
 expanding it to allow recursive references of fixpoints as arguments
 to other functions.
-
-\iffalse
-This problem was encountered also by \citet{barras-thesis}, who solved
-it by introducing a special typing mode called size-irrelevance typing
-and syntactic marker for the $\Pi$-types of fixpoint recursors.
-%
-We have used a similar solution to get around this problem in the
-strong normalization proof of the alternative formulation of \lang.
-%
-However, in the size-irrelevance typing of \citet{barras-thesis},
-there was the requirement that fixpoint recursors can never occur as
-arguments to other functions in their defining body.
-%
-For example, in order for $e$ to pass size-irrelevance typing, $e$
-cannot contain a sub-expression of the form $(\app{M}{f})$.
-%
-We were able to get rid of this requirement in the strong
-normalization proof of this alternative formulation of \lang.
-%
-In fact, the typing rules allowed for size-irrelevance typing can be
-expanded to include counterparts for almost all of the ``normal''
-typing rules.
-
-An alternative approach seems to be to use a model involving PERs,
-where the PERs are designed to ensure size-irrelevance.
-%
-In any case, it seems that an inherent restriction of size-irrelevance
-is one may not have a recursive function $F$ with behaviours such as
-$\app{F}{n} \approx \Nat^\upsilon \to ...n\text{ times}... \to
-\Nat^\upsilon$ or even $\app{F}{n} \approx \Nat^\upsilon$ where
-$\upsilon$ is the size variable bound by $F$.
-%
-\citet{cic-hat-minus} has a similar restriction present in
-\CIChatminus, and this restriction matches the intuition of
-size-irrelevance.
-%
-If $\app{F}{n} \approx \Nat^\upsilon$ then the value of $F$ on an
-input $n$ depends on the size $\upsilon$, which precisely the
-behaviour size-irrelevance aims to forbid.
-%
-On the other hand, $\app{F}{n} \approx \Nat^\infty \to
-...n\text{ times}...\to\Nat^\infty$ does adhere to size-irrelevance.
-\fi
 
 \subsubsection{Size-Annotated Fixpoints}
 
