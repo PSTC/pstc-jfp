@@ -1,14 +1,14 @@
 \section{Prototype Implementation and Evaluation} \label{sec:impl}
 
 We have implemented the sized typing algorithm in a beta version of Coq 8.12~\citep{impl},
-which can be found in \citet{impl}.
+which can also be found in the supplementary materials.
 Naturally, the full core language of Coq has more features (irrelevant for sized typing) than \lang,
 and the implementation has to interact with these as well as other proof assistant features such as elaboration and the vernacular.
 Furthermore, many details of the sized typing algorithm are left underspecified.
 In this section, we take a take a brief look at these details,
 verify the time complexity of the implementation against the theoretical complexities from the previous section,
 determine its impact on performance as a whole,
-and discuss the practical feasibility of the implementation as well as the problems that were encountered.
+and discuss the practical feasibility of the implementation as well as the problems encountered.
 
 \subsection{Architecture of the Coq Kernel}
 
@@ -17,7 +17,7 @@ Before reaching the kernel, terms go through a round of \emph{pretyping}
 where existential metavariables (essentially typed holes) are solved for
 and the recursive indices of fixpoints are determined.
 Size inference is implemented as an augmentation of the existing type checking/inference algorithm,
-making use of the recursive indices and assuming that there are no more metavariables.
+making use of the recursive indices.
 
 \autoref{fig:kernel} summarizes the relevant file/module structure.
 Most of the added code specifically for size inference is in the new \texttt{Sized} and \texttt{Subsizing} modules;
@@ -101,7 +101,7 @@ with \msetlist's compilation time at $15.122 \pm 0.073$ seconds and \msetlistsiz
 \textbf{Total compilation}    & $15.122 \pm 0.073$ & $ 83.660 \pm 0.286$ &      & 100    \\
 \hline
 \end{tabular}
-\caption{Execution times of select OCaml functions during compilation of \msetlist vs. \msetlistsized}
+\caption{Relevant function runtimes when compiling \msetlist vs. \msetlistsized}
 \label{table:timing}
 \end{table}
 
