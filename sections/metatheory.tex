@@ -171,6 +171,10 @@ whose reduction and convertibility rules are untyped.
 
 Following strong normalization and logical consistency for \CIChatminus and \CChatomega,
 we conjecture that they hold for \lang as well.
+We present some details of a model constructed in our a proof attempt;
+unfortunately, the model requires changes to \lang that are backwards
+incompatible with Coq, so we do not pursue it further.
+We discuss from where these backwards incompatible changes arise for posterity.
 
 \begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
   %
@@ -196,16 +200,12 @@ Fixpoint f (u: unit): unit := let x := f u in tt.
 Fail Fixpoint f (u: unit): False := let x := f u in x.
 \end{minted}
 
-\subsubsection{Proof Attempt}
+\subsubsection{Proof Attempt and Apparent Requirements for Set-Theoretic Model}
 
-In ongoing work%
-\footnote{To be submitted as an undergraduate thesis by Yufeng Li under the supervision of Bruno Barras.}
-on a variant of \lang called \langAnother,
-strong normalization has been proven with a set-theoretic model construction
-equipped with realisability candidates based on \citet{barras-thesis}.
-To simplify the presentation, \langAnother does not deal with mutual fixpoints,
-cofixpoints, local definitions, or global declarations.
-For the proof to work, it requires additional nontrivial changes relative to \lang:
+In attempting to prove normalization and consistency, we develop a variant of
+\lang called \langAnother which made a series of simplifying assumptions about
+suggested by the proof attempt.
+These changes include:
 
 \begin{itemize}
   \item As is the case for most set-theoretic models,
@@ -242,16 +242,25 @@ For the proof to work, it requires additional nontrivial changes relative to \la
 \end{itemize}
 
 Because these changes violate backward compatibility, they cannot be adopted in \lang.
-The current literature suggests that \langAnother and \lang may be proven to be equivalent
-such that strong normalization (and therefore logical consistency) of \langAnother implies that they hold in \lang.
+
+The literature suggests that future work could prove \langAnother and \lang
+equivalent to derive that strong normalization (and therefore logical
+consistency) of \langAnother implies that they hold in \lang.
 More specifically, \cite{conversion} show that a typed and an untyped convertibility in a Martin--L\"of type theory (MLTT) imply each other;
 and \citet{w-types, polynomial-functors-w} show that W types in an extensional MLTT
 can encode well-formed inductive types, including nested inductive types
 (while \citet{hofmann} shows that extensional MLTT is a conservative extension of intensional MLTT).
 
-Nevertheless, in the subsequent subsubsections we explain where these changes originate from
-and why they are necessary for the model,
-as well as notable difficulties that arise in the construction.
+We leave this line of inquiry as future work\footnote{In fact, ongoing work by
+  the second author, Yufeng Li, in collaboration with Bruno Barras has reportedly
+  finished the strong normalization proof of \langAnother using realisability
+  candidates based on \citet{barras-thesis}. (private
+  communication, Dec. 2021).}, since we have other reasons to believe backwards
+incompatible changes are necessary in \lang to make sized typing practical.
+
+Nevertheless, we next explain where each these changes originate and why they
+seem necessary for the model, as well as notable difficulties that arise in the
+construction.
 
 \subsubsection{Typed Reduction}
 
