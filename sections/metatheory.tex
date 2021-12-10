@@ -202,22 +202,24 @@ Fail Fixpoint f (u: unit): False := let x := f u in x.
 
 \subsubsection{Proof Attempt and Apparent Requirements for Set-Theoretic Model}
 
-In attempting to prove normalization and consistency, we develop a variant of
+In attempting to prove normalization and consistency, we developed a variant of
 \lang called \langAnother which made a series of simplifying assumptions about
 suggested by the proof attempt.
 These changes include:
 
 \begin{itemize}
-  \item As is the case for most set-theoretic models,
-    reduction, subtyping, and convertibility are typed.
+  \item Reduction, subtyping, and convertibility are typed, as is the case for
+    most set-theoretic models.
     That is, each judgement requires the type of the terms,
     and the derivation rules may have as typing judgements as premises.
-  \item A new size irrelevant typing judgement is needed, similar to that introduced by \citet{barras-thesis}.
+  \item A new size irrelevant typing judgement is needed, similar to that
+    introduced by \citet{barras-thesis}. While \lang is probably size
+    irrelevant, this is not clear in the model without an explicit judgment.
   \item Fixpoint type annotations require explicit size annotations
-    (\ie are no longer merely position terms),
-    explicitly abstract over a size variable,
-    and are explicitly applied to a size expression.
-    The typing rule no longer erases the type, and the size in the fixpoint type is fixed.
+    (\ie are no longer merely position terms), explicitly abstract over a size
+    variable, and are explicitly applied to a size expression.
+    The typing rule no longer erases the type, and the size in the fixpoint type
+    is fixed.
     \begin{mathparpagebreakable}
       \inferrule*[right=\defrule{fix-explicit}]
       { \Gamma (f : t) \vdash e : \subst{t}{\upsilon}{\hat{\upsilon}} }
@@ -241,7 +243,8 @@ These changes include:
     Including impredicative W types as well poses several technical challenges.% to the realisability semantics.
 \end{itemize}
 
-Because these changes violate backward compatibility, they cannot be adopted in \lang.
+Because some of these changes violate backward compatibility, they cannot be
+adopted in \lang.
 
 The literature suggests that future work could prove \langAnother and \lang
 equivalent to derive that strong normalization (and therefore logical
@@ -319,6 +322,25 @@ reduction (and therefore subtyping and convertibility) needs to be typed.
 
 \subsubsection{Size Irrelevance}
 
+In the model, we need to know that functions cannot make computational decisions
+based on the value of a size variable, \ie, that computation is size irrelevant.
+This is necessary to model functions as set-theoretic functions, since sizes are
+ordinals and (set-theoretic) functions quantifying over ordinals may be too
+large to be proper sets.
+
+In short, while we conjecture that size irrelevance holds in \lang, since size
+expressions are second class and size variables are implicitly quantified, it is
+no longer true in the model, when sizes are modeled as expressions and size
+variables must be explicitly quantified.
+As a result, we follow \citet{barras-thesis} in creating two typing modes in
+\langAnother---normal, and size irrelevant---and two function spaces---normal,
+and sized---which allows proving that functions are well defined in the model.
+The sized function space and size irrelevant mode enforce that the size of the
+function's domain is irrelevant during typing, and this is use to type check
+fixpoints.
+
+In detail, the problem arises as follows.
+
 Given a recursive call $f$ of some fixpoint whose body is $e'$
 and two functions $\psi_1, \psi_2$ of the same type as $f$,
 if they behave identically, then the model requires that
@@ -378,7 +400,7 @@ approximations, and so that
   \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x).
   \label{eqn:irrel}\tag{\textsc{irrel}}
 \end{align*}
-This is the formal statement of size irrelevance:
+This is the formal statement of size irrelevance in the model:
 size variables bound by fixpoints merely restrict their domains and do not
 affect their computation.
 It turns out that size irrelevance ensures that $\psi_\alpha$
