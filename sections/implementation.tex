@@ -144,6 +144,10 @@ we fit the data to linear models using least-square regressions (shown as orange
 and examine the residuals plots in \autoref{fig:stats:residuals-solve} and \autoref{fig:stats:residuals-reccheck}
 for \solve and \RecCheck, respectively.
 (Note the logarithmic horizontal scale used for clarity, as there are more calls with fewer variables and constraints).
+
+% TODO: Don't flow this manually...
+\include{figures/plots.tex}
+
 For \solve, the model appears to be a good fit at first,
 but residuals increase in magnitude as $\norm{V}\norm{C}$ increases,
 indicating some additional behaviour unexplained by the model.
@@ -156,8 +160,6 @@ we can at least reasonably conclude that execution time increases with $\norm{V}
 Since this time complexity is intrinsic to the algorithms and are not due to mere implementational details,
 and more than three-fourths of the total compilation time is due to $\solve$ and $\RecCheck$,
 the majority of the slowdown is therefore intrinsic and unavoidable.
-
-\include{figures/plots.tex}
 
 \subsubsection{An Explosion of Size Variables}
 
