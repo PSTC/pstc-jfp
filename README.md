@@ -16,9 +16,9 @@ but this is currently buggy and might break when compiling the `minted` stuff.
 
 ## Build Instructions for arXiv
 
-1. Replace `minted` package with `\usepackage[finalizecache,cachedir=.]{minted}`.
+1. Replace `minted` package with `\usepackage[finalizecache,cachedir=./minted]{minted}`.
 2. Build once.
-3. Now replace instead with `\usepackage[frozencache,cachedir=.]{minted}`.
+3. Now replace instead with `\usepackage[frozencache,cachedir=./minted]{minted}`.
 4. Run `make arxiv` to create `arxiv.zip`.
 5. Restore `\usepackage{minted}`.
 6. [Optional] Run `make clean` to remove newly-generated files.

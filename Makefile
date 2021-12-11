@@ -14,4 +14,4 @@ arxiv: main.pdf
 
 clean:
 	latexmk -C
-	git clean -xfe arxiv.zip
+	git clean -xfde arxiv.zip
