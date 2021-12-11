@@ -51,7 +51,7 @@ rather than ordinary \textit{sized terms}, we instead have \textit{bare terms} $
 This denotes terms where size annotations are removed.
 These terms are required to be bare in order to preserve subject reduction without requiring explicit size applications or typed reduction,
 both of which would violate backward compatibility with Coq.
-We give an example of the loss of subject reduction when type annotations are not bare in \autoref{sec:metatheory:sr:bare}
+We give an example of the loss of subject reduction when type annotations aren't bare in \autoref{sec:metatheory:sr:bare}
 % \citet{cic-hat-minus} discusses the issue in further detail.
 Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
 
@@ -65,7 +65,7 @@ where size annotations are either removed or replaced by a \textit{position anno
 They occur on the inductive type of the recursive argument, as well as the return type if it is an inductive with the same or smaller size.
 For instance (using $\new{t \rightarrow u}$ as syntactic sugar for $\prod{\any}{t}{u}$),
 the recursive function $\fix*{1}{\mathit{minus}^1 : \Nat^* \rightarrow \Nat \rightarrow \Nat^* \coloneqq \dots}$
-has a position-annotated return type since the return value will not be any larger than that of the first argument.
+has a position-annotated return type since the return value won't be any larger than that of the first argument.
 
 Mutual cofixpoints $\cofix{m}{f_k}{t_k^*}{e_k}$ are similar, except cofixpoint definitions don't need $n_k$,
 as cofixpoints corecursively \emph{produce} a coinductive rather than recursively \emph{consuming} an inductive.
@@ -131,7 +131,7 @@ $\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\h
 
 As is standard, the well-formedness of \coinductive definitions depends not only on the well-typedness of its types but also on syntactic positivity conditions.
 We reproduce the \textit{strict positivity} conditions in \autoref{sec:wf-ind}, and refer the reader to clauses I1--I9 in \citet{cic-hat-minus}, clauses 1--7 in \mbox{\citet{cic-hat}}, and the Coq Manual~\citep{coq} for further details.
-As \lang does not support nested \coinductives,
+As \lang doesn't support nested \coinductives,
 we don't need the corresponding notion of \textit{nested positivity}.
 Furthermore, we assume that our fixed, implicit signature is well-formed.
 
@@ -240,7 +240,7 @@ and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations fr
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.
 If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
-Notably, each usage of a variable or a constant does not have to have the same size annotations.
+Notably, each usage of a variable or a constant doesn't have to have the same size annotations.
 
 Inductive types and constructors are typed mostly similar to CIC,
 with their types specified by \indtype and \constrtype.

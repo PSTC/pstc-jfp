@@ -30,13 +30,22 @@ Then we can define $\rho' \coloneqq \rho \circ \set{\upsilon_i \mapsto \hat{\ups
 \begin{enumerate}
   \item The proof is more involved; see \citet{f-hat}.
   \item The shortest path from $\tau$ to itself is no path at all, so $\rho'\tau = \upsilon$.
-  \item Since $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$, for every $\upsilon_i \in V^*$, $\rho'\upsilon_i = \hat{\upsilon}^{w_i}$ where $w_i$ is the weight of the shortest path from $\upsilon$ to $\upsilon_i$, and its size variable is obviously $\upsilon$.
-  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then $\infty \sqsubseteq \upsilon'$ must be in $C$, and therefore $\rho\upsilon' = \infty$, so $\rho'\upsilon' = \rho\upsilon'$. Otherwise, if $\upsilon' \notin \bigsqcup V^\iota$, we again have $\rho'\upsilon' = \rho\upsilon'$. Since $\upsilon$ is fresh, it could not be mapped to by $\rho$, so the size variable of $\rho\upsilon'$ cannot be $\upsilon$.
-  \item Let $\upsilon' \in V^\neq$. If $\upsilon' \in \bigsqcup V^\iota$, then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho\upsilon' = \infty$. Therefore, $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\upsilon' = (\set{\upsilon \mapsto \rho\tau} \circ \rho)\upsilon' = \rho\upsilon'$.
+  \item Since $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$,
+    for every $\upsilon_i \in V^*$, $\rho'\upsilon_i = \hat{\upsilon}^{w_i}$ where $w_i$ is the weight of the shortest path from $\upsilon$ to $\upsilon_i$,
+    and its size variable is obviously $\upsilon$.
+  \item Let $\upsilon' \in V^\neq$.
+    If $\upsilon' \in \bigsqcup V^\iota$, then $\infty \sqsubseteq \upsilon'$ must be in $C$, and therefore $\rho\upsilon' = \infty$, so $\rho'\upsilon' = \rho\upsilon'$.
+    Otherwise, if $\upsilon' \notin \bigsqcup V^\iota$, we again have $\rho'\upsilon' = \rho\upsilon'$.
+    Since $\upsilon$ is fresh, it could not be mapped to by $\rho$, so the size variable of $\rho\upsilon'$ cannot be $\upsilon$.
+  \item Let $\upsilon' \in V^\neq$.
+    If $\upsilon' \in \bigsqcup V^\iota$,
+    then we must have the constraint $\infty \sqsubseteq \upsilon'$ in $C$, so $\rho\upsilon' = \infty$.
+    Therefore, $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\upsilon' = (\set{\upsilon \mapsto \rho\tau} \circ \rho)\upsilon' = \rho\upsilon'$.
   \item Let $\tau' \in V^*$. Note that $V^* \subseteq V^\iota \subseteq \bigsqcup V^\iota$.
-  Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'\tau' = \hat{\upsilon}^{w'}$, and $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\tau' = \succ{\rho\tau}^{w'}\!$.
-  Since $\rho \vDash C$ and there is a path of weight $w'$ from $\tau$ to $\tau'$ in $C$,
-  we have $\succ{\rho\tau}^{w'}\! \sqsubseteq \rho\tau'$. \qed
+    Then letting $w'$ be the weight of the shortest path from $\upsilon$ to $\tau'$, we have $\rho'\tau' = \hat{\upsilon}^{w'}$,
+    and $(\set{\upsilon \mapsto \rho\tau} \circ \rho')\tau' = \succ{\rho\tau}^{w'}\!$.
+    Since $\rho \vDash C$ and there is a path of weight $w'$ from $\tau$ to $\tau'$ in $C$,
+    we have $\succ{\rho\tau}^{w'}\! \sqsubseteq \rho\tau'$. \qed
 \end{enumerate}
 \end{proof}
 

@@ -53,7 +53,7 @@ For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
   &\caseof*{\erase{P}}{\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}}}{\seq{\Succ \Rightarrow e}} \rhd_\nu \\
   &\caseof*{\erase{P}}{\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}}{\seq{\Succ \Rightarrow e}}
 \end{align*}
-Assuming both terms are well typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these are not convertible without allowing cofixpoints to reduce arbitrarily.
+Assuming both terms are well typed, the former has type $\app{P}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}}})}$ while the latter has type $\app{P}{(\app{\Succ}{(\cofix*{1}{\defn{\omega}{\Conat}{\app{\Succ}{\omega}})}})}$, but for an arbitrary $P$ these aren't convertible without allowing cofixpoints to reduce arbitrarily.
 
 \begin{figure}
   \fbox{$\gg \vdash e \reduce_{\beta\zeta\delta\Delta\iota\mu\nu'} e$} \hfill
@@ -305,12 +305,7 @@ By the definition of the interpretation of application,
 since the interpretation of $\Prop$ is not in the domain of the function,
 the left-hand side becomes $\emptyset$.
 Meanwhile, the right-hand side is $\set{\emptyset, \set{\emptyset}}$,
-and the interpretations of the two sides are not equal.
-
-% I want to mention why the interpretation of application yields the empty set for senseless things
-% but it's starting to feel like we're digging too deep into the set-theoretic details...
-% Basically the trace encoding erases the domain, so you can't even look out for cases
-% where the domain doesn't line up with the argument.
+and the interpretations of the two sides aren't equal.
 
 Ultimately, the set-theoretic interpretations of terms only make sense for well-typed terms,
 despite being definable for ill-typed ones as well.
@@ -404,7 +399,7 @@ the results of previous approximations, and so that
   \label{eqn:irrel}\tag{\textsc{irrel}}
 \end{align*}
 This is the formal statement of size irrelevance in the model:
-size variables bound by fixpoints merely restrict their domains and do not
+size variables bound by fixpoints merely restrict their domains and don't
 affect their computation.
 It turns out that size irrelevance ensures that $\psi_\alpha$
 converges at $\psi_\omega$,
@@ -432,7 +427,7 @@ to other functions.
 As shown above, the set-theoretic interpretation of a fixpoint evaluated at some size $s$
 is the iteration of its corresponding operator up to $\alpha$ times,
 where $\alpha$ is the valuation of $s$.
-Without explicitly annotating the size, we would not know how many times to iterate,
+Without explicitly annotating the size, we wouldn't know how many times to iterate,
 since $s$ is otherwise only found in the type of the fixpoint and not in the fixpoint term itself.
 
 \iffalse
