@@ -15,10 +15,10 @@ which we explain in detail shortly.
 Notation such as syntactic sugar or metafunctions and metarelations will also be highlighted in grey
 where they are first introduced in the prose.
 
-The brackets $\seq{\ph}$ denotes a sequence of syntactic constructions.
+The overline $\new{\vec{\ph}}$ denotes a sequence of syntactic constructions.
 We use 1-based indexing for sequences using subscripts;
 sequences only range over a single index unless otherwise specified.
-Ellipses may be used in place of the brackets where it is clearer;
+Ellipses may be used in place of the overline where it is clearer;
 for instance, the branches of a case expression are written as
 $\langle \vec{c_j \Rightarrow e_j} \rangle$ or
 $\langle c_1 \Rightarrow e_1, \dots, c_j \Rightarrow e_j, \dots \rangle$,
@@ -32,7 +32,7 @@ A \coinductive with an \textit{infinite} $\infty$ size annotation is said to be 
 representing \coinductives of all sizes.
 Otherwise, an inductive with a \textit{noninfinite} size annotation $s$ represents inductives of size $s$ or \emph{smaller},
 while a coinductive with annotation $s$ represents coinductives of size $s$ or \emph{larger}.
-This captures the idea that an object of an inductive type has some amount of content to be consumed,
+This captures the idea that a construction of an inductive type has some amount of content to be consumed,
 while one of a coinductive type must produce some amount of content.
 
 As a concrete example, a list with $s$ elements has type $\app{\List^{s}}{t}$, because it has at most $s$ elements,
@@ -61,14 +61,14 @@ In contrast to \CIChat and \CIChatminus, \lang has mutual \cofixpoints.
 In a mutual fixpoint $\fix{m}{f_k^{n_k}}{t_k^*}{e_k}$, each $\defn{f_k^{n_k}}{t_k^*}{e_k}$ is one fixpoint definition.
 $n_k$ is the index of the recursive argument of $f_k$, and $\kw{fix}_m$ means that the $m$th fixpoint definition is selected.
 Instead of bare terms, fixpoint type annotations are \textit{position terms} $t^*$,
-where size annotations are either removed or replaced with a \textit{position annotation} $\ast$.
+where size annotations are either removed or replaced by a \textit{position annotation} $\ast$.
 They occur on the inductive type of the recursive argument, as well as the return type if it is an inductive with the same or smaller size.
 For instance (using $\new{t \rightarrow u}$ as syntactic sugar for $\prod{\any}{t}{u}$),
 the recursive function $\fix*{1}{\mathit{minus}^1 : \Nat^* \rightarrow \Nat \rightarrow \Nat^* \coloneqq \dots}$
 has a position-annotated return type since the return value will not be any larger than that of the first argument.
 
 Mutual cofixpoints $\cofix{m}{f_k}{t_k^*}{e_k}$ are similar, except cofixpoint definitions don't need $n_k$,
-as cofixpoints corecursively produce a coinductive rather than recursively consuming an inductive.
+as cofixpoints corecursively \emph{produce} a coinductive rather than recursively \emph{consuming} an inductive.
 Position annotations occur on the coinductive return type as well as any coinductive argument types with the same size or smaller.
 As an example, $\cofix*{1}{\mathit{dup} : \prod{A}{\Set}{\app{\Stream^*}{A} \rightarrow \app{\Stream^*}{A}} \coloneqq \dots}$,
 a corecursive function that duplicates each element of a stream,
@@ -115,7 +115,7 @@ consists of the following:
 \end{itemize}
 
 We require that the index and argument types be \emph{full} types and terms.
-Note also that $I_j$ is the \coinductive type of the $j$th constructor, \emph{not} the $j$th \coinductive in the sequence $I_i$.
+Note also that $I_j$ is the \coinductive type of the $j$th constructor, \emph{not} the $j$th \coinductive in the sequence $\vec{I_i}$.
 We forgo the more precise notation $I_{i_j}$ for brevity.
 
 As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \rightarrow u}$ as syntactic sugar for $\prod{x}{t}{u}$) would be defined as:
@@ -251,7 +251,7 @@ In \refrule{constr}, size annotations appear in two places:
       We annotate each occurrence of $I_j$ in the arguments $\Delta^\infty_j$ with a size expression $s$.
     \item On the \coinductive type of the fully-applied constructor,
       which is annotated with the size expression $\hat{s}$.
-      Using the successor guarantees that the constructor always constructs an object that is \textit{larger} than any of its arguments of the same type.
+      Using the successor guarantees that the constructor always constructs a construction that is \textit{larger} than any of its arguments of the same type.
 \end{itemize}
 As an example, consider a possible typing of \text{VCons}:
 \begin{align*}
@@ -267,7 +267,7 @@ In \refrule{case}, a case expression has three parts:
 
     \item The \textbf{motive} $P$, which yields the return type of the case expression.
       While it ranges over the \coinductive's indices,
-      the parameter variables $\dom{\Delta_p}$ in the indices' types are bound to the parameters of the target type.
+      the parameter variables $\dom{\Delta_p}$ in the indices' types are bound to the parameters $\vec{p}$ of the target type.
       As usual, the universe of the motive $U$ is restricted by the universe of the \coinductive $U'$ according to \Elims.
 
       (This presentation follows that of Coq, but differs from that by~\citet{cic-hat-minus, cic-hat-l, cc-hat-omega}, where the case expression contains a return type in which the index and target variables are free and explicitly stated, in the syntactic form $\vec{y}.x.P$.)
@@ -281,7 +281,7 @@ Finally, we have the typing of mutual \cofixpoints in rules \refnorule{fix} and 
 We take the annotated type $t_k$ of the $k$th \cofixpoint definition to be convertible to a function type containing a \coinductive type, as usual.
 However, instead of the guard condition, we ensure termination/productivity using size expressions.
 
-The main difficulty in these rules is supporting size-preserving \cofixpoints.
+The main complexity in these rules is supporting size-preserving \cofixpoints.
 We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints using the positivity and negativity judgments.
 For fixpoints, the type of the $n_k$th argument, the recursive argument, is an inductive type annotated with a size variable $v_k$.
 For cofixpoints, the return type is a coinductive type annotated with $v_k$.
@@ -289,7 +289,7 @@ The positivity or negativity of $v_k$ in the rest of $t_k$ indicate where $v_k$ 
 For instance, supposing that $n = 1$,
 $\app{\List^\upsilon}{\Nat} \to \app{\List}{\Nat} \to \app{\List^\upsilon}{\Nat}$
 is a valid fixpoint type with respect to $\upsilon$, while
-$\app{\List^\upsilon}{\Nat} \to \app{\List^\upsilon}{\Nat} \to \app{\Stream^\upsilon}{\Nat}$
+$\app{\List^\upsilon}{\Nat} \to \app{\List}{\Nat^\upsilon} \to \app{\Stream^\upsilon}{\Nat}$
 is not, since $\upsilon$ illegally appears negatively in $\Stream$ and must not appear at all in the parameter of the second $\List$ argument type.
 This restriction ensures the aforementioned monotonicity property of subtyping for the \cofixpoints' types,
 so that $u_k \leq \subst{u_k}{\upsilon_k}{\hat{\upsilon}_k}$ holds for fixpoints,
@@ -300,7 +300,7 @@ The metafunction $\new{\erase{\ph}^\upsilon}$ replaces $\upsilon$ annotations wi
 
 Checking termination and productivity is then relatively straightforward.
 If $t_k$ are well typed, then the \cofixpoint bodies should have type $t_k$ with a successor size when $(\assm{f_k}{t_k})$ are in the local environment.
-This tells us that the recursive calls to $f_k$ in fixpoint bodies are on smaller-sized arguments, and that corecursive bodies produce objects with size larger than those from the corecursive call to $f_k$.
+This tells us that the recursive calls to $f_k$ in fixpoint bodies are on smaller-sized arguments, and that corecursive bodies produce constructions with size larger than those from the corecursive call to $f_k$.
 The type of the $m$th \cofixpoint is then the $m$th type $t_m$ with some size expression $s$ substituted for the size variable $v_m$.
 
 In Coq, the indices of the recursive elements are often elided, and there are no user-provided position annotations at all.

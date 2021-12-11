@@ -67,14 +67,14 @@ Assuming both terms are well typed, the former has type $\app{P}{(\cofix*{1}{\de
   \label{fig:reduction-alt}
 \end{figure}
 
-On the other hand, if we do allow unrestricted $\nu$-reduction as in \autoref{fig:reduction-alt}, subject reduction does hold,
+On the other hand, if we do allow unrestricted $\nu'$-reduction as in \autoref{fig:reduction-alt}, subject reduction does hold,
 at the expense of normalization,
 as a cofixpoint on its own could reduce indefinitely.
 
 \begin{theorem}[Subject Reduction]
   \label{thm:metatheory:sr}
   Let $\Sigma$ be a well-formed signature.
-  Suppose that $\nu$-reduction to allows unrestricted reduction of cofixpoints.
+  Suppose $\rhd$ includes unrestricted $\nu'$-reduction of cofixpoints.
   Then $\gg \vdash e : t$ and $e \rhd e'$ implies $\gg \vdash e' : t$.
 \end{theorem}
 
@@ -203,15 +203,14 @@ Fail Fixpoint f (u: unit): False := let x := f u in x.
 \subsubsection{Proof Attempt and Apparent Requirements for Set-Theoretic Model}
 
 In attempting to prove normalization and consistency, we developed a variant of
-\lang called \langAnother which made a series of simplifying assumptions about
-suggested by the proof attempt.
-These changes include:
+\lang called \langAnother which made a series of simplifying assumptions
+suggested by the proof attempt:
 
 \begin{itemize}
   \item Reduction, subtyping, and convertibility are typed, as is the case for
     most set-theoretic models.
     That is, each judgement requires the type of the terms,
-    and the derivation rules may have as typing judgements as premises.
+    and the derivation rules may have typing judgements as premises.
   \item A new size-irrelevant typing judgement is needed, similar to that
     introduced by \citet{barras-thesis}. While \lang is probably size
     irrelevant, this is not clear in the model without an explicit judgment.
@@ -261,8 +260,7 @@ We leave this line of inquiry as future work\footnote{In fact, ongoing work by
   communication, Dec. 2021).}, since we have other reasons to believe backward-incompatible
   changes are necessary in \lang to make sized typing practical.
 Nevertheless, we next explain where each these changes originate and why they
-seem necessary for the model, as well as notable difficulties that arise in the
-construction.
+seem necessary for the model.
 
 \subsubsection{Typed Reduction}
 
@@ -327,13 +325,13 @@ This is necessary to model functions as set-theoretic functions, since sizes are
 ordinals and (set-theoretic) functions quantifying over ordinals may be too
 large to be proper sets.
 
-In short, while we conjecture that size irrelevance holds in \lang, since size
+In short, while we conjecture that size irrelevance holds in \lang since size
 expressions are second class and size variables are implicitly quantified, it is
-no longer true in the model, when sizes are modeled as expressions and size
+no longer true in the model, where sizes are modeled as ordinals and size
 variables must be explicitly quantified.
 As a result, we follow \citet{barras-thesis} in creating two typing modes in
 \langAnother (normal and size irrelevant) and two function spaces (normal
-and sized) which allows proving that functions are well-defined in the model.
+and sized) which allow proving that functions are well-defined in the model.
 The sized function space and size-irrelevant mode enforce that the size of the
 function's domain is irrelevant during typing, and this is use to type check
 fixpoints.
@@ -367,8 +365,8 @@ the fixed point has been reached.
 
 For simplicity, suppose that for every ordinal $\alpha$, we have some valuation
 $\Val(\Nat^\upsilon)_\rho^{\subst{\pi}{\upsilon}{\alpha}} = \McN^\alpha$,
-where given some ordered ordinals $\vec{\alpha}$,
-$\vec{\McN^\alpha}$ is a $\subseteq$-increasing sequence of sets constant
+where given some ordered ordinals $\vec{\alpha_i}$,
+$\vec{\McN^{\alpha_i}}$ is a $\subseteq$-increasing sequence of sets constant
 beyond $\alpha = \omega$.
 %
 Let $D_0 = \set{\emptyset}$, the vacuous function space

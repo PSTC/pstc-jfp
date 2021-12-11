@@ -61,7 +61,7 @@ In short, the extended syntactic guard condition long used by Coq is anti-modula
 \paragraph*{} This situation is particularly unfortunate, as there exists a non-syntactic termimation- and productivity-checking method that overcomes these issues,
 whose theory is nearly as old as the guard condition itself: sized types.
 
-In essence, the \coinductive type of an object is annotated with a size annotation, which provides some information about the size of the object.
+In essence, the \coinductive type of a construction is annotated with a size annotation, which provides some information about the size of the construction.
 In this paper, we consider a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
 If the argument to a constructor has size $s$, then the fully-applied constructor would have a successor size $\hat{s}$.
 For instance, the constructors for the naturals follow the below rules:
@@ -78,8 +78,8 @@ For instance, the constructors for the naturals follow the below rules:
 \end{mathpar}
 
 Termination and productivity checking is then \emph{just} a type checking rule that uses size information.
-For termination, the recursive call must be done on an object with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
-For productivity, the returned object must have a larger size than that of the corecursive call, so the type of the body of the cofixpoint must be larger than the type of the reference to itself in the typing context.
+For termination, the recursive call must be done on a construction with a smaller size, so when typing the body of the fixpoint, the reference to itself in the typing context must have a smaller size.
+For productivity, the returned construction must have a larger size than that of the corecursive call, so the type of the body of the cofixpoint must be larger than the type of the reference to itself in the typing context.
 In short, they both follow the following (simplified) typing rule, where $\upsilon$ is an arbitrary fresh size variable annotated on the \coinductive types, and $s$ is an arbitrary size expression as needed.
 
 \vspace{-2ex}
@@ -97,7 +97,7 @@ Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ 
 does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
 Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving,
 expanding the set of terminating and productive functions that can be accepted.
-Finally, if additional expressivity is needed, rather than using syntactic hacks like inlining, we can take the semantic approach of enriching the size algebra.
+Finally, if additional expressivity is needed, rather than using syntactic hacks like inlining, we could take the semantic approach of enriching the size algebra.
 
 \paragraph*{} It seems perfect; so why doesn't Coq \emph{just} use sized types?
 
@@ -124,7 +124,7 @@ Proof techniques from past work, especially in \citet{cic-hat-minus}, don't read
 in particular to impredicative $\Prop$, universe cumulativity, and unrestricted size variables.
 On the other hand, set-theoretic semantics of type theories that do have these features don't readily adapt to the interpretation of sizes, either,
 with additional difficulties due to untyped conversion.
-We list a few proof attempts and possible future directions in detail.
+We detail a proof attempt on a variant of \lang and discuss its shortcomings.
 
 Even supposing that the metatheoretical problems can be solved and strong normalization and consistency proven,
 is an implementation of this sytem practical?
@@ -136,7 +136,7 @@ This flag can be used in conjuction with or without the existing guard checking 
 
 While sized typing enables many of our goals, namely increased expressivity with modular and compositional typing for \cofixpoints, the performance cost is unacceptable.
 We measure at least a $5.5 \times$ increase in compilation time in some standard libraries.
-The performance cost seems to be intrinsic to the size inference algorithm, and thus intrinsic to attempting to maintain backward compatibility.
+Much of the performance cost is intrinsic to the size inference algorithm, and thus intrinsic to attempting to maintain backward compatibility.
 We analyze the performance of our size inference algorithm and our implementation in detail.
 
 So why doesn't Coq \emph{just} use sized types?
@@ -151,7 +151,7 @@ and the consequences resulting from these design decisions.
 We formalize the calculus \lang in \autoref{sec:typing},
 and discuss the desired metatheoretical properties in \autoref{sec:metatheory}.
 In \autoref{sec:algorithm}, we present the size inference algorithm from unsized terms to sized \lang terms,
-and evaluate its actual implementation in our fork in \autoref{sec:impl}.
+and evaluate an implementation in our fork in \autoref{sec:impl}.
 Finally, we take a look at all of the past work on sized types leading up to \lang in \autoref{sec:related}, and conclude in \autoref{sec:conclusion}.
 
 %%% Local Variables:

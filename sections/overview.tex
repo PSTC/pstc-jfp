@@ -55,8 +55,9 @@ which are existing features in Coq.
 Cumulativity and impredicativity complicate the set-theoretic model by \citet{cic-hat-minus}, but these issues are known: see, for instance, \citet{not-so-simple-cc}.
 
 The size inference algorithms for \CIChat and \lang both take terms without size annotations,
-which are in essence plain CIC terms, along with a local environment,
-and return an annotated term, its annotated size, and a set of size constraints that must be satisfied.
+which are in essence plain CIC terms, along with a local environment
+and a set of size constraints for the environment,
+and return an annotated term, its annotated size, and a new set of size constraints that must be satisfied.
 Because \lang includes global definitions, its algorithm also takes a global environment.
 
 \subsection{Definitions}
@@ -78,7 +79,7 @@ it would \emph{not} be correct to perform the na\"ive substitution to get $\Nat^
 addition intuitively does not always return something of the same size.
 
 What we want instead is to allow a different size for each use of $N$,
-allowing the above type to reduce to $\Nat^{\upsilon_1} \rightarrow \Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
+so that the above type reduces to $\Nat^{\upsilon_1} \rightarrow \Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
 This means $N$ must be polymorphic in the sizes involved in its definition,
 the same kind of rank-1 or prenex polymorphism in ML-style let polymorphism for type variables.
 To retain backward compatibility, there is no explicit size quantification or application ---
@@ -89,8 +90,6 @@ These and all other size annotations are inferrable, as detailed in \autoref{sec
 Having definitions and annotated variables and constants also means we need to now allow sizes to appear
 not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
 in contrast to the restrictions of \CIChatminus.
-This complicates the set-theoretic interpretation of \lang terms,
-which we go into detail in \autoref{sec:metatheory:sn}.
 
 \paragraph*{} Recall that the inference algorithm will return a size constraint set.
 To handle inference of global declarations, after the size inference of one declaration,

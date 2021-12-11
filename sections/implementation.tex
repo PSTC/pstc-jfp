@@ -219,16 +219,16 @@ For example, the tuple types in \autoref{fig:nats} can have infinite size annota
 without affecting the sizes of the \coqinline{nat} arguments.
 In other words, we allow size annotations in the surface language that users write,
 which would no longer be plain CIC;
-as this solution deviates from the philosophy of being wholly backward-compatible,
+as this solution deviates from the philosophy of being wholly backward compatible,
 it is beyond the scope of this paper.
 
 \subsection{Inferring Recursive Indices}\label{sec:impl:recind}
 
 As previously mentioned, users are not obligated to indicate which fixpoint argument is the one on which we recur,
 and its position index is inferred during pretyping in the kernel.
-In Coq, for a mutual fixpoint, this is done by trying the guard check on every combination of indices%
+In Coq, for a mutual fixpoint, this is done by trying the guard predicate on every combination of indices%
 \footnote{This is the \texttt{search\_guard} function in \texttt{coq/kernel/Pretyping.ml}.}.
-This is possible because the guard check is a syntactic check, requiring nothing but the elaborated fixpoint term.
+This is possible because the guard predicate is a syntactic check, requiring nothing but the elaborated fixpoint term.
 
 Unfortunately, we run into problems when attempting to apply the same strategy to inferring recursive indices through sized typing alone.
 Because termination checking is inextricably tied to type checking,
