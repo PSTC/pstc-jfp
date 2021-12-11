@@ -48,7 +48,7 @@ Constructors construct constructions of a larger size than their \corecursive fu
 \CIChat and \CIChatminus differ in that \CIChat includes a size inference algorithm but no proof of strong normalization,
 while \CIChatminus is proven to be strongly normalizing, with no size inference algorithm explicitly given.
 \CIChatminus also restricts where size variables may appear in terms.
-Since \lang does not have such restrictions, it can be thought of as an extension of \CIChat combined with \CChatomega,
+Since \lang doesn't have such restrictions, it can be thought of as an extension of \CIChat combined with \CChatomega,
 featuring sized (mutual) \coinductive types and (mutual) \cofixpoints,
 and further adding universe cumulativity and an impredicative $\Prop$ universe,
 which are existing features in Coq.
@@ -118,8 +118,8 @@ because $\Nat^s \leq \Nat^{\hat{s}}$ holds,
 which in turn holds because $\hat{s}$ is a larger size than $s$.
 Similarly, a negative polarity reverses the subtyping relation,
 while an invariant polarity induces no subtyping relation from the parameters at all.
-It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
-so again in the name of backward compatibility, \lang does not have these annotations,
+It's not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
+so again in the name of backward compatibility, \lang doesn't have these annotations,
 and treats all parameters as invariant.
 This aligns with Coq's current behaviour, where \coqinline{list Set} is not a subtype of \coqinline{list Type}
 despite the presence of cumulativity where \coqinline{Set} is a subtype of \coqinline{Type}.
@@ -134,7 +134,7 @@ removing them from \CIChat.
 \iffalse
 \subsection{Position Size Annotations}
 
-Although users are not required to indicate the recursive argument when writing fixpoints in Coq,
+Although users aren't required to indicate the recursive argument when writing fixpoints in Coq,
 they are indicated in the core calculus because Coq's type checker will attempt determine which one it is when not explicitly indicated.
 This tells the guard predicate which argument should be checked for structural smallerness.
 Similarly, \lang has position annotations to indicate which argument is the recursive argument and whether the \cofixpoint preserves sizes or not,

@@ -50,7 +50,7 @@ Fixpoint div n m : nat :=
   end.
 \end{minted}
 
-If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour does not change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
+If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour doesn't change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
 The acceptance of \coqinline{div} then depends a separate definition independent of \coqinline{div}.
 While the difference is easy to spot here, for larger programs or programs that use many imported library definitions,
 this behaviour can make debugging much more difficult.
@@ -94,7 +94,7 @@ The fact that we can assign it a type indicates that it will terminate,
 and the $\upsilon$ annotations indicate that the function preserves the size of its first argument.
 Then \coqinline{div} uses only the type of \coqinline{minus} to successfully type check, not requiring its body.
 Furthermore, being type-based and not syntax-based, replacing \coqinline{| O, _ => n} with \coqinline{| O, _ => O}
-does not affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
+doesn't affect the type of \coqinline{minus} or the typeability of \coqinline{div}.
 Similarly, some other \cofixpoints that preserve the size of arguments in ways that aren't syntactically obvious may be typed to be size preserving,
 expanding the set of terminating and productive functions that can be accepted.
 Finally, if additional expressivity is needed, rather than using syntactic hacks like inlining, we could take the semantic approach of enriching the size algebra.

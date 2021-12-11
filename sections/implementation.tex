@@ -57,7 +57,7 @@ By default, the flag is off; the commands
 $$\coqinline{Set Sized Typing. Unset Guard Checking.}$$
 will enable sized typing only.
 If both are set, then guard checking will only occur if sized typing fails.
-When sized typing is not set, size annotations are still added, but constraints are not collected,
+When sized typing is not set, size annotations are still added, but constraints aren't collected,
 meaning that global definitions checked in this state will never be marked as size preserving.
 
 \subsection{Analysis of Performance Degradation}
@@ -157,7 +157,7 @@ also indicating additional behaviour unexplained by the model (such as the two o
 
 Although there might be additional smaller factors influencing the time complexities of \solve and \RecCheck beyond the number of variables and constraints,
 we can at least reasonably conclude that execution time increases with $\norm{V}\norm{C}$.
-Since this time complexity is intrinsic to the algorithms and are not due to mere implementational details,
+Since this time complexity is intrinsic to the algorithms and is not due to mere implementational details,
 and more than three-fourths of the total compilation time is due to $\solve$ and $\RecCheck$,
 the majority of the slowdown is therefore intrinsic and unavoidable.
 
@@ -208,7 +208,7 @@ which means that that definition also needs to be checked with sized typing on,
 or the \cofixpoint itself may have a large number of size variables.
 Furthermore, there's no clear indication of which definitions might have a large number of size variables and which don't,
 leaving it up to a lot of guesswork and experimentation.
-Using sized typing as a targeted tool for particular programs isn't viable
+Using sized typing as a targeted tool for particular programs is not viable
 if we cannot directly tell \emph{which} particular programs will benefit the most
 in terms of tradeoffs between non-structural \corecursion and performance.
 
@@ -224,7 +224,7 @@ it is beyond the scope of this paper.
 
 \subsection{Inferring Recursive Indices}\label{sec:impl:recind}
 
-As previously mentioned, users are not obligated to indicate which fixpoint argument is the one on which we recur,
+As previously mentioned, users aren't obligated to indicate which fixpoint argument is the one on which we recur,
 and its position index is inferred during pretyping in the kernel.
 In Coq, for a mutual fixpoint, this is done by trying the guard predicate on every combination of indices%
 \footnote{This is the \texttt{search\_guard} function in \texttt{coq/kernel/Pretyping.ml}.}.
