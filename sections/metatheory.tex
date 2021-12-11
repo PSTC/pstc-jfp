@@ -211,7 +211,7 @@ suggested by the proof attempt:
     most set-theoretic models.
     That is, each judgement requires the type of the terms,
     and the derivation rules may have typing judgements as premises.
-  \item A new size-irrelevant typing judgement is needed, similar to that
+  \item A new size irrelevant typing judgement is needed, similar to that
     introduced by \citet{barras-thesis}. While \lang is probably size
     irrelevant, this is not clear in the model without an explicit judgment.
   \item Fixpoint type annotations require explicit size annotations
@@ -279,8 +279,8 @@ Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
 $$\bigg\{\trace(f) \mathbin{\big|} f \in A \times \bigcup_{a \in A} B_a \text{ and } \forall a \in A, f(a) \in B_a\bigg\}$$
 where $A$ is the interpretation of $t$ and $B_a$ is the interpretation of $u$ when $x = a$,
 while a function $\abs{x}{t}{e}$ is interpreted as
-$\set{(a, b) \mid a \in A, b \in B_a}$
-where $b$ is the interpretation of $e$ when $x = a$.
+$\set{(a, b) \mid a \in A, b \in y_a}$
+where $y_a$ is the interpretation of $e$ when $x = a$.
 
 To see that this definition satisfies impredicativity,
 suppose that $u$ is in $\Prop$.
@@ -331,8 +331,9 @@ no longer true in the model, where sizes are modeled as ordinals and size
 variables must be explicitly quantified.
 As a result, we follow \citet{barras-thesis} in creating two typing modes in
 \langAnother (normal and size irrelevant) and two function spaces (normal
-and sized) which allow proving that functions are well-defined in the model.
-The sized function space and size-irrelevant mode enforce that the size of the
+and sized) which allow proving that functions respect sizes in necessary
+situations in the model.
+The sized function space and size irrelevant mode enforce that the size of the
 function's domain is irrelevant during typing, and this is use to type check
 fixpoints.
 
@@ -356,8 +357,11 @@ the valuation of $e$ is denoted by $\Val(e)_\rho^\pi$.
 
 Consider now the valuation of the following term that is well typed under
 $\Gamma$.
-$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$$
-As the fixpoint is evaluated at the infinite size $\infty$,
+$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{s}$$
+As the fixpoint is evaluated at the infinite size $\infty$
+(\todo: evaluated at $\infty$ isn't really the thing that makes size irrelevance
+needed, I would remove the first part and just say ``As in most set-theoretic
+models, the valuation of $e$...''),
 intuitively the valuation of $e$ must be the fixed point of
 $e'$ with respect to $f$.
 Then to compute $e$, we take an initial approximation of $e'$ and iterate until
@@ -367,7 +371,9 @@ For simplicity, suppose that for every ordinal $\alpha$, we have some valuation
 $\Val(\Nat^\upsilon)_\rho^{\subst{\pi}{\upsilon}{\alpha}} = \McN^\alpha$,
 where given some ordered ordinals $\vec{\alpha_i}$,
 $\vec{\McN^{\alpha_i}}$ is a $\subseteq$-increasing sequence of sets constant
-beyond $\alpha = \omega$.
+beyond $\alpha = \omega$
+(\todo: Why the subscript $i$? I thought $\vec{\alpha}$ and $\vec{\McN^\alpha}$
+are sequences already?).
 %
 Let $D_0 = \set{\emptyset}$, the vacuous function space
 (representing $\McN^0 \to \McN^0$),
@@ -385,14 +391,14 @@ The usual approach to compute $\Val(e)_\rho^\pi$ is to iterate up to the least f
 $\varphi_\alpha$ starting at $\psi_0 = D_0$ and setting
 $\psi_{\alpha + 1} = \varphi_\alpha(\psi_\alpha)$.
 \refrule{fix-explicit} ensures that $\psi_\alpha \in D_\alpha$;
-however, we also need to ensure that for successive $\alpha$,
-$\psi_\alpha$ eventually converges.
+however, we also need to ensure that the sequence
+$\vec{\psi_\alpha}$ eventually converges.
 
 What would be a sufficient condition for convergence?  As
-$\psi_\alpha$ is obtained by successively improving upon
-approximations of the fixed point of $\varphi$, we expect that
-subsequent approximations to use the results of previous
-approximations, and so that
+$\vec{\psi_\alpha}$ is obtained by successively improving upon
+approximations of the fixed point of (the interpretation of) the
+defining body $e'$, we expect that subsequent approximations to use
+the results of previous approximations, and so that
 \begin{align*}
   \forall x \in \McN^\alpha \subseteq \McN^\beta, \psi_\alpha(x) = \psi_\beta(x).
   \label{eqn:irrel}\tag{\textsc{irrel}}
@@ -416,7 +422,7 @@ Inductively, $\psi_\alpha$ and $\psi_\beta$ behave identically,
 but from \refrule{fix-explicit} we cannot easily conclude that $e'$ cannot tell
 them apart.
 This is the same problem encountered by \citet{barras-thesis},
-who resolves it using a new size-irrelevant judgement.
+who resolves it using a new size irrelevant judgement.
 We use a similar judgement for \langAnother,
 expanding it to allow recursive references of fixpoints as arguments
 to other functions.
