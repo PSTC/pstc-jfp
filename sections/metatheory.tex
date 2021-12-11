@@ -352,11 +352,8 @@ the valuation of $e$ is denoted by $\Val(e)_\rho^\pi$.
 
 Consider now the valuation of the following term that is well typed under
 $\Gamma$.
-$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{s}$$
-As the fixpoint is evaluated at the infinite size $\infty$
-(\todo: evaluated at $\infty$ isn't really the thing that makes size irrelevance
-needed, I would remove the first part and just say ``As in most set-theoretic
-models, the valuation of $e$...''),
+$$e = \fixE{\upsilon}{f}{\Nat^\upsilon \rightarrow \Nat^\upsilon}{e'}{\infty}$$
+As the fixpoint is evaluated at the infinite size $\infty$,
 intuitively the valuation of $e$ must be the fixed point of
 $e'$ with respect to $f$.
 Then to compute $e$, we take an initial approximation of $e'$ and iterate until
