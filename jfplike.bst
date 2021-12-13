@@ -797,8 +797,8 @@ FUNCTION {format.in.ed.booktitle}
         { word.in booktitle emphasize * }
         { word.in booktitle emphasize *
           ", " *
-          format.in.editors * *
-          bbl.eds
+          format.in.editors * " " *
+          bbl.eds *
         }
       if$
     }
