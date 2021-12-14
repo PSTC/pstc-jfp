@@ -129,7 +129,8 @@ We detail a proof attempt on a variant of \lang and discuss its shortcomings.
 Even supposing that the metatheoretical problems can be solved and strong normalization and consistency proven,
 is an implementation of this sytem practical?
 Seeking to answer this question, we have forked Coq~\citep{impl}, implemented the size inference algorithm within its kernel,
-and opened a draft pull request to the Coq repository.\footnote{\url{https://github.com/coq/coq/pull/12426/}}
+and opened a draft pull request to the Coq repository%
+\footnote{\url{https://github.com/coq/coq/pull/12426/} (now closed).}.
 To maximize backward compatibility, the surface language is completely unchanged,
 and sized typing can be enabled by a flag that is off by default.
 This flag can be used in conjuction with or without the existing guard checking flag enabled.

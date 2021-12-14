@@ -38,7 +38,8 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
 Suject reduction does not hold in \lang or in Coq due to the way coinductives are presented.
 This is a well-known problem, discussed previously in a sized-types setting by \citet{cc-hat-omega},
 on which our presentation of coinductives is based,
-as well as by the Coq developers\footnote{The discussion of the problem and suggested solutions can be found here: \url{https://github.com/coq/coq/issues/5288/}.}.
+as well as by the Coq developers%
+\footnote{The discussion of the problem and suggested solutions can be found here: \url{https://github.com/coq/coq/issues/5288/}.}.
 
 In brief, the current presentation of coinductives requires that cofixpoint reduction be \textit{restricted},
 \ie occurring only when it is the target of a case expression.
