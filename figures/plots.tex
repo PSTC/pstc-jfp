@@ -38,18 +38,3 @@
 \caption{Execution vs. $\norm{V}\norm{C}$, residuals, $\norm{V}\norm{C}$ distributions for \solve and \RecCheck}
 \label{fig:stats}
 \end{figure}
-
-\begin{figure}
-\begin{minted}{coq}
-Unset Guard Checking.
-Set Sized Typing.
-Time Definition nats1  := (nat, nat, nat, nat, nat, nat, nat, nat).
-Time Definition nats2  := (nats1, nats1, nats1, nats1).
-Time Definition nats3  := (nats2, nats2, nats2, nats2).
-Time Definition nats4  := (nats3, nats3, nats3, nats3).
-Time Definition nats5  := (nats4, nats4, nats4, nats4).
-Time Definition nats6  := (nats5, nats5, nats5, nats5).
-\end{minted}
-\caption{Coq definitions with an explosion in size variables and elapsed time}
-\label{fig:nats}
-\end{figure}

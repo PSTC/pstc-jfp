@@ -127,8 +127,7 @@ or constraints could be stored in a data structure incrementally checked for neg
 similar to the current implementation of universe level constraints.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
 
-% TODO: Don't flow this manually...
-\include{figures/plots.tex}
+\input{figures/plots.tex}
 
 \subsubsection{Time Complexity of \titlesolve and \titleRecCheck}
 
@@ -162,6 +161,21 @@ and more than three-fourths of the total compilation time is due to $\solve$ and
 the majority of the slowdown is therefore intrinsic and unavoidable.
 
 \subsubsection{An Explosion of Size Variables}
+
+\begin{figure}
+\begin{minted}{coq}
+Unset Guard Checking.
+Set Sized Typing.
+Time Definition nats1  := (nat, nat, nat, nat, nat, nat, nat, nat).
+Time Definition nats2  := (nats1, nats1, nats1, nats1).
+Time Definition nats3  := (nats2, nats2, nats2, nats2).
+Time Definition nats4  := (nats3, nats3, nats3, nats3).
+Time Definition nats5  := (nats4, nats4, nats4, nats4).
+Time Definition nats6  := (nats5, nats5, nats5, nats5).
+\end{minted}
+\caption{Coq definitions with an explosion in size variables and elapsed time}
+\label{fig:nats}
+\end{figure}
 
 As $\solve$ and $\RecCheck$ contribute so much to the compilation time
 and their complexities depend on $\norm{V}\norm{C}$,
