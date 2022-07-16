@@ -22,7 +22,44 @@ The following are notes on non-typo comments.
 
 ## Referee 2
 
-TODO
+* NOTE: Is the evaluation really the part an arbitrary reader is most
+  interested in? I dunno. I think it depends on the reader really.
+* TODO [Discuss with William]: "Another reason why the goal of backwards
+  compatibility feels a little arbitrary is that it is heavily tied to the
+  current capabilities of Coq's termination checker, which might change in the
+  future. ... Hence it would be better to instead be more explicit about
+  precisely what kind of definitions you want to be accepted by your algorithm,
+  so it is not as coupled to the current state of the Coq implementation.
+* TODO [Sec. 6.2]: Explicitly mention that the implementation is *not*
+  entirely backwards compatible, since a number of libraries no longer compile
+  with sized typing turned on, due to complications with elaboration
+  (c.f. Sec. 6.3) and other features (e.g. inlining), as well as a number of
+  bugs (link to issues page in repository).
+* TODO [Sec. 3.1.3]: Mention explicitly that induction–induction and
+  induction–recursion aren't supported (but neither does Coq!)
+* TODO [Sec 2.3]: Some further investigation into whether polarity annotations
+  can be inferred. At least cite someone else on the matter to quash concerns.
+* REBUT: The implementation doesn't do pos/neg checks explicitly. Instead, it
+  generates constraints during algorithmic subtyping, and the various soundness
+  and completeness lemmas say that it corresponds to pos/neg checks.
+* NOTE: "Can you give an example of where it is necessary to know that a
+  function is size-preserving?" This is literally the `div` example????
+* TODO [L1189]: Fix definition of WHNF. (ngl I'm not sure what it should be)
+* TODO [Fig. 17]: Maybe rework the illustration a little.
+* TODO [L1505]: Cite CLRS for Bellman–Ford (I could've sworn I had).
+* NOTE/TODO [Thm. 5.5, 5.6]: I'm not really sure how to write these out in
+  words because to me they're just conditions that happen to make soundness
+  work. Sacchini didn't really explain it either so it's not my fault.
+* TODO [L1943]: Either mention there's no past formalization on the interaction
+  between size inference and elaboration (implementation of Agda is not a
+  formalization) or remove the remark entirely.
+* TODO [For William]: "The difference between elaboration and inference is that
+  elaboration translates to a different (core) language while inference fills
+  in implicit parts of an existing program, but both of them could equally make
+  use of heuristics or not.
+* REBUT/TODO: Size irrelevance is an additional, orthogonal feature that could
+  be added on top. The same problems noted by Abel et al. (2017) are bound to
+  arise in our sized types as well.
 
 ## Referee 3
 
