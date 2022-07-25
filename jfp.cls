@@ -1106,6 +1106,7 @@
       \global\advance\JFP@linecount by \@ne}}}
 
 \def\JFP@linecountL{%
+  % comment next line out to remove line numbers
   \JFP@mk@linecount%\newsavebox{\JFP@linecount@bx}
   \begin{picture}(0,0)%\newlength\JFP@linecount@bxht
     \put(-35,-27){\usebox{\JFP@linecount@bx}}%\newcount\JFP@linecount

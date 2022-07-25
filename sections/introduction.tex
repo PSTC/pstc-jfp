@@ -16,12 +16,12 @@ Fixpoint plus n m : nat :=
 CoFixpoint const {A} a : Stream A := Cons a (const a).
 \end{minted}
 
-In the recursive call to \coqinline{plus}, the first argument \coqinline{p} is structurally smaller than \coqinline{S p}, which is the form of the original first argument \coqinline{n}. Similarly, in \coqinline{const}, the constructor \coqinline{Cons} is applied to the corecursive call.
+In the recursive call to \coqinline{plus}, the first argument \coqinline{p} is structurally smaller than \coqinline{S p}, which is the shape of the original first argument \coqinline{n}. Similarly, in \coqinline{const}, the constructor \coqinline{Cons} is applied to the corecursive call.
 
 The actual implementation of the guard predicate extends beyond the \guardedbydestructors and \guardedbyconstructors conditions
 to accept a larger set of terminating and productive functions.
 In particular, function calls will be unfolded (\ie inlined) in the bodies of \cofixpoints
-and reduction will be performed as needed before checking the guard predicate.
+and reduction will be performed if needed before checking the guard predicate.
 This has a few disadvantages:
 firstly, the bodies of these functions are required, which hinders modular design;
 and secondly, as aptly summarized by \citet{coqterm},
@@ -51,14 +51,14 @@ Fixpoint div n m : nat :=
 \end{minted}
 
 If we replace \coqinline{| O, _ => n} with \coqinline{| O, _ => O} in \coqinline{minus}, the behaviour doesn't change, but \coqinline{O} is not a structurally smaller term of \coqinline{n} in the recursive call to \coqinline{div}, so \coqinline{div} no longer satisfies the guard predicate.
-The acceptance of \coqinline{div} then depends a separate definition independent of \coqinline{div}.
+The acceptance of \coqinline{div} then depends on a separate definition independent of \coqinline{div}.
 While the difference is easy to spot here, for larger programs or programs that use many imported library definitions,
 this behaviour can make debugging much more difficult.
 Furthermore, the guard predicate is unaware of the obvious fact that \coqinline{minus} never returns a \coqinline{nat} larger than its first argument, which the user would have to prove in order for \coqinline{div} to be accepted with our alternate definition of \coqinline{minus}.
 
 In short, the extended syntactic guard condition long used by Coq is anti-modular, anti-compositional, has poor performance characteristics, and requires the programmer to either avoid certain algorithms or pay a large cost in proof burden.
 
-\paragraph*{} This situation is particularly unfortunate, as there exists a non-syntactic termimation- and productivity-checking method that overcomes these issues,
+\paragraph*{} This situation is particularly unfortunate, as there exists a non-syntactic termination- and productivity-checking method that overcomes these issues,
 whose theory is nearly as old as the guard condition itself: sized types.
 
 In essence, the \coinductive type of a construction is annotated with a size annotation, which provides some information about the size of the construction.
@@ -149,7 +149,7 @@ the performance sacrifice required for compatibility makes our approach seem wil
 \paragraph*{} The remainder of this paper is organized as follows.
 We begin in \autoref{sec:overview} with a high-level overview of the design of \lang as compared to past work and Coq,
 and the consequences resulting from these design decisions.
-We formalize the calculus \lang in \autoref{sec:typing},
+We formalize \lang in \autoref{sec:typing},
 and discuss the desired metatheoretical properties in \autoref{sec:metatheory}.
 In \autoref{sec:algorithm}, we present the size inference algorithm from unsized terms to sized \lang terms,
 and evaluate an implementation in our fork in \autoref{sec:impl}.

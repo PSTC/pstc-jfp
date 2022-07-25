@@ -22,6 +22,7 @@ ENTRY
     volume
     year
     url
+    doi
   }
   {}
   { label extra.label sort.label short.list }
@@ -424,10 +425,16 @@ FUNCTION {format.key}
 FUNCTION {format.url}
 { url empty$
     { "" }
-    { new.block "Available at: \url{" url * "}" * }
+    { new.block "\textsc{url}:\url{" url * "}" * }
   if$
 }
 
+FUNCTION {format.doi}
+{ doi empty$
+    { "" }
+    { new.block "\doi{" doi * "}" * }
+  if$
+}
 
 FUNCTION {format.authors}
 { author empty$
@@ -868,6 +875,11 @@ FUNCTION {article}
     }
   if$
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -901,6 +913,11 @@ FUNCTION {book}
   if$
   format.edition output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -915,6 +932,11 @@ FUNCTION {booklet}
   howpublished output
   address output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -957,6 +979,11 @@ FUNCTION {inbook}
  format.editors.inbook "editors" output.check
  publisher "publisher" output.check
  note output
+ format.doi output
+ doi missing$
+ { format.url output }
+ 'skip$
+ if$
  fin.entry
 }
 
@@ -985,6 +1012,11 @@ FUNCTION {incollection}
     }
   if$
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1008,6 +1040,11 @@ FUNCTION {inproceedings}
     }
   if$
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1025,6 +1062,11 @@ FUNCTION {manual}
   address output
   format.edition output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1040,6 +1082,11 @@ FUNCTION {mastersthesis}
   school "school" output.check
   address output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1053,6 +1100,11 @@ FUNCTION {misc}
   new.sentence
   howpublished output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1068,6 +1120,11 @@ FUNCTION {phdthesis}
   school "school" output.check
   address output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1084,6 +1141,11 @@ FUNCTION {proceedings}
   organization output
   publisher output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1099,6 +1161,11 @@ FUNCTION {techreport}
   institution "institution" output.check
   address output
   note output
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 
@@ -1111,6 +1178,11 @@ FUNCTION {unpublished}
   format.title "title" output.check
   new.sentence
   note "note" output.check
+  format.doi output
+  doi missing$
+  { format.url output }
+  'skip$
+  if$
   fin.entry
 }
 

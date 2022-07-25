@@ -28,7 +28,7 @@ while also inferring all the size annotations.
 However, Coq's core calculus extends quite a bit beyond merely CIC,
 and the presentation of various analogous features differ subtly but nontrivially.
 The goal of \lang is to bring sized types in CIC a few steps closer to Coq,
-while keeping with the original philosphy.
+while keeping with the original philosophy.
 In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is
 viable---for Coq's codebase itself is old, large, and intricate---we
 must also discard some features from past work.
@@ -118,7 +118,7 @@ because $\Nat^s \leq \Nat^{\hat{s}}$ holds,
 which in turn holds because $\hat{s}$ is a larger size than $s$.
 Similarly, a negative polarity reverses the subtyping relation,
 while an invariant polarity induces no subtyping relation from the parameters at all.
-It's not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
+It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
 so again in the name of backward compatibility, \lang doesn't have these annotations,
 and treats all parameters as invariant.
 This aligns with Coq's current behaviour, where \coqinline{list Set} is not a subtype of \coqinline{list Type}

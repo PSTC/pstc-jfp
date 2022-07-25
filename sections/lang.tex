@@ -78,7 +78,7 @@ Position annotations mark the size annotation locations in the type of the \cofi
 This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\hat{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\hat{\upsilon}}$, for instance.
 In general, if a \cofixpoint has a position annotation on an argument type and the return type,
 we say that it is \textit{size preserving} in that argument.
-Inuitively, $f$ is size preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
+Intuitively, $f$ is size preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
 
 \subsubsection{Environments and Signatures}
 
@@ -125,7 +125,7 @@ As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \righ
       \assm{\VCons&}{(\assm{n}{\Nat}) \to A \to \app{\Vector}{A}{(\app{\Succ}{n}))}}}.
 \end{align*}
 
-As mentioned in the previous section, unlike \CIChat and \CIChatminus, our \coinductive definitions do not have parameter polarity annotations.
+As mentioned in the previous section, unlike \CIChat and \CIChatminus, our \coinductive definitions don't have parameter polarity annotations.
 In those languages, for $\Vector$'s parameter for instance, they might write $(\assm{A^+}{\Type{}})$, giving it positive polarity, so that 
 $\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\hat{s}}}{n}$.
 
@@ -168,7 +168,7 @@ Therefore, the ``free size variables'' of the annotated variable are those in $\
 and given some size substitution $\rho$,
 $\rho x^{\set{\vec{\upsilon \mapsto s}}} = x^{\set{\vec{\upsilon \mapsto \rho s}}}$.
 Meanwhile, we treat all $\vec{\upsilon}$ in the definition as \emph{bound},
-so that $\rho(\Gamma_1 \defn{x}{t}{e} \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
+so that $\rho(\Gamma_1 (\defn{x}{t}{e}) \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
 skipping over all definitions, and similarly for global environments.
 
 Finally, $\new{\ph \equiv \ph}$ is syntactic equality up to $\alpha$-equivalence (renaming),
@@ -234,7 +234,7 @@ Additionally, we use $\any$ to omit irrelevant constructions for readability.
 The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
 Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
-Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv} \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
+Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
 Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction,
 and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term.
 

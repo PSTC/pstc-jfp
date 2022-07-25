@@ -58,7 +58,7 @@ Constraints of the form $\infty \sqsubseteq \hat{\upsilon}^n$ correspond to an e
 \end{definition}
 
 Given a constraint graph and some set of size variables $V$,
-it's useful to know which variables in the graph can be reached from $V$ or will reach $V$.
+it is useful to know which variables in the graph can be reached from $V$ or will reach $V$.
 
 \begin{definition}[Transitive closures]~\\[-4ex]
 \begin{itemize}
@@ -97,7 +97,7 @@ They all use the symbol $\rightsquigarrow$, with inputs on the left and outputs 
   that ensures that the type of $e$ subtypes $t$.
   \item $C, \gg \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$ (inference)
   takes a set of constraints $C$, environments $\Gamma_G, \Gamma$,
-  and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a set of constraints $C$.
+  and a bare term $e^\circ$, and produces the annotated term $e$, its annotated type $t$, and a set of constraints $C'$.
   \item $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ (well-formedness) takes a global environment with bare declarations and produces a global environment where each declaration has been properly annotated via size inference.
 \end{itemize}
 
@@ -130,7 +130,7 @@ We define a number of additional metafunctions to translate the side conditions 
 They are introduced as needed.
 
 \paragraph*{} The entry point of the algorithm is the well-formedness judgement,
-which take and produce global environments representing whole programs.
+which takes and produces global environments representing whole programs.
 Its rules are defined in \autoref{fig:algorithm-wf} and use the mutually-defined rules of the checking and inference judgements,
 defined in \autoref{fig:algorithm-check}, \autoref{fig:algorithm-core}, and \autoref{fig:algorithm-coind} respectively.
 We begin with the latter two first in \autoref{sec:algorithm:infer},
@@ -141,9 +141,13 @@ Finally, we make our way up to soundness and completeness with respect to the ty
 \subsection{Inference Algorithm}\label{sec:algorithm:infer}
 
 Size inference begins with either a bare term or a position term. For the bare terms, even type annotations of \cofixpoints are bare, \ie
-  $$e^\circ \Coloneqq \dots
-    \mid \fix{m}{f^n}{t^\circ}{e^\circ}
-    \mid \cofix{m}{f}{t^\circ}{e^\circ}$$
+
+\begin{displaymath}
+e^\circ \Coloneqq \dots
+  \mid \fix{m}{f^n}{t^\circ}{e^\circ}
+  \mid \cofix{m}{f}{t^\circ}{e^\circ}
+\end{displaymath}
+
 Notice that fixpoints still have the indices $n$ of the recursive arguments, whereas surface Coq programs generally have no indices.
 To produce these indices, we do what Coq currently does: brute-force search.
 We try the algorithm on every combination of indices from left to right.
@@ -153,10 +157,10 @@ and this position term itself is passed into the algorithm.
 Because of the way the Coq kernel is structured, this may not always be possible in the implementation.
 We discuss this and other implementational issues in the next section.
 
-\subsubsection{Checking}
-
 \input{figures/algorithm-check.tex}
 \input{figures/algorithm-subtyping.tex}
+
+\subsubsection{Checking}
 
 \paragraph*{} \refrule{a-check} in \autoref{fig:algorithm-check} is the checking component of the algorithm.
 It uses algorithmic subtyping in \autoref{fig:algorithm-subtyping} to ensure that the inferred type of the term is a subtype of given type.
@@ -268,7 +272,7 @@ It takes four arguments:
   \item The size variable $\tau$ of the annotation on the type of the recursive argument (for fixpoints) or on the return type (for cofixpoints).
     While the return type (for fixpoints) or the types of other arguments (for cofixpoints) may optionally be marked as size preserving,
     each \cofixpoint type requires at \textit{least} $\tau$ for the primary \corecursive type.
-  \item A set of size variables $V^*$ that must be set to some non-infinite size.
+  \item A set of size variables $V^*$ that must be set to some noninfinite size.
     These are the size annotations in the \cofixpoint type that have position size variables.
     Note that $\tau \in V^*$.
   \item A set of size variables $V^\neq$ that must be set to $\infty$.
@@ -361,7 +365,7 @@ The total $\solve$ algorithm, given some constraint graph $C$, is then as follow
   \item For every connected component $C_c$ of $C$, add mappings $\solvecomp{C_c}$ to $\rho$.
 \end{enumerate}
 
-Since dividing the constraint graph into connected components partitions the size variables and constraints into disjoint sets,
+Since dividing the constraint graph into connected components will partition the size variables and constraints into disjoint sets,
 the time complexity of all executions of \solvecomp is $O(\norm{V}\norm{C})$.
 This is also the time complexity of negative-cycle finding.
 These two dominate the time complexity of finding the connected components,
@@ -465,7 +469,7 @@ Suppose we have the following:
 Then the following hold:
 \begin{enumerate}
   \item If $C, \gg \vdash e^\circ \Leftarrow t \rightsquigarrow C', e$,
-  then $\forall \rho' \vDash C \cup C'$,
+  then $\forall \rho \vDash C \cup C'$,
   we have $\Gamma_G, \rho\Gamma \vdash \rho e : \rho t$.
   \item If $C, \gg \vdash e^\circ \rightsquigarrow C', e \Rightarrow t$,
   then $\forall \rho \vDash C \cup C'$,

@@ -35,7 +35,7 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
 \subsection{Subject Reduction}
 \label{sec:metatheory:sub-red}
 
-Suject reduction does not hold in \lang or in Coq due to the way coinductives are presented.
+Subject reduction does not hold in \lang or in Coq due to the way coinductives are presented.
 This is a well-known problem, discussed previously in a sized-types setting by \citet{cc-hat-omega},
 on which our presentation of coinductives is based,
 as well as by the Coq developers%
@@ -135,7 +135,7 @@ There are several possible solutions, all threats to backward compatibility.
 \CIChat's solution is to require that constructors be fully-applied and that their parameters be bare terms,
 so that we are forced to write $\app{\MkBox}{\nat}{\Zero}$.
 The problem with this is that Coq treats constructors essentially like functions,
-and assuring that they are fully applied with bare parameters would require either reworking how they are represented internally
+and ensuring that they are fully applied with bare parameters would require either reworking how they are represented internally
 or adding an intermediate step to elaborate partially-applied constructors into functions whose bodies are fully-applied constructors.
 The other solution, as mentioned, is to add polarities back in, so that $\Box$ with positive polarity in its parameter yields the subtyping relation $\app{\Box^\infty}{\nat^{\hat{\upsilon}}} \leq \app{\Box^\infty}{\nat^{\hat{\hat{\upsilon}}}}$.
 
@@ -174,7 +174,7 @@ Following strong normalization and logical consistency for \CIChatminus and \CCh
 we conjecture that they hold for \lang as well.
 We present some details of a model constructed in our a proof attempt;
 unfortunately, the model requires changes to \lang that are backward
-incompatible with Coq, so we do not pursue it further.
+incompatible with Coq, so we don't pursue it further.
 We discuss from where these backward-incompatible changes arise for posterity.
 
 \begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
@@ -274,7 +274,7 @@ its set-theoretical interpretation is the set $\set{\emptyset, \set{\emptyset}}$
 and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabitated propositions)
 or $\emptyset$ (representing false, uninhabited propositions).
 
-Impredicativity of function types are encoded using a \emph{trace encoding} \citep{aczel-trace}.
+Impredicativity of function types is encoded using a \emph{trace encoding} \citep{aczel-trace}.
 First, the \emph{trace} of a (set-theoretical) function $f : A \to B$ is defined as
 $$\trace(f) = \set{(a, b) \mid a \in A, b \in f(a)}.$$
 Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
@@ -324,14 +324,14 @@ large to be proper sets.
 
 In short, while we conjecture that size irrelevance holds in \lang since size
 expressions are second class and size variables are implicitly quantified, it is
-no longer true in the model, where sizes are modeled as ordinals and size
+no longer true in the model, where sizes are modelled as ordinals and size
 variables must be explicitly quantified.
 As a result, we follow \citet{barras-thesis} in creating two typing modes in
 \langAnother (normal and size irrelevant) and two function spaces (normal
 and sized) which allow proving that functions respect sizes in necessary
 situations in the model.
 The sized function space and size irrelevant mode enforce that the size of the
-function's domain is irrelevant during typing, and this is use to type check
+function's domain is irrelevant during typing, and this is used to type check
 fixpoints.
 
 In detail, the problem arises as follows.
@@ -343,7 +343,7 @@ $\subst{e'}{f}{\psi_1}$ and $\subst{e'}{f}{\psi_2}$ are indistinguishable.
 However, this cannot be shown with the current typing rules,
 which is why \emph{size irrelevance} is introduced.
 
-Formally, the set-theoretic model interpret terms and types as their natural
+Formally, the set-theoretic model interprets terms and types as their natural
 set-theoretic counterparts and size expressions as ordinals;
 we call these their \emph{valuations}.
 Given some environment $\Gamma$ and a term $e$ that is well typed under
