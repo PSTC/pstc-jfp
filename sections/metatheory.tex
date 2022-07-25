@@ -190,6 +190,7 @@ We discuss from where these backward-incompatible changes arise for posterity.
   %
 \end{conjecture}
 
+\iffalse
 Note that strong normalization is a stricter requirement than Coq, which is only \emph{weakly} normalizing:
 every well-typed term has \emph{some} finite reduction sequence.
 This relaxation enables more programs to pass the guard predicates while still being consistent.
@@ -200,6 +201,7 @@ but the second is not.
 Fixpoint f (u: unit): unit := let x := f u in tt.
 Fail Fixpoint f (u: unit): False := let x := f u in x.
 \end{minted}
+\fi
 
 \subsubsection{Proof Attempt and Apparent Requirements for Set-Theoretic Model}
 
@@ -250,9 +252,8 @@ The literature suggests that future work could prove \langAnother and \lang
 equivalent to derive that strong normalization (and therefore logical
 consistency) of \langAnother implies that they hold in \lang.
 More specifically, \cite{conversion} show that a typed and an untyped convertibility in a Martin--L\"of type theory (MLTT) imply each other;
-and \citet{w-types, polynomial-functors-w} show that W types in an extensional MLTT
-can encode well-formed inductive types, including nested inductive types
-(while \citet{hofmann} shows that extensional MLTT is a conservative extension of intensional MLTT).
+and \citet{whynotW, polynomial-functors-w} show that W types in MLTT with propositional equality
+can encode well-formed inductive types, including nested inductive types.
 
 We leave this line of inquiry as future work\footnote{In fact, ongoing work by
   the second author, Yufeng Li, in collaboration with Bruno Barras has reportedly

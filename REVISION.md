@@ -8,28 +8,31 @@ The following are notes on non-typo comments.
 
 ## Referee 1
 
-* TODO [L720]: Make a note that this presentation of case expressions only
+* ~TODO~ [L720]: Make a note that this presentation of case expressions only
   matches Coq up to v8.12, since the kernel representation was changed for
   v8.13 (but sized types is implemented on top of v8.12 anyway).
   - https://github.com/coq/ceps/blob/master/text/inductive-branch-predicate-representation-and-reduction.md
   - https://github.com/coq/coq/pull/13563
-* TODO [L916]: Remove note on weak normalization in Coq since it will no longer
+* ~TODO~ [L916]: Remove note on weak normalization in Coq since it will no longer
   hold in v8.16 and it's irrelevant to the discussion anyway.
   - https://github.com/coq/coq/pull/15434
-* TODO [L963]: Change citation of Abbot et al. (2004) to Jasper Hughunin's
+* ~TODO~ [L963]: Change citation of Abbot et al. (2004) to Jasper Hughunin's
   Why Not W? paper showing inductives can be encoded with W + equality.
-* TODO [L1786]: Remove comment about state monad.
+* ~TODO~ [L1786]: Remove comment about state monad.
 
 ## Referee 2
 
 * NOTE: Is the evaluation really the part an arbitrary reader is most
   interested in? I dunno. I think it depends on the reader really.
-* TODO [Discuss with William]: "Another reason why the goal of backwards
+* REBUT [Discuss with William]: "Another reason why the goal of backwards
   compatibility feels a little arbitrary is that it is heavily tied to the
   current capabilities of Coq's termination checker, which might change in the
   future. ... Hence it would be better to instead be more explicit about
   precisely what kind of definitions you want to be accepted by your algorithm,
-  so it is not as coupled to the current state of the Coq implementation.
+  so it is not as coupled to the current state of the Coq implementation."
+  The purpose is to see whether we *can* be backwards compatible with Coq,
+  so the definitions we want to be accepted are those that Coq accepts.
+  (Mention if we can give this up then we can resolve some performance issues.)
 * TODO [Sec. 6.2]: Explicitly mention that the implementation is *not*
   entirely backwards compatible, since a number of libraries no longer compile
   with sized typing turned on, due to complications with elaboration
@@ -56,7 +59,10 @@ The following are notes on non-typo comments.
 * TODO [For William]: "The difference between elaboration and inference is that
   elaboration translates to a different (core) language while inference fills
   in implicit parts of an existing program, but both of them could equally make
-  use of heuristics or not.
+  use of heuristics or not."
+  Rephrase: Goal was full inference; can instead make it partial inference with
+  implicits filled in by elaborator; have an incomplete inference algorithm
+  that gives up for better performance.
 * REBUT/TODO: Size irrelevance is an additional, orthogonal feature that could
   be added on top. The same problems noted by Abel et al. (2017) are bound to
   arise in our sized types as well.
