@@ -133,7 +133,8 @@ As is standard, the well-formedness of \coinductive definitions depends not only
 We reproduce the \textit{strict positivity} conditions in \autoref{sec:wf-ind}, and refer the reader to clauses I1--I9 in \citet{cic-hat-minus}, clauses 1--7 in \mbox{\citet{cic-hat}}, and the Coq Manual~\citep{coq} for further details.
 As \lang doesn't support nested \coinductives,
 we don't need the corresponding notion of \textit{nested positivity}.
-Furthermore, we assume that our fixed, implicit signature is well-formed.
+Furthermore, we assume that our fixed, implicit signature is well-formed,
+or that each definition in the signature is well-formed.
 
 \subsection{Reduction and Convertibility}
 
@@ -231,7 +232,7 @@ Additionally, we use $\any$ to omit irrelevant constructions for readability.
 
 \input{figures/typing.tex}
 
-The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
+The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, \citep{PTS} and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
 Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
 Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.

@@ -283,8 +283,9 @@ The key idea of the algorithm is that if there is a negative cycle in $C$,
 then for any size variable $\upsilon$ in the cycle,
 supposing that the total weight going once around the cycle is $-n$,
 by transitivity we have the subsizing relation $\hat{\upsilon}^{n} \sqsubseteq \upsilon$,
-This relation can only hold if $\upsilon = \infty$,
-since $\succ{\infty} \sqsubseteq \infty$.
+This relation can be satisfied by $\upsilon = \infty$,
+since $\succ{\infty} \sqsubseteq \infty$,
+while it cannot hold for any finite size.
 The algorithm proceeds as follows:
 
 \begin{enumerate}
@@ -302,7 +303,7 @@ The algorithm proceeds as follows:
 \end{enumerate}
 
 Disregarding closure operations and set operations like intersection and difference, the time complexity of a single pass is $O(\norm{V}\norm{C})$, where $V$ is the set of size variables appearing in $C$.
-This comes from the negative-cycle finding in (\ref{item:reccheck:neg-cycles}) using, for instance, the Bellman--Ford algorithm.
+This comes from the negative-cycle finding in (\ref{item:reccheck:neg-cycles}) using, for instance, the Bellman--Ford algorithm~\citep{BellmanFord}.
 
 \input{figures/algorithm-wf.tex}
 
@@ -314,8 +315,8 @@ Then we need to perform size inference on each declaration of $\Gamma_G$ in orde
 as given by \autoref{fig:algorithm-wf}.
 
 In \refrule{a-global-assum}, from a bare type $t^\circ$, inference gets us back
-a constraint set $C_1$, the annotated type $t$, and \emph{its} type $\varw$,
-such that $\Gamma_G, \mt \vdash t : w$ when the constraints in $C_1$ hold.
+a constraint set $C_1$, the annotated type $t$, and \emph{its} type $U$,
+such that $\Gamma_G, \mt \vdash t : U$ when the constraints in $C_1$ hold.
 Similarly, \refrule{a-global-def} gets back from inference a term $e$,
 its type $t$, and a constraint sets $C_1, C_2$,
 with $\Gamma_G, \mt \vdash e : t$ when the constraints in $C_1 \cup C_2$ hold.
@@ -352,7 +353,7 @@ Given a connected component $C_c$ with no negative cycles or an $\infty$ vertex,
 Again, the time complexity of a single pass is $O(\norm{V}\norm{C_c})$ (where $V$ is the set of size variables in $C_c$)
 due to
 finding the single-source shortest paths in (\ref{item:solvecomp:shortest-path}) using,
-for instance, the Bellman--Ford algorithm.
+for instance, the Bellman--Ford algorithm~\citep{BellmanFord}.
 (Note that although there are no negative cycles, there are still negative \emph{weights}, so we cannot use, for example, Dijkstra's algorithm.)
 The total $\solve$ algorithm, given some constraint graph $C$, is then as follows:
 
@@ -386,7 +387,7 @@ Dually, completeness says that if you have a solution to the original constraint
 then it must also be a solution to the constraint set returned by \RecCheck.
 
 \begin{theorem}[Soundness of \RecCheck (SRC)]
-If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDash C$,
+If $\RecCheck(C', \tau, V^*, V^\neq) = C$, then for every $\rho$ such that $\rho \vDash C$,
 given a fresh size variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
 \begin{enumerate}
   \item $\rho' \vDash C'$;
@@ -417,7 +418,7 @@ There are then two properties we want to ensure.
 \begin{enumerate}
   \item \RecCheckLoop terminates on all inputs.
   \item If $\RecCheckLoop{C', \Gamma, \vec{\tau_k}, \vec{t_k}, \vec{e_k}} = C$ with an initial position variable set $\mathcal{V}^*$,
-  then for every $i \in \vec{k}$, $\RecCheck{C', \tau_i, \PV(t_i), \SV(\Gamma, t_i, e_i) \setminus \PV(t_i)} \subseteq C$ with a final position variable set $\mathcal{V}^*_\subseteq \subseteq \mathcal{V}^*$.
+  then for every $i \in \vec{k}$, $\RecCheck{C', \tau_i, \PV(t_i), \SV(\Gamma, t_i, e_i) \setminus \PV(t_i)} \subseteq C$ with some final position variable set $\mathcal{V}^*_\subseteq \subseteq \mathcal{V}^*$.
 \end{enumerate}
 \end{theorem}
 
@@ -464,7 +465,7 @@ Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
 Suppose we have the following:
 \begin{enumerate}[label=\alph*)]
   \item $\forall \rho \vDash C, \WF{\Gamma_G, \rho \Gamma}$.
-  \item If $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
+  \item If $\exists e, t$ such that $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}
@@ -481,14 +482,14 @@ Then the following hold:
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Gamma$ a local environment, $C$ a constraint set, and $\rho \vDash C$ a solution to the constraint set.
 \begin{enumerate}
   \item If $\Gamma_G, \rho\Gamma \vdash e : \rho t$,
-    then there exist $C', \rho'$ such that:
+    then there exist $C', \rho', e'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and
       \item $C, \Gamma_G, \Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
     \end{itemize}
   \item If $\Gamma_G, \rho\Gamma \vdash e : t$,
-    then there exist $C, \rho'$ such that:
+    then there exist $C, \rho', t'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and

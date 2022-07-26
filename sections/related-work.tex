@@ -67,6 +67,9 @@ which are also implemented in MiniAgda.
 
 \cite{nbe} prove normalization of a higher-order sized dependent type theory with naturals, but without bounded size quantification.
 To our knowledge, this is the only formalization of higher-order sized dependent types in the literature.
+Additionally, they also add a notion of \emph{size irrelevance} so that more terms are convertible when their sizes don't matter;
+this is an orthogonal feature that can be added to \lang as well,
+since the issues size irrelevance aims to resolve can also arise here.
 
 Sized types with higher-order bounded size quantification are implemented in Agda%
 \footnote{For Agda's documentation on sized types, see \url{https://agda.readthedocs.io/en/latest/language/sized-types.html}.};

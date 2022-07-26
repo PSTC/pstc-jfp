@@ -47,7 +47,7 @@ This allows for strong normalization of cofixpoints in much the same way restric
 One way this can break subject reduction is by making the type of a case expression not be convertible before and after the cofixpoint reduction.
 As a concrete example, consider the following coinductive definition for conaturals.
 \begin{displaymath}
-  \seq{\assm{\Conat}{\Type{}}} \coloneqq {\seq{\assm{\Succ}{\Conat \to \Conat}}}
+  \seq{\assm{\Conat}{\Type{}}} \coloneqq {\seq{\assm{\Zero}{\Conat}, \assm{\Succ}{\Conat \to \Conat}}}
 \end{displaymath}
 For some motive $P$ and branch $e$, we have the following $\nu$-reduction.
 \begin{align*}
@@ -179,8 +179,7 @@ We discuss from where these backward-incompatible changes arise for posterity.
 
 \begin{conjecture}[Strong Normalization]\label{thm:metatheory:sn}
   %
-  If $\gg \vdash e : t$ then $e$ contains no infinite
-  reduction sequences.
+  If $\gg \vdash e : t$ then there are no infinite reduction sequences starting from $e$.
   %
 \end{conjecture}
 
