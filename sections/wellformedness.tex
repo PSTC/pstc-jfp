@@ -13,7 +13,7 @@ Note that although we prove subject reduction for \lang without nested inductive
     \item $t \conv \prod{x}{u}{v}$ and $x \notin \FV(u)$ and $x \POS v$
   \end{itemize}
 
-  If nested inductive types are permitted, then $x \POS t$ may hold if the following also holds:
+  If nested \coinductive types are permitted, then $x \POS t$ may hold if the following also holds:
 
   \begin{itemize}
     \item $t \conv I_k^\infty ~ \vec{p} ~ \vec{a}$ where
@@ -39,6 +39,8 @@ Note that although we prove subject reduction for \lang without nested inductive
 
   In short, $x \nPOS_I t$ if $t \conv \prodctx{\Delta}{\app{I}{\vec{p}}{\vec{a}}}$ and $x \POS \Delta$ and $x \notin \FV(\vec{a})$.
 \end{definition}
+
+Note that if nested \coinductive types are permitted, then strict and nested positivity are mutually defined.
 
 \begin{definition}[Constructor Type]
   The term $t$ is a constructor type for $I$ when:

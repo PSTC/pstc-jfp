@@ -77,7 +77,7 @@ The following are notes on non-typo comments.
   don't remember full justification. If it's in the paper move it up to where
   these annotations are first introduced; otherwise add them in.
   (Maybe see https://github.com/ionathanch/coq/blob/dev/kernel/sized.mli)
-* REBUT/TODO: (Co)inductive definitions are in a signature separate from the
+* ~~TODO~~: (Co)inductive definitions are in a signature separate from the
   global environment for simplicity so that we can ignore checking their
   well-formedness, which is an orthogonal matter. We employ many other
   simplifications, such as ignoring universe polymorphism and cumulativity
@@ -102,16 +102,14 @@ The following are notes on non-typo comments.
   specifically the bare term obtained from erasure.
 * ~~TODO~~ [L1487]: Rework wording of ν = ∞ justification (and fix typo)
 * ~~TODO~~ [Fig. 19]: \varw should instead be U.
-* TODO [Sec. 5.5]: Introduce ⌊s⌋ notation.
+* ~~TODO~~ [Sec. 5.5]: Introduce ⌊s⌋ notation.
 * ~~TODO~~ [Thm. 5.5]: "...+then+ for every ρ..."
 * ~~TODO~~ [Thm. 5.7]: "...with -a- +some+ final position variable set 𝒱^*_⊆..."
 * NOTE [Lem. 5.9]: I have no idea what this comment means.
 * ~~TODO~~ [Thm. 5.12]: Quantify over Γ₁, Γ₂, t, e explicitly in the right places.
 * ~~TODO~~ [Cnj. 5.13]: Quantify over e', t' explicitly.
 * NOTE [Thm. 5.15]: Good question. If |Γ| ⇝ Γ', shouldn't Γ' ≡ |Γ|?
-* REBUT: The caption for Fig. 22 refers to the explosion in size variables
-  and the explosion in elapsed time.
+* ~~TODO~~: Clarify caption for Fig. 22 to refer to the explosion in both size
+  variables and in elapsed time.
 * ~~TODO~~ [L2015]: Add remark on size irrelevance in Abel et al. (2017).
-* NOTE/TODO: Should Def. 1.1 and 1.2 be combined as a mutual definition?
-  Strict positivity only depends on nested positivity if nested inductives are
-  actually allowed, which we don't, so in our case it's not actually mutual.
+* ~~TODO~~: Add remark on mutualality of Def. 1.1 and 1.2.

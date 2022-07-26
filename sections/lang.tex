@@ -96,7 +96,8 @@ to represent the presence of some declaration binding $x$, the given assumption,
 and similarly for $\Gamma_G$ and $\Delta$.
 
 Signatures consist of mutual \coinductive definitions.
-For simplicity, throughout the judgements in this paper, we assume some fixed, implicit signature $\Sigma$.
+For simplicity, throughout the judgements in this paper, we assume some fixed, implicit signature $\Sigma$ separate from the global environment,
+so that well-formedness of environments can be defined separately from that of \coinductive definitions.
 Global environments and signatures should be easily extendible to an interleaving of declarations and \coinductive definitions,
 which would be more representative of a real program.
 A mutual \coinductive definition
@@ -173,6 +174,7 @@ so that $\rho(\Gamma_1 (\defn{x}{t}{e}) \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e
 skipping over all definitions, and similarly for global environments.
 
 Finally, $\new{\ph \equiv \ph}$ is syntactic equality up to $\alpha$-equivalence (renaming),
+the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term,
 and $\new{\norm{\ph}}$ yields the cardinality of its argument (\eg sequence length, set size, \etc).
 
 We define reduction ($\reduce$) as the congruent closure of the reductions,
@@ -236,8 +238,7 @@ The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, w
 Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
 Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
-Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction,
-and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term.
+Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction.
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.
 If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
