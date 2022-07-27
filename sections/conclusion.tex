@@ -35,12 +35,12 @@ If we make size quantification, abstraction, and application explicit,
 then there won't be any more size variables involved than are strictly necessary.
 To ease the tedious burden of all the extra annotations from the user,
 sizes that can be deduced could be marked as implicit and filled in by the elaborator, as is done for terms.
-In contrast to inference, elaboration merely deduces information already available,
-and fails as soon as more information is required,
-rather than trying to heuristically fill in the gaps itself.
+The performance would likely still be better than full inference due to the smaller number of size variables,
+and because it would be reasonable to expect the elaborator to also fail due to a lack of information rather than only on ill-typed terms.
 Another benefit of explicit sized types is that it can easily be extended to higher-order size quantification.
 This appears to be the best future direction for sized types;
-after all, Agda is still to date the only practical proof assistant with sized types.
+after all, Agda, which uses explicit sizes,
+is still to date the only practical proof assistant with sized types.
 
 So is sized typing for Coq practical?
 Our answer is that it might be---but only if we allow ourselves to ask users to put in a little work as well.

@@ -33,22 +33,24 @@ The following are notes on non-typo comments.
   The purpose is to see whether we *can* be backwards compatible with Coq,
   so the definitions we want to be accepted are those that Coq accepts.
   (Mention if we can give this up then we can resolve some performance issues.)
-* TODO [Sec. 6.2]: Explicitly mention that the implementation is *not*
+* REBUT [Sec. 6.2]: Explicitly mention that the implementation is *not*
   entirely backwards compatible, since a number of libraries no longer compile
   with sized typing turned on, due to complications with elaboration
   (c.f. Sec. 6.3) and other features (e.g. inlining), as well as a number of
   bugs (link to issues page in repository).
 * REBUT [Sec. 3.1.3]: Induction–induction and induction–recursion aren't
   supported since Coq doesn't support them either.
-* TODO [Sec 2.3]: Some further investigation into whether polarity annotations
-  can be inferred. At least cite someone else on the matter to quash concerns.
+* ~~TODO [Sec 2.3]: Some further investigation into whether polarity annotations
+  can be inferred. At least cite someone else on the matter to quash concerns.~~
+* REBUT [Sec 2.3]: Parameter polarity is something the programmer decides, not
+  something that can be inferred.
 * REBUT: The implementation doesn't do pos/neg checks explicitly. Instead, it
   generates constraints during algorithmic subtyping, and the various soundness
   and completeness lemmas say that it corresponds to pos/neg checks.
-* NOTE: "Can you give an example of where it is necessary to know that a
+* REBUT: "Can you give an example of where it is necessary to know that a
   function is size-preserving?" This is literally the `div` example????
-* TODO [L1189]: Fix definition of WHNF. (ngl I'm not sure what it should be)
-* TODO [Fig. 17]: Maybe rework the illustration a little.
+* ~~TODO~~ [L1189]: Fix definition of WHNF. (ngl I'm not sure what it should be)
+* ~~TODO~~ [Fig. 17]: Maybe rework the illustration a little.
 * ~~TODO~~ [L1505]: Cite Bellman for Bellman–Ford (I could've sworn I had).
 * NOTE/TODO [Thm. 5.5, 5.6]: I'm not really sure how to write these out in
   words because to me they're just conditions that happen to make soundness
@@ -56,7 +58,7 @@ The following are notes on non-typo comments.
 * ~~TODO~~ [L1943]: Either mention there's no past formalization on the interaction
   between size inference and elaboration (implementation of Agda is not a
   formalization) or remove the remark entirely.
-* TODO [For William]: "The difference between elaboration and inference is that
+* ~~TODO~~ [For William]: "The difference between elaboration and inference is that
   elaboration translates to a different (core) language while inference fills
   in implicit parts of an existing program, but both of them could equally make
   use of heuristics or not."

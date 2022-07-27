@@ -119,11 +119,8 @@ while $\erase{\ph}^*$ erases position size variables to position annotations and
 Finally, on the right-hand size of inference judgements, we use $e \Rightarrow^* t$ to mean $e \Rightarrow t' \wedge t = \whnf{t'}$.
 \whnf reduces a term until it is in \emph{weak head normal form} (WHNF),
 which allows us to syntactically match on and take apart the term.
-A term is in weak head normal form when no reduction rule can be applied to the entire term,
-when it has the form $\app{X}{\vec{a}}$ and $X$ is in WHNF,
-when it is a case expression whose target is in WHNF,
-or when it is an applied fixpoint whose arguments are in WHNF.
-For our purposes, the important thing is that we can tell whether or not a term is
+A term is in weak head normal form when its outer form is not a redex.
+For our purposes, the important thing is that we can tell whether a term is
 a universe, a function type, or an inductive type.
 
 We define a number of additional metafunctions to translate the side conditions from the typing rules into procedural form.
@@ -250,7 +247,7 @@ Therefore, instead of calling \RecCheck directly to check satisfiability,
 \RecCheckLoop iteratively calls \RecCheck and discards incorrect position annotations at each iteration.
 A simplification of the algorithm, not handling mutual \cofixpoints and removing single position annotations at a time,
 is illustrated in \autoref{fig:RecCheckLoop}.
-The size variable $\upsilon_i$ highlighted in grey corresponds to turning the position size variable into a regular size variable.
+The substitution from $\tau_i$ to $\upsilon_i$ represents turning the position size variable into a regular size variable.
 
 More precisely, \RecCheck either returns a new constraint set,
 or it fails with some set $V$ of position size variables that must be set to infinity
