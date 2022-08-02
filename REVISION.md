@@ -114,4 +114,4 @@ The following are notes on non-typo comments.
 * ~~TODO~~: Clarify caption for Fig. 22 to refer to the explosion in both size
   variables and in elapsed time.
 * ~~TODO~~ [L2015]: Add remark on size irrelevance in Abel et al. (2017).
-* ~~TODO~~: Add remark on mutualality of Def. 1.1 and 1.2.
+* ~~TODO~~: Add remark on mutuality of Def. 1.1 and 1.2.

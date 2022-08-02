@@ -70,6 +70,28 @@ Note that if nested \coinductive types are permitted, then strict and nested pos
   \end{enumerate}
 \end{definition}
 
+Well-formedness of a signature $\Sigma$ is then defined in terms of
+the well-formedness of its \coinductive definitions, given below.
+
+\begin{figure}[h]
+\centering
+\begin{flushleft}
+\fbox{$\WF{\Sigma}$}
+\end{flushleft}
+\vspace{-2\baselineskip}
+\begin{mathpar}
+\inferrule{~}{\WF{\mt}}
+\and
+\inferrule{
+  \WF{\Sigma} \\
+  \vec{p} = \dom{\Delta_p} \\
+  \defn{\langle \app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i} \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}}}} \textit{ is well formed}
+}{
+  \WF{\Sigma(\defn{\langle \app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i} \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}}}})}
+}
+\end{mathpar}
+\end{figure}
+
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
 %%% TeX-engine: default
