@@ -57,10 +57,15 @@ TODO
 > - p6, l249 Perhaps `Axiom` is clearer than `Parameter`?
 `Parameter` is a synonym for `Axiom` that nobody uses except people expecting to be able to instantiate it which they cannot.
 
+I picked `Parameter` based on its usage description in the Coq manual.
+Since it is rarely used, it has been changed to `Axiom` instead.
+
 TODO
 
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
+
+Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂.
 
 TODO
 
@@ -71,7 +76,7 @@ TODO
 
 > - Since Figure 22 does not report the times, is it necessary to show the `Time` commands? Is it to show how you timed?
 
-TODO
+Yes, the `Time` commands are to show how the times in Table 3 are obtained.
 
 ## New minor comments
 
@@ -79,23 +84,34 @@ TODO
 
 > - p2, l72 "e.t.c" et cætera is abbreviated as "etc." and should preferably not be at the start of a new line.
 
+The original document uses "e.t.c.",
+but this has been changed to _etc._ for consistency with the rest of the paper.
+
 TODO
 
 > - p3, l107 "annotated with a size annotation". "annotation" here is superfluous.
+
+The second "annotation" has been removed.
 
 TODO
 
 > - p4, l159 "in Sacchini (2011)" does not make sense, maybe replace "in" by "from"?
 
+"in" has been replaced by "from".
+
 TODO
 
 > - p6, footnote 2. If you go in this kind of details, why not also include existential variables? Both evars and section variables are not per se part of the kernel are they?
 
-TODO
+TODO: Did I do anything to section variables in the implementation?
 
 > - p7, l302 "This aligns with Coq’s current behaviour, where list Set is not a subtype of list Type despite the presence of cumulativity where Set is a subtype of Type.". Is this issue not partially solved by cumulative inductive types?
 
-TODO
+To my knowledge, cumulative inductive types are slightly different:
+`list` instantiated at universe level `i`, or
+`list@{i} : Type@{i} -> Type@{i}`,
+is a subtype of `list@{j} : Type@{j} -> Type@{j}` if `i < j`,
+but `list@{i} A ≤ list@{j} A` still only holds if the parameters are the same.
 
 > - p12, l532 "some size substitution ��, ����{��↦→��} =��{��↦→����}"
 This is difficult to parse, please separate the two inline maths by more than punctuation. For instance you could write "we have".
