@@ -26,7 +26,13 @@ TODO
 
 > I should clarify that I am not complaining about this, modelling the hierarchy using natural numbers is perfectly fine. My comment was more about `Set` which I wonder why you keep in this setting. As you say, these natural numbers only come up in models, not in the concrete syntax (even in the kernel) so keeping around `Set` is odd considering it is still in Coq mostly for backwards compatibility with impredicative `Set` (and for some oddities about universe minimisation) if I am not mistaken.
 
-TODO
+This is true; without needing to handle impredicative `Set`,
+it might as well have been called `Type₀` in our system,
+as do both pCuIC and MetaCoq.
+At the beginning of this project, I tried to minimize divergence from the kernel,
+and it's been kept in since.
+In any case, it seems to me that the only simplification this would offer
+is shortening the definitions of the relations in Fig. 9.
 
 > > ∞ is a size annotation of CIC^*, while ∘ is an annotation in the metalanguage, just like ⋆.
 
@@ -38,7 +44,7 @@ TODO
 
 > If you have worked out a simpler version of the Tait—Martin-Löf—Takahashi proof of confluence for CIC, then I suggest you mention it. Indeed the MetaCoq paper (Coq Coq Correct! POPL 2020) claims that the method needs to be extended to local environments as well.
 
-TODO
+TODO (for Michael)
 
 > > For Lem. 5.9, size variables can be negative as well to account for coinductives.
 
