@@ -43,6 +43,10 @@ These features and their presence or absence in the relevant works are summarize
 In terms of sized types, they add size expressions as annotations to \coinductive types,
 and a \cofixpoint $f$ is well typed if all \corecursive calls in its body occurs on an argument of a smaller sizes,
 as we have seen with the simplified typing rule in \autoref{sec:intro}.
+Similarly to the example with the naturals,
+the \corecursive arguments of a constructor must have a smaller size
+than the fully-applied constructor itself.
+
 Constructors construct constructions of a larger size than their \corecursive functions.
 
 \CIChat and \CIChatminus differ in that \CIChat includes a size inference algorithm but no proof of strong normalization,
@@ -66,7 +70,7 @@ Coq's core calculus contains two kinds of variables:%
 \footnote{It also has a third type of variable for section-level bindings;
 this is beyond the scope of \lang.}
 one for local bindings from functions, function types, and let expressions,
-and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Parameter} (which we call \textit{constants}).
+and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Axiom} (which we call \textit{constants}).
 \lang adds let expressions and global declarations to \CIChat,
 with separate local and global environments,
 and definitions in the environments in the style of a PTS with definitions~\citep{PTSD}.

@@ -467,7 +467,7 @@ Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
 Suppose we have the following:
 \begin{enumerate}[label=\alph*)]
   \item $\forall \rho \vDash C, \WF{\Gamma_G, \rho \Gamma}$.
-  \item If $\exists e, t$ such that $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
+  \item If $\exists \Gamma_1, \Gamma_2, e, t$ such that $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}

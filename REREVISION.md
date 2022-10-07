@@ -52,7 +52,11 @@ TODO
 
 > - p5, l228 "Constructors construct constructions if a larger size than their (co)recursive functions." is still there even though it is non-informative. How about "Constructors produce values of a larger size than their arguments." or something similar? Because I do not know what the recursive function of a constructor is.
 
-TODO
+Rephrased to the following:
+
+> Similarly to the example with the naturals,
+  the (co)recursive arguments of a constructor must have a smaller size
+  than the fully-applied constructor itself.
 
 > - p6, l249 Perhaps `Axiom` is clearer than `Parameter`?
 `Parameter` is a synonym for `Axiom` that nobody uses except people expecting to be able to instantiate it which they cannot.
@@ -60,14 +64,10 @@ TODO
 I picked `Parameter` based on its usage description in the Coq manual.
 Since it is rarely used, it has been changed to `Axiom` instead.
 
-TODO
-
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
 
-Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂.
-
-TODO
+Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂ in Section 5.5 and in the Appendix.
 
 > - Is there really no relation between the inferred context and the original one in Theorem 5.15? I would expect that they have the same erasure.
 Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.
