@@ -169,7 +169,7 @@ A variable $x^{\set{\vec{\upsilon \mapsto s}}}$ bound to $\defn{x}{t}{e}$ in the
 can be thought of as a delayed application of the sizes $\vec{s}$,
 with the definition implicitly abstracting over all size variables $\vec{\upsilon}$.
 Therefore, the ``free size variables'' of the annotated variable are those in $\vec{s}$,
-and given some size substitution $\rho$,
+and given some size substitution $\rho$, we have that
 $\rho x^{\set{\vec{\upsilon \mapsto s}}} = x^{\set{\vec{\upsilon \mapsto \rho s}}}$.
 Meanwhile, we treat all $\vec{\upsilon}$ in the definition as \emph{bound},
 so that $\rho(\Gamma_1 (\defn{x}{t}{e}) \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
@@ -183,9 +183,9 @@ We define reduction ($\reduce$) as the congruent closure of the reductions,
 multi-step reduction ($\rhd^*$) in \autoref{fig:reductions} as the reflexive--transitive closure of $\rhd$,
 and convertibility ($\conv*$) in \autoref{fig:convertibility}.
 The latter also includes $\eta$-convertibility,
-which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) in \citet{conversion}.
+which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) by \citet{conversion}.
 Note that there are no explicit rules for symmetry and transitivity of convertibility
-because these properties are derivable, as proven in\opcitt{conversion}
+because these properties are derivable, as proven by \citet{conversion}.
 
 \subsection{Subtyping and Positivity}\label{subsec:typing:subtyping}
 
@@ -236,10 +236,11 @@ Additionally, we use $\any$ to omit irrelevant constructions for readability.
 
 \input{figures/typing.tex}
 
-The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, \citep{PTS} and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
+The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms and \Rules \citep{PTS}, as well as \Elims, in \autoref{fig:axruel}.
+These describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
 Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
-Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
+Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{cumul}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
 Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction.
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.

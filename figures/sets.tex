@@ -5,12 +5,12 @@
     &= \set{(\Prop, \Type{1}), (\Set, \Type{1}), (\Type{i}, \Type{i+1})} \\
 \Rules
     &= \set{(U, \Prop, \Prop)}
-    \cup \set{(U, \Set, \Set) : U \in \set{\Prop, \Set}} \\
-    &\cup \set{(\Type{i}, \Type{j}, \Type{k}) : k = \meta{max}(i, j)} \\
+    \cup \set{(U, \Set, \Set) \mid U \in \set{\Prop, \Set}} \\
+    &\cup \set{(\Type{i}, \Type{j}, \Type{k}) \mid k = \meta{max}(i, j)} \\
 \Elims
-    &= \set{(U', U, I) : U' \in \set{\Set, \Type{}}}
+    &= \set{(U', U, I) \mid U' \in \set{\Set, \Type{}}}
     \cup \set{(\Prop, \Prop, I)} \\
-    &\cup \set{(\Prop, U, I : \text{$I$ empty or singleton}}
+    &\cup \set{(\Prop, U, I \mid \text{$I$ empty or singleton}}
 \end{align*}
 \caption{Universe relations: Axioms, Rules, and Eliminations}
 \label{fig:axruel}

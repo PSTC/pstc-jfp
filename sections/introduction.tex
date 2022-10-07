@@ -27,7 +27,7 @@ firstly, the bodies of these functions are required, which hinders modular desig
 and secondly, as aptly summarized by \citet{coqterm},
 
 \begin{quote}
-  ... unfold[ing] all the definitions used in the body of the function, do[ing] reductions, e.t.c.
+  ... unfold[ing] all the definitions used in the body of the function, do[ing] reductions, \etc
   ... makes typechecking extremely slow at times.
   Also, the unfoldings can cause the code to bloat by orders of magnitude and become impossible to debug.
 \end{quote}
@@ -61,7 +61,7 @@ In short, the extended syntactic guard condition long used by Coq is anti-modula
 \paragraph*{} This situation is particularly unfortunate, as there exists a non-syntactic termination- and productivity-checking method that overcomes these issues,
 whose theory is nearly as old as the guard condition itself: sized types.
 
-In essence, the \coinductive type of a construction is annotated with a size annotation, which provides some information about the size of the construction.
+In essence, the \coinductive type of a construction is annotated with a size, which provides some information about the size of the construction.
 In this paper, we consider a simple size algebra: \mbox{$s \coloneqq \upsilon \mid \hat{s} \mid \infty$}, where $\upsilon$ ranges over size variables.
 If the argument to a constructor has size $s$, then the fully-applied constructor would have a successor size $\hat{s}$.
 For instance, the constructors for the naturals follow the below rules:
@@ -120,7 +120,7 @@ borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
 
 For \lang we prove confluence and subject reduction.
 However, new difficulties arise when attempting to prove strong normalization and consistency.
-Proof techniques from past work, especially in \citet{cic-hat-minus}, don't readily adapt to our modifications,
+Proof techniques from past work, especially from \citet{cic-hat-minus}, don't readily adapt to our modifications,
 in particular to impredicative $\Prop$, universe cumulativity, and unrestricted size variables.
 On the other hand, set-theoretic semantics of type theories that do have these features don't readily adapt to the interpretation of sizes, either,
 with additional difficulties due to untyped conversion.

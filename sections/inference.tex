@@ -385,6 +385,8 @@ then it must also be a solution to the constraint set returned by \RecCheck.
 
 In these theorems, we use the metafunction $\new{\floor{s}}$ which returns either the size variable of a finite size expression
 or $\infty$ if the given size expression is infinite.
+Since sizes are (successors of) either a size variable or the infinite size,
+we have that $\floor{\hat{\upsilon}^{n}} = \upsilon$ and $\floor{\succ{\infty}^n} = \infty$.
 
 \begin{theorem}[Soundness of \RecCheck (SRC)]
 If $\RecCheck(C', \tau, V^*, V^\neq) = C$, then for every $\rho$ such that $\rho \vDash C$,

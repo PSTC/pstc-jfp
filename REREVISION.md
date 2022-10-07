@@ -87,23 +87,23 @@ Yes, the `Time` commands are to show how the times in Table 3 are obtained.
 The original document uses "e.t.c.",
 but this has been changed to _etc._ for consistency with the rest of the paper.
 
-TODO
-
 > - p3, l107 "annotated with a size annotation". "annotation" here is superfluous.
 
-The second "annotation" has been removed.
-
-TODO
+Removed the second "annotation".
 
 > - p4, l159 "in Sacchini (2011)" does not make sense, maybe replace "in" by "from"?
 
-"in" has been replaced by "from".
-
-TODO
+Replaced "in" by "from".
 
 > - p6, footnote 2. If you go in this kind of details, why not also include existential variables? Both evars and section variables are not per se part of the kernel are they?
 
-TODO: Did I do anything to section variables in the implementation?
+Section variables are present in the kernel;
+in `constr.ml`, these are the `Var` constructs.
+The implementation handles them like `Const`s, but since they're so similar,
+I omit them from the formalization for simplicity.
+On the other hand, while `Evar` is also a construct in the kernel,
+they're _supposed_ to all be solved during the pretyping stage
+before reaching typing in the kernel.
 
 > - p7, l302 "This aligns with Coq’s current behaviour, where list Set is not a subtype of list Type despite the presence of cumulativity where Set is a subtype of Type.". Is this issue not partially solved by cumulative inductive types?
 
@@ -113,40 +113,41 @@ To my knowledge, cumulative inductive types are slightly different:
 is a subtype of `list@{j} : Type@{j} -> Type@{j}` if `i < j`,
 but `list@{i} A ≤ list@{j} A` still only holds if the parameters are the same.
 
-> - p12, l532 "some size substitution ��, ����{��↦→��} =��{��↦→����}"
+> - p12, l532 "some size substitution ρ, ρx{υ↦s} = x{υ↦ρs}"
 This is difficult to parse, please separate the two inline maths by more than punctuation. For instance you could write "we have".
 
-TODO (also fix the missing characters above)
+Added "we have that" before the equation.
 
 > - p12, l542 "in Abel et al. (2017)"
 
-TODO
+Replaced "in" with "by".
 
 > - p12, l543. Your use of "op. cit." seems wrong, and the hyperlink does not point to anything.
 
-TODO
+Replaced "in op. cit." with "by Abel et al. (2017)."
 
 > - p14, l613. I would use the pipe (`|`) notation for set comprehension rather than the colon notation which may be confusing when speaking about typing. Note that you use the pipe notation on page 22.
 
-TODO
+Replaced `:` with `|` in set notation.
 
 > - p14, l642 "sets Axioms, Rules, (Barendregt, 1993)".
 Spurious comma.
 
-TODO
+Rephrased sentenced to make clear that Axioms and Rules come from Barendregt's PTS,
+while Elims does not.
 
 > - p16, l693. You renamed CONV to CUMUL as I suggested, but you did not change the reference to it in your list. This jumps out as it is the only item with no hyperlink.
 
-TODO
+Fixed hyperlink to CUMUL.
 
 > - p22, l968 "where each these changes"
 
-TODO
+Added "of".
 
 > - p22, footnote 4, "based on Barras (2012)."
 
-TODO
+Added "work by".
 
 > - p35, l1581. Thank you for introducing the notation. Perhaps you could even give its definition in math terms: `⌊v^n⌋ := v` and `⌊∞⌋ := ∞`.
 
-TODO
+Added a sentence describing the metafunction in mathematical terms.
