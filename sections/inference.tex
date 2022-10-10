@@ -437,14 +437,16 @@ Before proceeding onto the main soundness theorems, we need a few lemmas ensurin
 and algorithmic subtyping are sound and complete with respect to subtyping.
 
 \begin{lemma}[Soundness of positivity/negativity]
+Let $\Gamma_{G}, \Gamma$ be environments, $t$ a sized term and $\rho_1, \rho_2$ size substitutions.
 Suppose that $\forall \upsilon \in \SV{t}, \rho_1 \upsilon \sqsubseteq \rho_2 \upsilon$.
 \begin{enumerate}
-  \item If $\gg \vdash \upsilon \pos t$, then $\gg \vdash \rho_1 t \leq \rho_2 t$; and
-  \item If $\gg \vdash \upsilon \neg t$, then $\gg \vdash \rho_2 t \leq \rho_1 t$.
+  \item If $\forall \upsilon \in \SV{t}, \gg \vdash \upsilon \pos t$, then $\gg \vdash \rho_1 t \leq \rho_2 t$; and
+  \item If $\forall \upsilon \in \SV{t}, \gg \vdash \upsilon \neg t$, then $\gg \vdash \rho_2 t \leq \rho_1 t$.
 \end{enumerate}
 \end{lemma}
 
-\begin{lemma}[Completeness of positivity/negativity]~\\[-4ex]
+\begin{lemma}[Completeness of positivity/negativity]
+Let $\Gamma_{G}, \Gamma$ be environments, $t$ a sized term and $\upsilon \in \SV{t}$ some size variable.
 \begin{enumerate}
   \item If $\Gamma_G, \Gamma \vdash t \leq \subst{t}{\upsilon}{\hat{\upsilon}}$ then $\gg \vdash \upsilon \pos t$.
   \item If $\Gamma_G, \Gamma \vdash \subst{t}{\upsilon}{\hat{\upsilon}} \leq t$ then $\gg \vdash \upsilon \neg t$.

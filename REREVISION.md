@@ -47,7 +47,13 @@ TODO (for Michael)
 
 > It seems my comment was misunderstood so I will try to rephrase. Consider two size variables ν and μ, and the term I^μ where I is a coinductive type. By definition I have that ν pos I^μ, so by lemma 5.9 I get that I^(ρ₁(μ)) ≤ I^(ρ₂(μ)) as long as ρ₁(μ) ⊑ ρ₂(μ). I hope you can see why I find it wrong. Perhaps you mean to take the same ν in the whole lemma and consider substitution of it by two sizes s₁ and s₂, but you may not conclude about all other size variables unless you also know they appear positively in the term.
 
-TODO
+Thanks for pointing out the confusion;
+the lemma statements are in fact missing additional quantifications over υ.
+(Clearly, following your advice on explicitly quantifying variables everywhere would have prevented this!)
+The antecedents should additionally be quantified by ∀υ ∈ SV(t),
+so that either every size variable is positive or negative in t.
+Then your example no longer applies, since μ is negative in I^μ.
+Lemmata 5.9 and 5.10 now have explicit quantifications for clarity.
 
 ## Non-addressed points
 
