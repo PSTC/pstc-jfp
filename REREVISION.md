@@ -41,7 +41,12 @@ A short paragraph has also been added to the end of Section 3.1.1 describing t^�
 
 > If you have worked out a simpler version of the Tait—Martin-Löf—Takahashi proof of confluence for CIC, then I suggest you mention it. Indeed the MetaCoq paper (Coq Coq Correct! POPL 2020) claims that the method needs to be extended to local environments as well.
 
-TODO (for Michael)
+We have not worked out a simpler version of the Tait─Martin-Löf─Takahashi proof of confluence.
+Instead, the method to deal with local environments mentioned in the previous response is similar to the method mentioned in the MetaCoq paper.
+Indeed, to have confluence under the presence of local environments, we require a parallel substitution property like Theorem 2.1 of the MetaCoq paper.
+Since we had originally carried out the proof of substitution out on paper and were unaware of the MetaCoq result at that point, this was a subtle technical detail we overlooked.
+We apologize for this and thank the reviewer for having pointed this out.
+The updated draft now explicitly mentions this detail and references the MetaCoq paper.
 
 > > For Lem. 5.9, size variables can be negative as well to account for coinductives.
 

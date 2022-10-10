@@ -28,8 +28,15 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
   It uses the Takahashi translation $e^\dagger$ of terms $e$,
   defined as the simultaneous single-step reduction of all
   $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.
-  The proof is relatively standard thanks to reduction being purely syntactic and untyped.
+  % The proof is relatively standard thanks to reduction being purely syntactic and untyped.
   % Is it though?
+  One notable aspect of this proof is that to handle let statements,
+  we need to extend the Takahashi method to cover local environments
+  as well.
+  This is also observed in Section 2.3.2 of \citet{coq-coq-correct}
+  and in particular we require Theorem 2.1 (Parallel Substitution) of
+  \citet{coq-coq-correct} to ensure that $\delta$-reduction
+  (i.e. reducing a let-expression) is confluent.
 \end{proof}
 
 \subsection{Subject Reduction}
