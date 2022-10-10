@@ -53,14 +53,19 @@ These terms are required to be bare in order to preserve subject reduction witho
 both of which would violate backward compatibility with Coq.
 We give an example of the loss of subject reduction when type annotations aren't bare in \autoref{sec:metatheory:sr:bare}
 % \citet{cic-hat-minus} discusses the issue in further detail.
-Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
+
+In the syntax of signatures, we use the metanotation $t^\infty$ to denote \textit{full terms},
+which are sized terms with only infinite sizes and no size variables.
+Note that where bare terms occur within sized terms, they remain bare in full terms.
+Similarly, we use the metanotation $t^*$ to denote \textit{position terms},
+whose usage is explained in the next subsubsection.
 
 \subsubsection{Fixpoints and Cofixpoints}
 
 In contrast to \CIChat and \CIChatminus, \lang has mutual \cofixpoints.
 In a mutual fixpoint $\fix{m}{f_k^{n_k}}{t_k^*}{e_k}$, each $\defn{f_k^{n_k}}{t_k^*}{e_k}$ is one fixpoint definition.
 $n_k$ is the index of the recursive argument of $f_k$, and $\kw{fix}_m$ means that the $m$th fixpoint definition is selected.
-Instead of bare terms, fixpoint type annotations are \textit{position terms} $t^*$,
+Instead of bare terms, fixpoint type annotations are position terms $t^*$,
 where size annotations are either removed or replaced by a \textit{position annotation} $\ast$.
 They occur on the inductive type of the recursive argument, as well as the return type if it is an inductive with the same or smaller size.
 For instance (using $\new{t \rightarrow u}$ as syntactic sugar for $\prod{\any}{t}{u}$),

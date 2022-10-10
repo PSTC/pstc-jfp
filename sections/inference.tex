@@ -505,12 +505,13 @@ If $\Gamma_G^\circ \rightsquigarrow \Gamma_G$ then $\WF{\Gamma_G, \mt}$.
 \end{theorem}
 
 The completeness theorem for well-formedness is slightly different than expected:
-a well-formed global environment, when erased, should successfully have sizes inferred,
-but we don't place any requirements on the newly size-inferred environment,
-just that there should be \emph{some} answer.
+a well-formed global environment, when erased, should successfully have sizes inferred.
+The inferred environment and the original environment also erase to the same bare environment,
+which can be proven by induction on the size inference derivations.
 
 \begin{theorem}[Completeness (well-formedness)]
-If $\WF{\Gamma_G, \mt}$ then $\erase{\Gamma_G} \rightsquigarrow \Gamma'_G$.
+If $\WF{\Gamma_G, \mt}$ then $\erase{\Gamma_G} \rightsquigarrow \Gamma'_G$
+and $\erase{\Gamma_G} = \erase{\Gamma'_G}$.
 \end{theorem}
 
 %%% Local Variables:

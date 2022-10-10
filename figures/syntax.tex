@@ -15,14 +15,26 @@ e, a, b, p, q, t, u, v, P &\Coloneqq
   \mid \new{x^{\rho}}
   \mid U
   \mid \prod{x}{t}{t}
-  \mid \abs{x}{\new{t^\circ}}{e}
+  \mid \abs{x}{t^\circ}{e}
   \mid \app{e}{e}
-  \mid \letin{x}{\new{t^\circ}}{e}{e}
+  \mid \letin{x}{t^\circ}{e}{e}
   \mid \new{I^s}
   \mid c} \\
-&\mathrlap{\mid \caseof{\new{P^\circ}}{e}{c}{e}
+&\mathrlap{\mid \caseof{P^\circ}{e}{c}{e}
   \mid \fix{m}{f^n}{\new{t^*}}{e}
-  \mid \cofix{m}{f}{\new{t^*}}{e}}
+  \mid \cofix{m}{f}{\new{t^*}}{e}} \\
+\dots, e^\circ, t^\circ, P^\circ &\Coloneqq
+  \mathrlap{x
+  \mid U
+  \mid \prod{x}{t^\circ}{t^\circ}
+  \mid \abs{x}{t^\circ}{e^\circ}
+  \mid \app{e^\circ}{e^\circ}
+  \mid \letin{x}{t^\circ}{e^\circ}{e^\circ}
+  \mid I
+  \mid c} \\
+&\mathrlap{\mid \caseof{P^\circ}{e^\circ}{c}{e^\circ}
+  \mid \fix{m}{f^n}{t^\circ}{e^\circ}
+  \mid \cofix{m}{f}{t^\circ}{e^\circ}}
 \end{align*}
 
 \begin{align*}
