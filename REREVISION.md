@@ -4,13 +4,9 @@
 
 > This of course does not change the fact that I am positive about the paper and wish to see it published.
 
-Apologies for the lack of detail in the prior response!
-You are right that each point should have been addressed individually,
-and that more clarity was needed in indicating the changes made.
-In the response below, I've replied underneath each comment,
-explaining either the change made or justifying why the suggestion was not followed,
-and new changes made during this round are highlighted as annotations in the PDF.
-I hope then that our new response is of a higher quality than the last one.
+We apologize for the lack of detail in the prior response! Our experience with conference responses perhaps did not translate to well to the expectations in the JFP process.
+
+In the response below, we've replied underneath each comment, explaining either the change made or justifying why the suggestion was not followed, and new changes made during this round are highlighted as annotations in the PDF.
 
 ## About answer
 
