@@ -284,7 +284,7 @@ Impredicativity of function types is encoded using a \emph{trace encoding} \cite
 First, the \emph{trace} of a (set-theoretical) function $f : A \to B$ is defined as
 $$\trace(f) = \set{(a, b) \mid a \in A, b \in f(a)}.$$
 Then the interpretation of a function type $\prod{x}{t}{u}$ is defined as
-$$\bigg\{\trace(f) \mathbin{\big|} f \in A \times \bigcup_{a \in A} B_a \text{ and } \forall a \in A, f(a) \in B_a\bigg\}$$
+$$\bigg\{\trace(f) \mathbin{\bigg|} f \in A \times \bigcup_{a \in A} B_a \text{ and } \forall a \in A, f(a) \in B_a\bigg\}$$
 where $A$ is the interpretation of $t$ and $B_a$ is the interpretation of $u$ when $x = a$,
 while a function $\abs{x}{t}{e}$ is interpreted as
 $\set{(a, b) \mid a \in A, b \in y_a}$
