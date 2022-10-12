@@ -23,20 +23,20 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
 \end{theorem}
 
 \begin{proof}[{[sketch]}]
+  The proof is relatively standard.
+  % Is it though?
   We use the Takahashi translation technique due to \citet{takahashitrans},
   which is a simplification of the standard parallel reduction technique.
   It uses the Takahashi translation $e^\dagger$ of terms $e$,
   defined as the simultaneous single-step reduction of all
   $\beta\zeta\delta\Delta\iota\mu\nu$-redexes of $e$ in left-most inner-most order.
-  % The proof is relatively standard thanks to reduction being purely syntactic and untyped.
-  % Is it though?
-  One notable aspect of this proof is that to handle let statements,
-  we need to extend the Takahashi method to cover local environments
-  as well.
-  This is also observed in Section 2.3.2 of \citet{coq-coq-correct}
-  and in particular we require Theorem 2.1 (Parallel Substitution) of
-  \citet{coq-coq-correct} to ensure that $\delta$-reduction
-  (i.e. reducing a let-expression) is confluent.
+  One notable aspect of this proof is that to handle let expressions that
+  introduce local definitions, we need to extend the Takahashi method to support
+  local definitions.
+  This is essentially the same as the presentation in Section 2.3.2 of
+  \citet{coq-coq-correct}. In particular, we require Theorem 2.1 (Parallel
+  Substitution) of \citet{coq-coq-correct} to ensure that $\delta$-reduction
+  (\emph{i.e.} reducing a let-expression) is confluent.
 \end{proof}
 
 \subsection{Subject Reduction}
