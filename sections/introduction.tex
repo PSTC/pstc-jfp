@@ -116,7 +116,8 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus,cc-hat-ome
 To resolve these issues, we extend \CIChat~\citep{cic-hat}, \CIChatminus~\citep{cic-hat-minus-nat,cic-hat-minus}, and \CChatomega~\citep{cc-hat-omega} in our calculus \textbf{\lang} (``\emph{CIC-star-hat}''),
 and design a size inference algorithm from CIC to \lang,
 borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
-\autoref{table:CICs} summarizes the differences between \lang and these past works.
+\autoref{table:CICs} summarizes the differences between \lang and these past
+works; we give a detailed comparison in \autoref{sec:ancestry}.
 
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -167,8 +168,6 @@ While nothing yet leads us to believe that \lang is inconsistent,
 the performance sacrifice required for compatibility makes our approach seem wildly impractical.
 
 \paragraph*{} The remainder of this paper is organized as follows.
-We begin in \autoref{sec:overview} with a high-level overview of the design of \lang as compared to past work and Coq,
-and the consequences resulting from these design decisions.
 We formalize \lang in \autoref{sec:typing},
 and discuss the desired metatheoretical properties in \autoref{sec:metatheory}.
 In \autoref{sec:algorithm}, we present the size inference algorithm from unsized terms to sized \lang terms,
