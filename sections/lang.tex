@@ -203,7 +203,10 @@ Notice that both $\infty \sqsubseteq \succ{\infty}$ and $\succ{\infty} \sqsubset
 \input{figures/subtyping.tex}
 
 The subtyping rules in \autoref{fig:subtyping} extend those of cumulative CIC with rules for sized \coinductive types.
-In other words, they extend those of \CIChat, \CIChatminus, and \CChatomega with universe cumulativity (and a $\Prop$ universe).
+In other words, they extend those of \CIChat, \CIChatminus, and \CChatomega with universe cumulativity.
+The name $\Set$ is retained merely for uniformity with Coq's kernel;
+it could also have been named $\Type{0}$.
+
 Inductive types are \emph{covariant} in their size annotations with respect to subsizing (\refrule{st-ind}),
 while coinductive types are \emph{contravariant} (\refrule{st-coind}).
 Coming back to the examples in the previous section, this means that

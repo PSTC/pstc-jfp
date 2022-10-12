@@ -20,7 +20,7 @@ e, a, b, p, q, t, u, v, P &\Coloneqq
   \mid \letin{x}{t^\circ}{e}{e}
   \mid \new{I^s}
   \mid c} \\
-&\mathrlap{\mid \caseof{P^\circ}{e}{c}{e}
+\textit{(sized terms)} \qquad &\mathrlap{\mid \caseof{P^\circ}{e}{c}{e}
   \mid \fix{m}{f^n}{\new{t^*}}{e}
   \mid \cofix{m}{f}{\new{t^*}}{e}} \\
 \dots, e^\circ, t^\circ, P^\circ &\Coloneqq
@@ -32,16 +32,16 @@ e, a, b, p, q, t, u, v, P &\Coloneqq
   \mid \letin{x}{t^\circ}{e^\circ}{e^\circ}
   \mid I
   \mid c} \\
-&\mathrlap{\mid \caseof{P^\circ}{e^\circ}{c}{e^\circ}
+\textit{(bare terms)} \qquad &\mathrlap{\mid \caseof{P^\circ}{e^\circ}{c}{e^\circ}
   \mid \fix{m}{f^n}{t^\circ}{e^\circ}
   \mid \cofix{m}{f}{t^\circ}{e^\circ}}
 \end{align*}
 
 \begin{align*}
-\Delta &\Coloneqq \mt \mid \Delta(\assm{x}{e}) &\textit{telescopes} \\
-\Gamma &\Coloneqq \mt \mid \Gamma(\assm{x}{e}) \mid \Gamma(\defn{x}{t}{t}) &\textit{local environments} \\
-\Gamma_G &\Coloneqq \mt \mid \Gamma_G(\Assm{x}{e}) \mid \Gamma_G(\Defn{x}{t}{t}) &\textit{global environments} \\
-\Sigma &\Coloneqq \mt \mid \Sigma(\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\new{\Delta^\infty_i}}{U_i}}}} \coloneqq \seq{\vec{\assm{c_j}{\prodctx{\new{\Delta^\infty_j}}{\app{I_j}{\dom{\Delta_p}}{\new{\overline{t^\infty}_j}}}}}}) &\textit{signatures} \\
+\Delta &\Coloneqq \mt \mid \Delta(\assm{x}{e}) &\textit{(telescopes)} \\
+\Gamma &\Coloneqq \mt \mid \Gamma(\assm{x}{e}) \mid \Gamma(\defn{x}{t}{t}) &\textit{(local environments)} \\
+\Gamma_G &\Coloneqq \mt \mid \Gamma_G(\Assm{x}{e}) \mid \Gamma_G(\Defn{x}{t}{t}) &\textit{(global environments)} \\
+\Sigma &\Coloneqq \mt \mid \Sigma(\seq{\vec{\assm{\app{I_i}{\Delta_p}}{\prodctx{\new{\Delta^\infty_i}}{U_i}}}} \coloneqq \seq{\vec{\assm{c_j}{\prodctx{\new{\Delta^\infty_j}}{\app{I_j}{\dom{\Delta_p}}{\new{\overline{t^\infty}_j}}}}}}) &\textit{(signatures)} \\
 \end{align*}
 
 \caption{Syntax of \lang terms, environments, and signatures}

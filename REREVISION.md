@@ -16,7 +16,12 @@ In the response below, we've replied underneath each comment, explaining either 
 
 > I still stand by my claim that starting comparing objects that have not yet been introduced is not a great way to start the paper. It is also very hard to make sense of it as it mixes points where they all agree with differences. For instance the point about fixed points and constructors should be made in general not just in a comparison.
 
-TODO
+The table from the Overview has been moved into the Introduction where these features are first mentioned,
+while parts of the remainder of the Overview has been moved into Related Work.
+Additionally, impredicativity has been removed as a new feature of CIC^*,
+since `Prop` is found in both CIC^ and CIC^_.
+(It is the normalization proof method which differs in handling `Prop`
+in concert with cumulativity, which is discussed in the Metatheory section.)
 
 > > While not in the surface syntax, Coq's universes are indexed in the kernel representation through the elaboration process. This is further complicated by universe polymorphism and the module system, but ignoring those two features, the universes are essentially indexed by naturals in the kernel. Other models of Coq's core calculus (e.g. pCuIC, Timany and Sozeau, 2017) also model universes as being indexed by a natural.
 
@@ -25,13 +30,14 @@ TODO
 This is true; without needing to handle impredicative `Set`, it might as well have been called `Type₀` in our system, as do both pCuIC and MetaCoq.
 At the beginning of this project, I tried to minimize divergence from the kernel, and it's been kept in since.
 In any case, it seems to me that the only simplification this would offer is shortening the definitions of the relations in Fig. 9.
+Section 2.3 on subtyping adds a small remark on the naming.
 
 > > ∞ is a size annotation of CIC^*, while ∘ is an annotation in the metalanguage, just like ⋆.
 
 > Please make it more explicit in the paper as soon as you introduce them. To me the nature of these annotation is still unclear. What is the syntax of bare terms? I assume the same as terms but with `I` instead of `Iˢ`? Should I understand removed annotations to mean the same as infinite annotations? If not please explain why *in the paper*.
 
 The syntax for bare terms has been added to Fig. 1 alongside the syntax for sized terms.
-A short paragraph has also been added to the end of Section 3.1.1 describing t^∞ and t^∗ as metanotation for variations on sized terms.
+A short paragraph has also been added to the end of Section 2.1.1 describing t^∞ and t^∗ as metanotation for variations on sized terms.
 
 > > For definitions, the corresponding parallel reductions are extended to have an extra case to cover environments. In the context of Thm. 4.1, the proof goes by induction on the lengths of Γ and Γ_G. The general idea is that if Γ contains a binding (x : t := e₀), then in a previous inductive step we have shown that e₀ has the confluence property because the reduction rule for local definitions in the environment is just substitution of x by e₀; whenever we use a δ-reduction rule for (x : t := e₀) in e, the confluence property obtained inductively for e₀ transfers to the substitution in e.
 
@@ -77,7 +83,7 @@ Since it is rarely used, it has been changed to `Axiom` instead.
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
 
-Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂ in Section 5.5 and in the Appendix.
+Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
 
 > - Is there really no relation between the inferred context and the original one in Theorem 5.15? I would expect that they have the same erasure.
 Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.

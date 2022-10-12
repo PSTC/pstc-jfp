@@ -108,8 +108,7 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus,cc-hat-ome
 \begin{itemize}
     \item They require nontrivial backward-incompatible additions to the surface language,
       such as size annotations on \cofixpoint types and polarity annotations on \coinductive definitions.
-    \item They are missing important features found in Coq such as global and local definitions,
-      universe cumulativity, and an impredicative $\Prop$.
+    \item They are missing important features found in Coq such as global and local definitions, and universe cumulativity.
     \item They restrict size variables from appearing in terms, which precludes, for instance,
       defining type aliases for sized types.
 \end{itemize}
@@ -117,11 +116,32 @@ Unfortunately, past work on sized types~\citep{cic-hat, cic-hat-minus,cc-hat-ome
 To resolve these issues, we extend \CIChat~\citep{cic-hat}, \CIChatminus~\citep{cic-hat-minus-nat,cic-hat-minus}, and \CChatomega~\citep{cc-hat-omega} in our calculus \textbf{\lang} (``\emph{CIC-star-hat}''),
 and design a size inference algorithm from CIC to \lang,
 borrowing from the algorithms in past work~\citep{f-hat, cic-hat, cc-hat-omega}.
+\autoref{table:CICs} summarizes the differences between \lang and these past works.
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\begin{table}
+\centering
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+\textbf{Feature} & \textit{\CIChat} & \textit{\CIChatminus} & \textit{Coq} & \textit{\lang} \\
+\hline
+Universe cumulativity & \xmark & \xmark & \cmark & \cmark \\
+Definitions           & \xmark & \xmark & \cmark & \cmark \\
+Parameter polarities  & \cmark & \cmark & \xmark & \xmark \\
+Nested \coinductives  & \cmark & \cmark & \cmark & \xmark \\
+Normalization proven? & \xmark & \cmark & ?      & \xmark \\
+Size inference algorithm & \cmark & \xmark & N/A & \cmark \\
+\hline
+\end{tabular}
+\caption{Comparison of the features in \CIChat, \CIChatminus, Coq, and \lang}
+\label{table:CICs}
+\end{table}
 
 For \lang we prove confluence and subject reduction.
 However, new difficulties arise when attempting to prove strong normalization and consistency.
 Proof techniques from past work, especially from \citet{cic-hat-minus}, don't readily adapt to our modifications,
-in particular to impredicative $\Prop$, universe cumulativity, and unrestricted size variables.
+in particular to universe cumulativity and unrestricted size variables.
 On the other hand, set-theoretic semantics of type theories that do have these features don't readily adapt to the interpretation of sizes, either,
 with additional difficulties due to untyped conversion.
 We detail a proof attempt on a variant of \lang and discuss its shortcomings.
