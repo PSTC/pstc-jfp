@@ -37,7 +37,18 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
   \citet{coq-coq-correct}. In particular, we require Theorem 2.1 (Parallel
   Substitution) of \citet{coq-coq-correct} to ensure that $\delta$-reduction
   (\emph{i.e.} reducing a let-expression) is confluent.
+  The exact statement of parallel substitution adapted to our setting
+  is given in the following \Cref{lem:metatheory:parallel-subst}.
 \end{proof}
+
+\begin{lemma}[Parallel Substitution]\label{lem:metatheory:parallel-subst}
+  Fix contexts $\gg$.
+  For all terms $e,t$ and $x$ free in $e$, we have
+  $\subst{e}{x}{t}^{\dagger} = \subst{e^\dagger}{x}{t^\dagger}$, where
+  $-^\dagger$ denotes the Takahashi translation (simultaneous
+  single-step reduction of all redexes in left-most inenr-most order)
+  in $\gg$.
+\end{lemma}
 
 \subsection{Subject Reduction}
 \label{sec:metatheory:sub-red}
