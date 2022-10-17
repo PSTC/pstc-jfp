@@ -118,6 +118,11 @@ I omit them from the formalization for simplicity.
 On the other hand, while `Evar` is also a construct in the kernel,
 they're _supposed_ to all be solved during the pretyping stage
 before reaching typing in the kernel.
+Since size inference occurs during typing and not pretyping,
+and we are interested in modelling the size-inferred language,
+unsolved metavariables are excluded from CIC^*.
+As Section 5.3 suggests, though, size inference may need to occur during pretyping instead to fix some bugs;
+then `Evar`s would need to be handled as well.
 
 > - p7, l302 "This aligns with Coq’s current behaviour, where list Set is not a subtype of list Type despite the presence of cumulativity where Set is a subtype of Type.". Is this issue not partially solved by cumulative inductive types?
 
