@@ -28,9 +28,9 @@ in concert with cumulativity, which is discussed in the Metatheory section.)
 > I should clarify that I am not complaining about this, modelling the hierarchy using natural numbers is perfectly fine. My comment was more about `Set` which I wonder why you keep in this setting. As you say, these natural numbers only come up in models, not in the concrete syntax (even in the kernel) so keeping around `Set` is odd considering it is still in Coq mostly for backwards compatibility with impredicative `Set` (and for some oddities about universe minimisation) if I am not mistaken.
 
 This is true; without needing to handle impredicative `Set`, it might as well have been called `Type₀` in our system, as do both pCuIC and MetaCoq.
-At the beginning of this project, I tried to minimize divergence from the kernel, and it's been kept in since.
-In any case, it seems to me that the only simplification this would offer is shortening the definitions of the relations in Fig. 9.
-Section 2.3 on subtyping adds a small remark on the naming.
+At the beginning of this project, we tried to minimize divergence from the kernel, and it's been kept in since.
+In any case, it seems to us that the only simplification this would offer is shortening the definitions of the relations in Fig. 9.
+Section 2.3 on subtyping adds a small remark about this on the naming.
 
 > > ∞ is a size annotation of CIC^*, while ∘ is an annotation in the metalanguage, just like ⋆.
 
@@ -48,7 +48,7 @@ Instead, the method to deal with local environments mentioned in the previous re
 Indeed, to have confluence under the presence of local environments, we require a parallel substitution property like Theorem 2.1 of the MetaCoq paper.
 Since we had originally carried out the proof of substitution out on paper and were unaware of the MetaCoq result at that point, this was a subtle technical detail we overlooked.
 We apologize for this and thank the reviewer for having pointed this out.
-The updated draft now explicitly mentions this detail and references the MetaCoq paper.
+The updated draft now explicitly mentions this and references the MetaCoq paper in Section 3.1.
 
 > > For Lem. 5.9, size variables can be negative as well to account for coinductives.
 
@@ -60,7 +60,7 @@ the lemma statements are in fact missing additional quantifications over υ.
 The antecedents should additionally be quantified by ∀υ ∈ SV(t),
 so that either every size variable is positive or negative in t.
 Then your example no longer applies, since μ is negative in I^μ.
-Lemmata 5.9 and 5.10 now have explicit quantifications for clarity.
+Lemmata 4.9 and 4.10 (previously 5.9 and 5.10) now have explicit quantifications for clarity.
 
 ## Non-addressed points
 
@@ -74,19 +74,19 @@ this sentence has been removed.
 > - p6, l249 Perhaps `Axiom` is clearer than `Parameter`?
 `Parameter` is a synonym for `Axiom` that nobody uses except people expecting to be able to instantiate it which they cannot.
 
-I picked `Parameter` based on its usage description in the Coq manual.
+We picked `Parameter` based on its usage description in the Coq manual.
 Since it is rarely used, it has been changed to `Axiom` instead.
 
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
-You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
+> You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
 
 Theorem 4.12 b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
 
 > - Is there really no relation between the inferred context and the original one in Theorem 5.15? I would expect that they have the same erasure.
-Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.
+> Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.
 
 Yes, you're correct, the inferred context should erase to the erasure of the original context.
-The theorem statement has been updated along with the preceding paragraph.
+The theorem statement (now Theorem 4.15) has been updated along with the preceding paragraph.
 
 > - Since Figure 22 does not report the times, is it necessary to show the `Time` commands? Is it to show how you timed?
 
