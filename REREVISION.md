@@ -68,11 +68,8 @@ Lemmata 5.9 and 5.10 now have explicit quantifications for clarity.
 
 > - p5, l228 "Constructors construct constructions if a larger size than their (co)recursive functions." is still there even though it is non-informative. How about "Constructors produce values of a larger size than their arguments." or something similar? Because I do not know what the recursive function of a constructor is.
 
-Rephrased to the following:
-
-> Similarly to the example with the naturals,
-  the (co)recursive arguments of a constructor must have a smaller size
-  than the fully-applied constructor itself.
+As part of the restructuring of the Overview to instead be included in Related Work,
+this sentence has been removed.
 
 > - p6, l249 Perhaps `Axiom` is clearer than `Parameter`?
 `Parameter` is a synonym for `Axiom` that nobody uses except people expecting to be able to instantiate it which they cannot.
@@ -83,7 +80,7 @@ Since it is rarely used, it has been changed to `Axiom` instead.
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
 
-Theorem 5.12 b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
+Theorem 4.12 b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
 
 > - Is there really no relation between the inferred context and the original one in Theorem 5.15? I would expect that they have the same erasure.
 Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.

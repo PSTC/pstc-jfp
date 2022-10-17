@@ -230,7 +230,7 @@ It uses the following metafunctions:
     Note that the decomposition of $t$ may perform reductions using \whnf.
   \item \getrecvar, given a function type $t$ and an index $n$, returns the position size variable of the annotation on the $n$th inductive argument type, while \getcorecvar returns the position size variable of the annotation on the coinductive return type.
     Essentially, they retrieve the position size variable of the annotation on the primary \corecursive type of a \cofixpoint type.
-  \item \shift replaces all position size annotations $s$ (\ie $\floor{s} \in \V^*$) by their successor $\hat{s}$.
+  \item \shift replaces all position size annotations $s$ (\ie where $s = \hat{\tau}^{n}$) by their successor $\hat{s}$.
 \end{itemize}
 
 Although the desired \cofixpoint is the $m$th one in the block of mutually-defined \cofixpoints, we must still size-infer and type-check the entire mutual definition.
