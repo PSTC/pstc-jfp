@@ -1,11 +1,11 @@
 \section{Well-Formedness of (Co)Inductive Definitions}\label{sec:wf-ind}
 
-In this section we define what it means for a \coinductive definition to be \emph{well-formed}, including some required auxilliary definitions.
+In this section we define what it means for a \coinductive definition to be \emph{well-formed}, including some required auxillary definitions.
 A signature is then well formed if each of its \coinductive definitions are well-formed.
 Note that although we prove subject reduction for \lang without nested inductive types, we include their definitions for completeness.
 
 \begin{definition}[Strict Positivity]
-  Given some existing sigature $\Sigma$, the variable $x$ occurs \emph{strictly positively} in the term $t$, written $x \POS t$, if any of the following holds:
+  Given some existing signature $\Sigma$, the variable $x$ occurs \emph{strictly positively} in the term $t$, written $x \POS t$, if any of the following holds:
 
   \begin{itemize}
     \item $x \notin \FV(t)$

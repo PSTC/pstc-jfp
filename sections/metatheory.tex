@@ -46,7 +46,7 @@ Recall that we define $\rhd$ as the congruent closure of \reduction and $\rhd^*$
   For all terms $e,t$ and $x$ free in $e$, we have
   $\subst{e}{x}{t}^{\dagger} = \subst{e^\dagger}{x}{t^\dagger}$, where
   $-^\dagger$ denotes the Takahashi translation (simultaneous
-  single-step reduction of all redexes in left-most inenr-most order)
+  single-step reduction of all redexes in left-most inner-most order)
   in $\gg$.
 \end{lemma}
 
@@ -140,7 +140,7 @@ We exploit this fact and break subject reduction explicitly with the following c
 By cumulativity, the target can be typed as $\nat^{\hat{\upsilon}^{3}}$ (that is, with size $\hat{\hat{\hat{\upsilon}}}$).
 By \refrule{case}, the second branch must then have type $\prod{x}{\app{\Box}{\nat^{\hat{\hat{\upsilon}}}}}{\nat^\infty}$ (and so it does).
 Then the case expression is well typed with type $\nat^\infty$.
-However, once we reduce the the case expression, we end up with a term that is no longer well typed.
+However, once we reduce the case expression, we end up with a term that is no longer well typed.
 \begin{displaymath}
   \app{(\abs{A}{\Type{}}{\abs{x}{A}{\Zero}})}
     {(\app{\Box^\infty}{\nat^{\hat{\hat{\upsilon}}}})}
@@ -233,7 +233,7 @@ suggested by the proof attempt:
     and the derivation rules may have typing judgements as premises.
   \item A new size irrelevant typing judgement is needed, similar to that
     introduced by \citet{barras-thesis}. While \lang is probably size
-    irrelevant, this is not clear in the model without an explicit judgment.
+    irrelevant, this is not clear in the model without an explicit judgement.
   \item Fixpoint type annotations require explicit size annotations
     (\ie are no longer merely position terms) and explicitly abstract over a size
     variable, and fixpoints are explicitly applied to a size expression.
@@ -288,7 +288,7 @@ universe cumulativity to the existing universe hierarchy in \CIChatminus.
 We follow the set-theoretical model presented by \citet{not-so-simple-cc},
 where $\Prop$ is treated proof-irrelevantly:
 its set-theoretical interpretation is the set $\set{\emptyset, \set{\emptyset}}$,
-and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabitated propositions)
+and a type in $\Prop$ is either $\set{\emptyset}$ (representing true, inhabited propositions)
 or $\emptyset$ (representing false, uninhabited propositions).
 
 Impredicativity of function types is encoded using a \emph{trace encoding} \citep{aczel-trace}.
@@ -486,7 +486,7 @@ $\Val(e')_{\subst{\rho}{f}{\psi_\kappa}}^{\subst{\pi}{\upsilon}{\kappa}}
 moving the substitution by $\infty$ into the valuation as $\kappa$.
 More generally, for any term $e$ along with valuations $\pi$, $\rho$,
 one would like to have ordinal $\Infty(e; \upsilon)_\rho^\pi$ such that the
-following infinite-size subsitutivity property holds:
+following infinite-size substitutivity property holds:
 $$\forall \kappa \geq \Infty(e; \upsilon)_\rho^\pi,
   \Val(e)_{\rho}^{\subst{\pi}{\upsilon}{\kappa}}
   = \Val(\subst{e}{\upsilon}{\infty})_{\rho}^{\pi}$$
@@ -632,7 +632,7 @@ $\psi_\alpha =
 %
 And so one sees that one has pushed both $\nu,\upsilon$ to $\infty$.
 %
-Formalising the idea, it turns out that the key to the solution of
+Formalizing the idea, it turns out that the key to the solution of
 computing the $\infty$ size is to compute
 $\Infty(e;\upsilon{\upsilon_i}_{i=1}^n)_\rho^\pi$ for a set of size
 variables.
