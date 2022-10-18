@@ -80,7 +80,7 @@ Since it is rarely used, it has been changed to `Axiom` instead.
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 > You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
 
-Theorem 4.12 b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
+Theorem 4.12 (previously Theorem 5.12) b) now also quantifies over Γ₁ and Γ₂ in Section 4.5 and in the Appendix.
 
 > - Is there really no relation between the inferred context and the original one in Theorem 5.15? I would expect that they have the same erasure.
 > Completeness is usually supposed to help avoid degenerate inference such as always producing the empty environment.
@@ -126,14 +126,14 @@ then `Evar`s would need to be handled as well.
 
 > - p7, l302 "This aligns with Coq’s current behaviour, where list Set is not a subtype of list Type despite the presence of cumulativity where Set is a subtype of Type.". Is this issue not partially solved by cumulative inductive types?
 
-To my knowledge, cumulative inductive types are slightly different:
+To our knowledge, cumulative inductive types are slightly different:
 `list` instantiated at universe level `i`, or
 `list@{i} : Type@{i} -> Type@{i}`,
 is a subtype of `list@{j} : Type@{j} -> Type@{j}` if `i < j`,
 but `list@{i} A ≤ list@{j} A` still only holds if the parameters are the same.
 
 > - p12, l532 "some size substitution ρ, ρx{υ↦s} = x{υ↦ρs}"
-This is difficult to parse, please separate the two inline maths by more than punctuation. For instance you could write "we have".
+> This is difficult to parse, please separate the two inline maths by more than punctuation. For instance you could write "we have".
 
 Added "we have that" before the equation.
 
@@ -150,7 +150,7 @@ Replaced "in op. cit." with "by Abel et al. (2017)."
 Replaced `:` with `|` in set notation.
 
 > - p14, l642 "sets Axioms, Rules, (Barendregt, 1993)".
-Spurious comma.
+> Spurious comma.
 
 Rephrased sentenced to make clear that Axioms and Rules come from Barendregt's PTS,
 while Elims does not.
