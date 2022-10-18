@@ -72,10 +72,11 @@ As part of the restructuring of the Overview to instead be included in Related W
 this sentence has been removed.
 
 > - p6, l249 Perhaps `Axiom` is clearer than `Parameter`?
-`Parameter` is a synonym for `Axiom` that nobody uses except people expecting to be able to instantiate it which they cannot.
+> `Parameter` is a synonym for `Axiom` that nobody uses except people expecting to
+> be able to instantiate it which they cannot.
 
 We picked `Parameter` based on its usage description in the Coq manual.
-Since it is rarely used, it has been changed to `Axiom` instead.
+Since it is rarely used, it has been changed to `Axiom` instead. (l1936)
 
 > - In Theorem 5.12 it would useful to quantify over Γ₁, t, e and Γ₂ explicitly.
 > You did address this point partially, but only t and e are explicitly quantified. I find it odd to only partially quantify objects.
@@ -103,11 +104,11 @@ but this has been changed to _etc._ for consistency with the rest of the paper.
 
 > - p3, l107 "annotated with a size annotation". "annotation" here is superfluous.
 
-Removed the second "annotation".
+Removed the second "annotation". (l107)
 
 > - p4, l159 "in Sacchini (2011)" does not make sense, maybe replace "in" by "from"?
 
-Replaced "in" by "from".
+Replaced "in" by "from". (l170)
 
 > - p6, footnote 2. If you go in this kind of details, why not also include existential variables? Both evars and section variables are not per se part of the kernel are they?
 
@@ -135,38 +136,38 @@ but `list@{i} A ≤ list@{j} A` still only holds if the parameters are the same.
 > - p12, l532 "some size substitution ρ, ρx{υ↦s} = x{υ↦ρs}"
 > This is difficult to parse, please separate the two inline maths by more than punctuation. For instance you could write "we have".
 
-Added "we have that" before the equation.
+Added "we have that" before the equation. (l440)
 
 > - p12, l542 "in Abel et al. (2017)"
 
-Replaced "in" with "by".
+Replaced "in" with "by". (l450)
 
 > - p12, l543. Your use of "op. cit." seems wrong, and the hyperlink does not point to anything.
 
-Replaced "in op. cit." with "by Abel et al. (2017)."
+Replaced "in op. cit." with "by Abel et al. (2017)." (l451)
 
 > - p14, l613. I would use the pipe (`|`) notation for set comprehension rather than the colon notation which may be confusing when speaking about typing. Note that you use the pipe notation on page 22.
 
-Replaced `:` with `|` in set notation.
+Replaced `:` with `|` in set notation. (l521)
 
 > - p14, l642 "sets Axioms, Rules, (Barendregt, 1993)".
 > Spurious comma.
 
 Rephrased sentenced to make clear that Axioms and Rules come from Barendregt's PTS,
-while Elims does not.
+while Elims does not. (l501)
 
 > - p16, l693. You renamed CONV to CUMUL as I suggested, but you did not change the reference to it in your list. This jumps out as it is the only item with no hyperlink.
 
-Fixed hyperlink to CUMUL.
+Fixed hyperlink to CUMUL. (l537)
 
 > - p22, l968 "where each these changes"
 
-Added "of".
+Added "of". (l861)
 
 > - p22, footnote 4, "based on Barras (2012)."
 
-Added "work by".
+Added "work by". (l872)
 
 > - p35, l1581. Thank you for introducing the notation. Perhaps you could even give its definition in math terms: `⌊v^n⌋ := v` and `⌊∞⌋ := ∞`.
 
-Added a sentence describing the metafunction in mathematical terms.
+Added a sentence describing the metafunction in mathematical terms. (l1477)
