@@ -53,14 +53,19 @@ These terms are required to be bare in order to preserve subject reduction witho
 both of which would violate backward compatibility with Coq.
 We give an example of the loss of subject reduction when type annotations aren't bare in \autoref{sec:metatheory:sr:bare}
 % \citet{cic-hat-minus} discusses the issue in further detail.
-Similarly, we use $t^\infty$ to denote \textit{full terms}, which appear in signatures.
+
+In the syntax of signatures, we use the metanotation $t^\infty$ to denote \textit{full terms},
+which are sized terms with only infinite sizes and no size variables.
+Note that where bare terms occur within sized terms, they remain bare in full terms.
+Similarly, we use the metanotation $t^*$ to denote \textit{position terms},
+whose usage is explained in the next subsubsection.
 
 \subsubsection{Fixpoints and Cofixpoints}
 
 In contrast to \CIChat and \CIChatminus, \lang has mutual \cofixpoints.
 In a mutual fixpoint $\fix{m}{f_k^{n_k}}{t_k^*}{e_k}$, each $\defn{f_k^{n_k}}{t_k^*}{e_k}$ is one fixpoint definition.
 $n_k$ is the index of the recursive argument of $f_k$, and $\kw{fix}_m$ means that the $m$th fixpoint definition is selected.
-Instead of bare terms, fixpoint type annotations are \textit{position terms} $t^*$,
+Instead of bare terms, fixpoint type annotations are position terms $t^*$,
 where size annotations are either removed or replaced by a \textit{position annotation} $\ast$.
 They occur on the inductive type of the recursive argument, as well as the return type if it is an inductive with the same or smaller size.
 For instance (using $\new{t \rightarrow u}$ as syntactic sugar for $\prod{\any}{t}{u}$),
@@ -78,7 +83,7 @@ Position annotations mark the size annotation locations in the type of the \cofi
 This is why we can give the $\mathit{minus}$ fixpoint the type $\Nat^{\hat{\upsilon}} \rightarrow \Nat^\infty \rightarrow \Nat^{\hat{\upsilon}}$, for instance.
 In general, if a \cofixpoint has a position annotation on an argument type and the return type,
 we say that it is \textit{size preserving} in that argument.
-Inuitively, $f$ is size preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
+Intuitively, $f$ is size preserving over an argument $e$ if using $\app{f}{e}$ in place of $e$ should be allowed, size-wise.
 
 \subsubsection{Environments and Signatures}
 
@@ -96,7 +101,8 @@ to represent the presence of some declaration binding $x$, the given assumption,
 and similarly for $\Gamma_G$ and $\Delta$.
 
 Signatures consist of mutual \coinductive definitions.
-For simplicity, throughout the judgements in this paper, we assume some fixed, implicit signature $\Sigma$.
+For simplicity, throughout the judgements in this paper, we assume some fixed, implicit signature $\Sigma$ separate from the global environment,
+so that well-formedness of environments can be defined separately from that of \coinductive definitions.
 Global environments and signatures should be easily extendible to an interleaving of declarations and \coinductive definitions,
 which would be more representative of a real program.
 A mutual \coinductive definition
@@ -125,7 +131,7 @@ As a concrete example, the usual $\Vector$ type (using $\new{(\assm{x}{t}) \righ
       \assm{\VCons&}{(\assm{n}{\Nat}) \to A \to \app{\Vector}{A}{(\app{\Succ}{n}))}}}.
 \end{align*}
 
-As mentioned in the previous section, unlike \CIChat and \CIChatminus, our \coinductive definitions do not have parameter polarity annotations.
+As mentioned in the previous section, unlike \CIChat and \CIChatminus, our \coinductive definitions don't have parameter polarity annotations.
 In those languages, for $\Vector$'s parameter for instance, they might write $(\assm{A^+}{\Type{}})$, giving it positive polarity, so that 
 $\app{\Vector^\infty}{\Nat^s}{n}$ is a subtype of $\app{\Vector^\infty}{\Nat^{\hat{s}}}{n}$.
 
@@ -133,7 +139,10 @@ As is standard, the well-formedness of \coinductive definitions depends not only
 We reproduce the \textit{strict positivity} conditions in \autoref{sec:wf-ind}, and refer the reader to clauses I1--I9 in \citet{cic-hat-minus}, clauses 1--7 in \mbox{\citet{cic-hat}}, and the Coq Manual~\citep{coq} for further details.
 As \lang doesn't support nested \coinductives,
 we don't need the corresponding notion of \textit{nested positivity}.
-Furthermore, we assume that our fixed, implicit signature is well-formed.
+Furthermore, we assume that our fixed, implicit signature is well-formed,
+or that each definition in the signature is well-formed.
+The definitions of well-formedness of \coinductives and signatures
+are also given in \autoref{sec:wf-ind}.
 
 \subsection{Reduction and Convertibility}
 
@@ -165,22 +174,23 @@ A variable $x^{\set{\vec{\upsilon \mapsto s}}}$ bound to $\defn{x}{t}{e}$ in the
 can be thought of as a delayed application of the sizes $\vec{s}$,
 with the definition implicitly abstracting over all size variables $\vec{\upsilon}$.
 Therefore, the ``free size variables'' of the annotated variable are those in $\vec{s}$,
-and given some size substitution $\rho$,
+and given some size substitution $\rho$, we have that
 $\rho x^{\set{\vec{\upsilon \mapsto s}}} = x^{\set{\vec{\upsilon \mapsto \rho s}}}$.
 Meanwhile, we treat all $\vec{\upsilon}$ in the definition as \emph{bound},
-so that $\rho(\Gamma_1 \defn{x}{t}{e} \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
+so that $\rho(\Gamma_1 (\defn{x}{t}{e}) \Gamma_2) = (\rho\Gamma_1)(\defn{x}{t}{e})(\rho\Gamma_2)$,
 skipping over all definitions, and similarly for global environments.
 
 Finally, $\new{\ph \equiv \ph}$ is syntactic equality up to $\alpha$-equivalence (renaming),
+the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term,
 and $\new{\norm{\ph}}$ yields the cardinality of its argument (\eg sequence length, set size, \etc).
 
 We define reduction ($\reduce$) as the congruent closure of the reductions,
 multi-step reduction ($\rhd^*$) in \autoref{fig:reductions} as the reflexive--transitive closure of $\rhd$,
 and convertibility ($\conv*$) in \autoref{fig:convertibility}.
 The latter also includes $\eta$-convertibility,
-which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) in \citet{conversion}.
+which is presented informally in the Coq manual~\citep{coq} and formally (but part of typed conversion) by \citet{conversion}.
 Note that there are no explicit rules for symmetry and transitivity of convertibility
-because these properties are derivable, as proven in\opcitt{conversion}
+because these properties are derivable, as proven by \citet{conversion}.
 
 \subsection{Subtyping and Positivity}\label{subsec:typing:subtyping}
 
@@ -193,7 +203,10 @@ Notice that both $\infty \sqsubseteq \succ{\infty}$ and $\succ{\infty} \sqsubset
 \input{figures/subtyping.tex}
 
 The subtyping rules in \autoref{fig:subtyping} extend those of cumulative CIC with rules for sized \coinductive types.
-In other words, they extend those of \CIChat, \CIChatminus, and \CChatomega with universe cumulativity (and a $\Prop$ universe).
+In other words, they extend those of \CIChat, \CIChatminus, and \CChatomega with universe cumulativity.
+The name $\Set$ is retained merely for uniformity with Coq's kernel;
+it could also have been named $\Type{0}$.
+
 Inductive types are \emph{covariant} in their size annotations with respect to subsizing (\refrule{st-ind}),
 while coinductive types are \emph{contravariant} (\refrule{st-coind}).
 Coming back to the examples in the previous section, this means that
@@ -231,12 +244,12 @@ Additionally, we use $\any$ to omit irrelevant constructions for readability.
 
 \input{figures/typing.tex}
 
-The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms, \Rules, and \Elims in \autoref{fig:axruel}, which describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
+The typing rules for sized terms are given in \autoref{fig:typing}. As in CIC, we define the three sets \Axioms and \Rules \citep{PTS}, as well as \Elims, in \autoref{fig:axruel}.
+These describe how universes are typed, how products are typed, and what eliminations are allowed in case expressions, respectively.
 Metafunctions that construct important function types for inductive types, constructors, and case expressions are listed in \autoref{fig:metafunctions}; they are also used by the inference algorithm in \autoref{sec:algorithm}.
 
-Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{conv} \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
-Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction,
-and the erasure metafunction $\new{\erase{\ph}}$ removes all size annotations from a sized term.
+Rules \refnorule{var-assum}, \refnorule{const-assum}, \refnorule{univ}, \refnorule{cumul}, \refnorule{pi}, and \refnorule{app} are essentially unchanged from CIC.
+Rules \refnorule{lam} and \refnorule{let} differ only in that type annotations need to be bare to preserve subject reduction.
 
 The first significant usage of size annotations are in Rules \refnorule{var-def} and \refnorule{const-def}.
 If a variable or a constant is bound to a term in the local or global environment, it is annotated with a size substitution such that the term is well typed after performing the substitution, allowing for proper $\delta$-/$\Delta$-reduction of variables and constants.
@@ -270,7 +283,7 @@ In \refrule{case}, a case expression has three parts:
       the parameter variables $\dom{\Delta_p}$ in the indices' types are bound to the parameters $\vec{p}$ of the target type.
       As usual, the universe of the motive $U$ is restricted by the universe of the \coinductive $U'$ according to \Elims.
 
-      (This presentation follows that of Coq, but differs from that by~\citet{cic-hat-minus, cic-hat-l, cc-hat-omega}, where the case expression contains a return type in which the index and target variables are free and explicitly stated, in the syntactic form $\vec{y}.x.P$.)
+      (This presentation follows that of Coq 8.12, but differs from those of Coq 8.13 and by~\citet{cic-hat-minus, cic-hat-l, cc-hat-omega}, where the case expression contains a return type in which the index and target variables are free and explicitly stated, in the syntactic form $\vec{y}.x.P$.)
 
     \item The \textbf{branches} $e_j$, one for each constructor $c_j$.
       Again, the parameters of its type are fixed to $\vec{p}$, while ranging over the constructor arguments.
@@ -282,7 +295,7 @@ We take the annotated type $t_k$ of the $k$th \cofixpoint definition to be conve
 However, instead of the guard condition, we ensure termination/productivity using size expressions.
 
 The main complexity in these rules is supporting size-preserving \cofixpoints.
-We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints using the positivity and negativity judgments.
+We must restrict how the size variable $v_k$ appears in the type of the \cofixpoints using the positivity and negativity judgements.
 For fixpoints, the type of the $n_k$th argument, the recursive argument, is an inductive type annotated with a size variable $v_k$.
 For cofixpoints, the return type is a coinductive type annotated with $v_k$.
 The positivity or negativity of $v_k$ in the rest of $t_k$ indicate where $v_k$ may occur other than in the \corecursive position.

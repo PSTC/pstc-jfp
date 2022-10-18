@@ -15,11 +15,11 @@
     {\WF{\Gamma_G, \Gamma (x:t \coloneqq e)}}
   \and
   \inferrule[\defrule{wf-global-assum}]
-    {\Gamma, \mt \vdash t: U \and x \notin \Gamma_G}
+    {\Gamma_G, \mt \vdash t: U \and x \notin \Gamma_G}
     {\WF{\Gamma_G (\Assm{x}{t}), \mt}}
   \and
   \inferrule[\defrule{wf-global-def}]
-    {\Gamma, \mt \vdash e: t \and x \notin \Gamma_G}
+    {\Gamma_G, \mt \vdash e: t \and x \notin \Gamma_G}
     {\WF{\Gamma_G (\Defn{x}{t}{e}), \mt}}
 \end{mathpar}
 \caption{Well-formedness of environments}

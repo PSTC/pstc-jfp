@@ -14,14 +14,14 @@ and discuss the practical feasibility of the implementation as well as the probl
 
 The core type checking/inference algorithm is found in Coq's \emph{kernel}.
 Before reaching the kernel, terms go through a round of \emph{pretyping}
-where existential metavariables (essentially typed holes) are solved for
+where existential metavariables (essentially typed holes) are solved for,
 and the recursive indices of fixpoints are determined.
 Size inference is implemented as an augmentation of the existing type checking/inference algorithm,
 making use of the recursive indices.
 
 \autoref{fig:kernel} summarizes the relevant file/module structure.
 Most of the added code specifically for size inference is in the new \texttt{Sized} and \texttt{Subsizing} modules;
-the remaining structure remains the same as that of Coq 8.13's codebase~\citep{coq}.
+the remaining structure remains the same as that of Coq 8.12's codebase~\citep{coq}.
 (\texttt{Subsizing} is only separate from \texttt{Sized} to break circular dependencies: it relies on the global environment, while the environment depends on \texttt{Sized}.)
 
 \begin{figure}
@@ -122,7 +122,7 @@ Other \texttt{Sized}-related overhead is smaller, although not insignificant,
 especially \texttt{Constraint} operations, which form a proportion slightly larger than that of \RecCheck.
 We conjecture that some of this other overhead can be reduced with more clever implementations.
 For instance, instead of explicitly performing size substitutions, the sizes can be looked up as needed;
-or instead of explicitly passing around a size state, we could use a state monad or a mutable global state;
+or instead of explicitly passing around a size state, we could use mutable global state;
 or constraints could be stored in a data structure incrementally checked for negative cycles,
 similar to the current implementation of universe level constraints.
 We therefore focus our attention on \solve and \RecCheck, where performance degradation may not be limited to mere implementational details.
@@ -173,7 +173,7 @@ Time Definition nats4  := (nats3, nats3, nats3, nats3).
 Time Definition nats5  := (nats4, nats4, nats4, nats4).
 Time Definition nats6  := (nats5, nats5, nats5, nats5).
 \end{minted}
-\caption{Coq definitions with an explosion in size variables and elapsed time}
+\caption{Coq definitions with an explosion in size variables and in elapsed time}
 \label{fig:nats}
 \end{figure}
 
@@ -249,7 +249,7 @@ Because termination checking is inextricably tied to type checking,
 the entire fixpoint needs to be type checked to verify whether the current set of indices is correct,
 and this type checking in the kernel can fail if the fixpoint still contains unsolved metavariables.
 Furthermore, because we only have access to the bare environments (\ie with no sizes inferred),
-local definitions in scope at the fixpoint may not yet known to be size preserving,
+local definitions in scope at the fixpoint may not yet be known to be size preserving,
 thus causing the check to fail.
 As an example, in the following Coq term, \coqinline{id} has no size annotations and is therefore treated as \emph{not} size preserving,
 even though it ought to be, which causes the recursive call on the smaller argument wrapped in \coqinline{id} to not pass type checking.
@@ -265,4 +265,4 @@ let id (x : nat) := x in
 %
 This suggests that size inference should be done during the pretyping phase:
 size inference could be viewed as part of the elaboration step from the surface CIC to the core \lang.
-This, too, is beyond the scope of this paper, especially as there is no past work on the interaction between size inference and elaboration to build on.
+This, too, is beyond the scope of this paper, especially as there is no past work on formalizing the interaction between size inference and elaboration to build on.

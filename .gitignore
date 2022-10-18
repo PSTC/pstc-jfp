@@ -9,6 +9,8 @@
 *.pdf
 *.synctex.gz
 .ipynb_checkpoints/
+.fleet/
 _minted-main
 minted/
 TAGS
+!pstc.pdf

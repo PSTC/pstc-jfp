@@ -5,7 +5,7 @@ found in \autoref{sec:algorithm:metatheory}.
 Further details when not specified can be found in \citet{f-hat}, \citet{cic-hat}, and \citet{cc-hat-omega}.
 
 \begin{theorem}[Soundness of \RecCheck (SRC)]\label{thm:src}
-If $\RecCheck(C', \tau, V^*, V^\neq) = C$, for every $\rho$ such that $\rho \vDash C$,
+If $\RecCheck(C', \tau, V^*, V^\neq) = C$, then for every $\rho$ such that $\rho \vDash C$,
 given a fresh size variable $\upsilon$, there exists a $\rho'$ such that the following all hold:
 \begin{enumerate}
   \item $\rho' \vDash C'$;
@@ -84,7 +84,7 @@ Let $V^\iota \coloneqq \bigsqcap V^*$, and let $V^-$ be the set of size variable
 \begin{enumerate}
   \item \RecCheckLoop terminates on all inputs.
   \item If $\RecCheckLoop{C', \Gamma, \vec{\tau_k}, \vec{t_k}, \vec{e_k}} = C$ with an initial position variable set $\mathcal{V}^*$,
-  then for every $i \in \vec{k}$, $\RecCheck{C', \tau_i, \PV(t_i), \SV(\Gamma, t_i, e_i) \setminus \PV(t_i)} \subseteq C$ with a final position variable set $\mathcal{V}^*_\subseteq \subseteq \mathcal{V}^*$.
+  then for every $i \in \vec{k}$, $\RecCheck{C', \tau_i, \PV(t_i), \SV(\Gamma, t_i, e_i) \setminus \PV(t_i)} \subseteq C$ with some final position variable set $\mathcal{V}^*_\subseteq \subseteq \mathcal{V}^*$.
 \end{enumerate}
 \end{theorem}
 
@@ -177,7 +177,7 @@ Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment,
 Suppose we have the following:
 \begin{enumerate}[label=\alph*)]
   \item \label{item:soundness:wf} $\forall \rho \vDash C, \WF{\Gamma_G, \rho \Gamma}$.
-  \item \label{item:soundness:sv} If $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
+  \item \label{item:soundness:sv} If $\exists \Gamma_1, \Gamma_2, e, t$ such that $\Gamma \equiv \Gamma_1 (\defn{x}{t}{e}) \Gamma_2$ then $\forall \upsilon \in \SV(e, t), \upsilon \notin \SV(\Gamma_G, \Gamma_1)$.
 \end{enumerate}
 Then the following hold:
 \begin{enumerate}
@@ -206,7 +206,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
   Let $\rho \vDash C \cup C_1 \cup C_2$.
   By the induction hypotheses on the premise, we have $C, \Gamma_G, \rho \Gamma \vdash \rho e : \rho t$.
   By \autoref{lem:subtyping}, we have $\Gamma_G, \rho \Gamma \vdash \rho t \leq \rho u$.
-  Then by \refrule{conv}, we have $\Gamma_G, \rho \Gamma \vdash \rho e : \rho u$.
+  Then by \refrule{cumul}, we have $\Gamma_G, \rho \Gamma \vdash \rho e : \rho u$.
   \item We will prove the cases for definitions, let expressions, case expressions, and fixpoints;
   the case for cofixpoints is similar to that of fixpoints, and the remaining cases are straightforward.
   \begin{itemize}
@@ -295,13 +295,13 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
         \item $\forall \rho_{4j} \vDash C \cup C_{4j}, \Gamma_G, \rho_{4j} \Gamma \vdash \rho_{4j} e_j : \rho_{4j} (\branchtype{\vec{p}}{c_j}{\upsilon}{P})$.
       \end{itemize}
       We can apply $\rho$ to all four of these.
-      By \refrule{conv}, we have that $\Gamma_G, \rho \Gamma \vdash \rho P : \rho (\motivetype{\vec{p}}{U}{I_k^{\hat{\upsilon}}})$.
+      By \refrule{cumul}, we have that $\Gamma_G, \rho \Gamma \vdash \rho P : \rho (\motivetype{\vec{p}}{U}{I_k^{\hat{\upsilon}}})$.
       Because $\rho \vDash \casesize{I_k^s, \hat{\upsilon}}$,
       $\rho s \sqsubseteq \rho \hat{\upsilon}$ if $I_k$ is inductive and
       $\rho \hat{\upsilon} \sqsubseteq s$ if $I_k$ is coinductive.
       Then by Rules \refnorule{st-ind} or \refnorule{st-coind} respectively,
       we have $\Gamma_G, \rho \Gamma \vdash \rho I_k^s \leq \rho I_k^{\hat{\upsilon}}$,
-      and by \refrule{conv}, we have $\Gamma_G, \rho \Gamma \vdash \rho e : \rho (\app{I_k^{\hat{\upsilon}}}{\vec{p}}{\vec{a}})$.
+      and by \refrule{cumul}, we have $\Gamma_G, \rho \Gamma \vdash \rho e : \rho (\app{I_k^{\hat{\upsilon}}}{\vec{p}}{\vec{a}})$.
       Finally, using \refrule{case}, we have our goal.
     \item \refrule{a-fix}.
       \begin{displaymath}
@@ -359,7 +359,7 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
       while $\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho' \sqsubseteq \rho$ when applied to position variables.
       Since $\Delta_m$ contains no position variables, and all position variables appear positively in $u_m$, by \autoref{lem:posneg-subtyping},
       $\Gamma_G, \rho \Gamma \vdash (\set{\upsilon_m \mapsto \rho \tau_m} \circ \rho') t_m \leq \rho t_m$.
-      The goal then follows by \refrule{conv} on \autoref{eqn:soundness:fix}. \qed
+      The goal then follows by \refrule{cumul} on \autoref{eqn:soundness:fix}. \qed
   \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -368,14 +368,14 @@ Suppose \ref{item:soundness:wf} and \ref{item:soundness:sv} hold.
 Let $\Sigma$ be a fixed, well-formed signature, $\Gamma_G$ a global environment, $\Gamma$ a local environment, $C$ a constraint set, and $\rho \vDash C$ a solution to the constraint set.
 \begin{enumerate}
   \item \label{thm:completeness:check} If $\Gamma_G, \rho\Gamma \vdash e : \rho t$,
-    then there exist $C', \rho'$ such that:
+    then there exist $C', \rho', e'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and
       \item $C, \Gamma_G, \Gamma \vdash \erase{e} \Leftarrow t \rightsquigarrow C', e'$ where $\Gamma_G, \Gamma \vdash \rho' e' \conv* e$.
     \end{itemize}
   \item \label{thm:completeness:infer} If $\Gamma_G, \rho\Gamma \vdash e : t$,
-    then there exist $C, \rho'$ such that:
+    then there exist $C, \rho', t'$ such that:
     \begin{itemize}
       \item $\rho' \vDash C'$;
       \item $\forall \upsilon \in \SV(\Gamma, t), \rho \upsilon = \rho' \upsilon$; and

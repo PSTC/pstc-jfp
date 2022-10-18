@@ -4,7 +4,7 @@ The history of sized types is vast and varied.
 Extensive prior accounts are given in dissertations by \citet{lambda-hat-diss} and \citet{abel-diss}.
 Here, we focus on two lineages towards sized dependent type theories: first, the more-or-less direct ancestry of \lang, and second, a contrasting line of work on type systems with explicit higher-order sized types.
 
-\subsection{Ancestry of \titlelang}
+\subsection{Ancestry of \titlelang}\label{sec:ancestry}
 
 Perhaps the most well-known work on sized types is by \citet{hughes},
 who introduce sized types for a Hindley--Milner type system with \coinductives and a size inference algorithm,
@@ -48,6 +48,112 @@ All three include size inference algorithms similar to that of \CIChat.
 There are prototype implementations of \CIChatminus~\citep{cicminus} and \CIChatsub~\citep{cic-wf}.
 It appears that there were also plans to implement sized types in Coq by \citet{coq-hat}, but seem to be abandoned.
 
+\subsection{Past Work in Detail}
+
+Past work \CIChat, \CIChatminus, and \CChatomega add sized types to CIC with the explicit philosophy of requiring no size annotations:
+a user would write bare CIC code, and the type checker would have the simultaneous task of synthesizing and checking types,
+while also inferring all the size annotations.
+However, Coq's core calculus extends quite a bit beyond merely CIC,
+and the presentation of various analogous features differ subtly but nontrivially.
+The goal of \lang is to bring sized types in CIC a few steps closer to Coq,
+while keeping with the original philosophy.
+In the process of conforming to Coq's calculus, to minimize the changes required to it so that a prototype implementation is
+viable, we must also discard some features from past work.
+
+\subsubsection{Cumulativity}\label{sec:overview:comparison}
+
+\CIChat and \CIChatminus are extensions of CIC, with dependent functions, a universe hierarchy, inductive definitions, case expressions, and fixpoints.
+\CChatomega dually has coinductive streams and cofixpoints instead.
+\CIChat and \CIChatminus differ in that \CIChat includes a size inference algorithm but no proof of strong normalization,
+while \CIChatminus is proven to be strongly normalizing, with no size inference algorithm explicitly given.
+\CIChatminus also restricts where size variables may appear in terms.
+Since \lang doesn't have such restrictions, it can be thought of as an extension of \CIChat combined with \CChatomega,
+featuring sized (mutual) \coinductive types and (mutual) \cofixpoints,
+and further adding universe cumulativity, which is an existing feature in Coq.
+As noted in \autoref{sec:metatheory}, cumulativity and impredicativity complicate the set-theoretic model by \citet{cic-hat-minus}.
+
+\subsubsection{Definitions}
+
+Coq's core calculus contains two kinds of variables:%
+\footnote{It also has a third type of variable for section-level bindings;
+this is beyond the scope of \lang.}
+one for local bindings from functions, function types, and let expressions,
+and one for global bindings from vernacular declarations such as \coqinline{Definition} and \coqinline{Axiom} (which we call \textit{constants}).
+\lang adds let expressions and global declarations to \CIChat,
+with separate local and global environments,
+and definitions in the environments in the style of a PTS with definitions~\citep{PTSD}.
+
+Global definitions and let expressions let us define aliases for types for concision and organization of code,
+which necessitates a form of size polymorphism if we want the aliases to behave as we expect.
+For instance, if we globally define $\Defn{N}{\Type{}}{\Nat^\upsilon}$,
+and later want to define an addition function with type $N \rightarrow N \rightarrow N$,
+it would \emph{not} be correct to perform the na\"ive substitution to get $\Nat^\upsilon \rightarrow \Nat^\upsilon \rightarrow \Nat^\upsilon$:
+addition intuitively does not always return something of the same size.
+
+What we want instead is to allow a different size for each use of $N$,
+so that the above type reduces to $\Nat^{\upsilon_1} \rightarrow \Nat^{\upsilon_2} \rightarrow \Nat^{\upsilon_3}$.
+This means $N$ must be polymorphic in the sizes involved in its definition,
+the same kind of rank-1 or prenex polymorphism in ML-style let polymorphism for type variables.
+To retain backward compatibility, there is no explicit size quantification or application ---
+every definition and let binding is implicitly quantified over \emph{all} size variables involved.
+The corresponding notion of size instantiation comes in the form of size substitution annotations on variables and constants, so that $N^{\set{\upsilon \mapsto s}}$ for instance reduces to $\Nat^s$.
+% These and all other size annotations are inferrable, as detailed in \autoref{sec:algorithm}.
+
+Having definitions and annotated variables and constants also means we need to now allow sizes to appear
+not only in the bodies of let expressions but also in the bodies of functions and in the branches of case expressions,
+in contrast to the restrictions of \CIChatminus.
+
+\iffalse
+\paragraph*{} Recall that the inference algorithm will return a size constraint set.
+To handle inference of global declarations, after the size inference of one declaration,
+we now have two options:
+pass the resulting constraints along to inference of subsequent declarations,
+or ``solve'' the constraints by reassigning size variables with sizes that satisfy those constraints.
+Global definitions in Coq are independent of one another in terms of type checking,
+so we choose the second option for its modularity:
+constraints derived from previous definitions should not interfere with the size inference of the current definition.
+However, solving constraints introduces a nontrivial overhead,
+so we stick with the first option for local definitions.
+
+Unfortunately, even when only solving constraints for global declarations,
+our implementation of the size inference algorithm in the Coq codebase takes a rather significant performance hit.
+This is in part due to the proliferation of sizes in which the definitions are polymorphic,
+as the worst-case time complexity of solving is at least quadratic in the number of size variables,
+and every usage of each definition requires fresh size variables for it.
+We analyze the performance of our implementation and discuss possible solutions in \autoref{sec:impl}.
+\fi
+
+\subsubsection{Polarities}
+
+\Coinductive definitions in \CIChatminus are also annotated with polarities for each of its parameters to augment the subtyping relation.
+For example, if the type parameter of the usual $\List$ type is given a positive polarity,
+then $\app{\List^r}{\Nat^s} \leq \app{\List^r}{\Nat^{\hat{s}}}$ holds
+because $\Nat^s \leq \Nat^{\hat{s}}$ holds,
+which in turn holds because $\hat{s}$ is a larger size than $s$.
+Similarly, a negative polarity reverses the subtyping relation,
+while an invariant polarity induces no subtyping relation from the parameters at all.
+It is not known whether these polarity annotations are inferrable from the \coinductive definitions alone,
+so again in the name of backward compatibility, \lang doesn't have these annotations,
+and treats all parameters as invariant.
+This aligns with Coq's current behaviour, where \coqinline{list Set} is not a subtype of \coqinline{list Type}
+despite the presence of cumulativity where \coqinline{Set} is a subtype of \coqinline{Type}.
+
+Unfortunately, the invariance of parameters and subtyping of sized \coinductive types interferes with nested \coinductive types,
+where the type itself may appear as a parameter to another type in the type of its constructors.
+Subject reduction is violated: it becomes possible to have a well-typed term that becomes no longer well typed after a reduction step,
+as demonstrated in in \autoref{sec:metatheory:sub-red}.
+The approach \lang takes is to disallow nested \coinductives, removing them from \CIChat.
+
+\subsubsection{Implementation}
+
+% Should the implementation just have a different name? Coq-hat-star?
+Whereas \lang can be seen as an extension of \CIChat and \CChatomega,
+its implementation is an extension of Coq:
+all features of Coq orthogonal to sized types remain untouched,
+such as universe polymorphism, strict $\Prop$, various primitives, modules, and so on.
+The implementation also retains Coq's nested \coinductives,
+especially as it doesn't appear possible for size inference to produce the kind of annotations that break subject reduction.
+
 \subsection{Higher-Order Sized Types}
 
 For the purposes of size inferrability from unannotated code,
@@ -67,6 +173,9 @@ which are also implemented in MiniAgda.
 
 \cite{nbe} prove normalization of a higher-order sized dependent type theory with naturals, but without bounded size quantification.
 To our knowledge, this is the only formalization of higher-order sized dependent types in the literature.
+Additionally, they also add a notion of \emph{size irrelevance} so that more terms are convertible when their sizes don't matter;
+this is an orthogonal feature that can be added to \lang as well,
+since the issues size irrelevance aims to resolve can also arise here.
 
 Sized types with higher-order bounded size quantification are implemented in Agda%
 \footnote{For Agda's documentation on sized types, see \url{https://agda.readthedocs.io/en/latest/language/sized-types.html}.};

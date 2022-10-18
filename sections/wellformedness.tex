@@ -1,11 +1,11 @@
 \section{Well-Formedness of (Co)Inductive Definitions}\label{sec:wf-ind}
 
-In this section we define what it means for a \coinductive definition to be \emph{well-formed}, including some required auxilliary definitions.
+In this section we define what it means for a \coinductive definition to be \emph{well-formed}, including some required auxillary definitions.
 A signature is then well formed if each of its \coinductive definitions are well-formed.
 Note that although we prove subject reduction for \lang without nested inductive types, we include their definitions for completeness.
 
 \begin{definition}[Strict Positivity]
-  Given some existing sigature $\Sigma$, the variable $x$ occurs \emph{strictly positively} in the term $t$, written $x \POS t$, if any of the following holds:
+  Given some existing signature $\Sigma$, the variable $x$ occurs \emph{strictly positively} in the term $t$, written $x \POS t$, if any of the following holds:
 
   \begin{itemize}
     \item $x \notin \FV(t)$
@@ -13,7 +13,7 @@ Note that although we prove subject reduction for \lang without nested inductive
     \item $t \conv \prod{x}{u}{v}$ and $x \notin \FV(u)$ and $x \POS v$
   \end{itemize}
 
-  If nested inductive types are permitted, then $x \POS t$ may hold if the following also holds:
+  If nested \coinductive types are permitted, then $x \POS t$ may hold if the following also holds:
 
   \begin{itemize}
     \item $t \conv I_k^\infty ~ \vec{p} ~ \vec{a}$ where
@@ -39,6 +39,8 @@ Note that although we prove subject reduction for \lang without nested inductive
 
   In short, $x \nPOS_I t$ if $t \conv \prodctx{\Delta}{\app{I}{\vec{p}}{\vec{a}}}$ and $x \POS \Delta$ and $x \notin \FV(\vec{a})$.
 \end{definition}
+
+Note that if nested \coinductive types are permitted, then strict and nested positivity are mutually defined.
 
 \begin{definition}[Constructor Type]
   The term $t$ is a constructor type for $I$ when:
@@ -67,6 +69,28 @@ Note that although we prove subject reduction for \lang without nested inductive
     \item For every $i, j$, all \coinductive types in the terms $\codom{\Delta_p}, \codom{\Delta_i}, \codom{\Delta_j}$ are annotated with $\infty$.
   \end{enumerate}
 \end{definition}
+
+Well-formedness of a signature $\Sigma$ is then defined in terms of
+the well-formedness of its \coinductive definitions, given below.
+
+\begin{figure}[h]
+\centering
+\begin{flushleft}
+\fbox{$\WF{\Sigma}$}
+\end{flushleft}
+\vspace{-2\baselineskip}
+\begin{mathpar}
+\inferrule{~}{\WF{\mt}}
+\and
+\inferrule{
+  \WF{\Sigma} \\
+  \vec{p} = \dom{\Delta_p} \\
+  \defn{\langle \app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i} \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}}}} \textit{ is well formed}
+}{
+  \WF{\Sigma(\defn{\langle \app{I_i}{\Delta_p}}{\prodctx{\Delta_i}{U_i} \rangle}{\seq{\assm{c_j}{\prodctx{\Delta_j}{\app{I_j}{\vec{p}}{\vec{t}_j}}}}})}
+}
+\end{mathpar}
+\end{figure}
 
 %%% Local Variables:
 %%% TeX-master: "../main.tex"
