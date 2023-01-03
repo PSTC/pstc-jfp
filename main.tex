@@ -1,4 +1,4 @@
-\documentclass[online]{jfp}
+\documentclass[online,OA,nolinenum]{jfp}
 
 \usepackage{newtxmath}
 \let\Bbbk\relax % amssymb tries to define \Bbbk
@@ -51,10 +51,12 @@
 \begin{document}
 
 \journaltitle{JFP}
-\cpr{Cambridge University Press}
-\doival{10.1017/xxxxx}
+\cpr{The Author(s),}
+\doival{10.1017/S0956796822000120}
 \totalpg{\pageref{lastpage}}
-\jnlDoiYr{2021}
+\jnlDoiYr{2023}
+\lefttitle{J. Chan et al.}
+\righttitle{Is Sized Typing for Coq Practical?}
 
 % To reconsider
 %\title{Practical Sized Typing for Coq}
@@ -64,19 +66,19 @@
   \author{Jonathan Chan}
   \affiliation{
     University of British Columbia\\
-    \emaillink{jcxz@cs.ubc.ca}\\
-    \emaillink{jcxz@seas.upenn.edu}
+    (\emails{\elink{jcxz@cs.ubc.ca},
+    \elink{jcxz@seas.upenn.edu}})
   }
   \author{Yufeng Li}
   \affiliation{
     University of Waterloo\\
-    \emaillink{yufeng.li@uwaterloo.ca}\\
-    \emaillink{yufeng.li@mail.mcgill.ca}
+    (\emails{\elink{yufeng.li@uwaterloo.ca},
+    \elink{yufeng.li@mail.mcgill.ca}})
   }
   \author{William J. Bowman}
   \affiliation{
     University of British Columbia\\
-    \emaillink{wjb@williamjbowman.com}
+    (\email{\elink{wjb@williamjbowman.com}})
   }
 \end{authgrp}
 
@@ -95,11 +97,11 @@
 \input{sections/conclusion.tex}
 \input{sections/acknowledgements.tex}
 
-\paragraph*{Conflicts of Interest.} None.
+\section{Conflicts of Interest.} None.
+
 \bibliographystyle{JFPlike}
 \bibliography{main.bib}
 
-\clearpage
 \appendix
 
 \input{sections/wellformedness.tex}

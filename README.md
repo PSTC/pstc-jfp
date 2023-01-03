@@ -26,5 +26,5 @@ but this is currently buggy and might break when compiling the `minted` stuff.
 ## JFP LaTeX Styles
 
 JFP's instructions for submission can be found [here](https://www.cambridge.org/core/journals/journal-of-functional-programming/information/instructions-contributors),
-and the LaTeX styles can be found [here](https://www.cambridge.org/core/services/aop-file-manager/file/5efdfbf0c990970b59d33052).
+and the LaTeX styles can be found [here](https://www.cambridge.org/core/services/aop-file-manager/file/62c85bd958968d042914d994).
 The files needed are `jfp.cls` and `jfplike.bst`.
