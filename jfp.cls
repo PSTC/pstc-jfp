@@ -1,10 +1,10 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{jfp}[2020/07/23 V1.5 Standard LaTeX document class]
+\ProvidesClass{jfp}[2022/06/27 V1.8 Standard LaTeX document class]
 %
 \newif\ifcopoddhead\global\copoddheadfalse
 \newif\ifOA\global\OAfalse
-\newif\ifnatbiboff\global\natbibofffalse
 \newif\ifnolineno\global\nolinenofalse
+\newif\ifnatbiboff\global\natbibofffalse
 \newif\ifeqnum\global\eqnumfalse
 \newif\ifkeyedin\global\keyedinfalse
 \newif\iffirstproof\global\firstprooffalse
@@ -18,7 +18,6 @@
 \newif\ifguestedit\global\guesteditfalse
 \newif\ifaubreakand\global\aubreakandfalse
 \newif\ifnoundrule\global\noundrulefalse
-\newif\ifcombtoc\global\combtocfalse
 \newif\if@twoauthors\global\@twoauthorsfalse
 \newif\if@affsep\global\@affsepfalse
 \newif\iflettersize\global\lettersizetrue%
@@ -51,7 +50,6 @@
 \newif\ifchapteronly\global\chapteronlyfalse
 \newif\ifcontentonly\global\contentonlyfalse
 \newif\ifchaptercontent\global\chaptercontentfalse
-\newif\iftoc\global\tocfalse
 \newif\iftwofig\global\twofigfalse
 \newif\ifsidebotfig\global\sidebotfigfalse
 \newif\ifsidetopfig\global\sidetopfigfalse
@@ -107,7 +105,6 @@
 \newif\ifcountempty\global\countemptyfalse
 \newif\ifpddata\global\pddatafalse
 \newif\iffloatid\global\floatidfalse
-\newif\iftocfile\global\tocfilefalse
 \newif\ifmathtif\global\mathtiffalse%
 \newif\ifAbstract\global\Abstractfalse
 \newif\ifmergexml\global\mergexmlfalse
@@ -125,7 +122,6 @@
 \newif\ifeditorial\global\editorialfalse%%
 \newif\ifDhead\global\Dheadfalse%%
 \newif\ifEPF\global\EPFfalse%
-\newif\ifmergetoc\global\mergetocfalse%
 \newif\ifnoauthor\global\noauthorfalse%
 \newif\ifdbleed\global\dbleedfalse%
 \newif\ifsupertitle\global\supertitlefalse%
@@ -143,7 +139,6 @@
 \newif\if@obituary\global\@obituaryfalse
 \newif\if@puretex\global\@puretexfalse
 \newif\if@final\@finalfalse
-\newif\if@toc\global\@tocfalse
 \newif\if@aa\global\@aafalse
 \newif\if@rp\global\@rpfalse
 \newif\if@issue\global\@issuefalse
@@ -163,7 +158,6 @@
 \newif\if@corres\global\@corresfalse
 \newif\if@reflink\global\@reflinkfalse
 \newif\ifdhead\global\dheadfalse
-\newif\ifvoltoc\global\voltocfalse
 \newif\ifauthor \authorfalse%
 \newif\iffloutsidemargin\floutsidemarginfalse
 \newif\ifflinsidemargin\flinsidemarginfalse
@@ -217,7 +211,6 @@
 \newif\iftestbody\testbodytrue
 \newif\ifbibchapter\global\bibchapterfalse
 \newif\ifnumsqure\global\numsqurefalse
-\newif\ifnotoc\global\notocfalse
 \newif\iffirstfm\global\firstfmtrue%
 \newif\iffirstbm\global\firstbmfalse%
 \newif\ifstartfm\global\startfmtrue%
@@ -226,10 +219,6 @@
 \newif\ifswitch@CH@bkm@no\global\switch@CH@bkm@nofalse%
 \newif\iffixchapcontent\fixchapcontentfalse%
 \newif\ifdottedchapcontent\dottedchapcontenttrue%
-\newif\ifctocfixsectioncontent\ctocfixsectioncontentfalse%
-\newif\ifctocdottedsectioncontent\ctocdottedsectioncontenttrue%
-\newif\ifctocfixsubsectioncontent\ctocfixsubsectioncontentfalse%
-\newif\ifctocdottedsubsectioncontent\ctocdottedsubsectioncontenttrue%
 \newif\iffixfigurecontent\fixfigurecontentfalse%
 \newif\ifdottedfigurecontent\dottedfigurecontenttrue%
 \newif\iffixtablecontent\fixtablecontentfalse%
@@ -428,12 +417,8 @@
 \newdimen\subsubsecnwidth%
 \newdimen\pldim%
 \newdimen\authorcontentwidth%
-\newdimen\@ctocsecmaxnumdim%
-\newdimen\ctocsecnwidth%
 \newdimen\@secmaxnumdim%
 \newdimen\secnwidth%
-\newdimen\@ctocsubsecmaxnumdim%
-\newdimen\ctocsubsecnwidth%
 \newdimen\@subsecmaxnumdim%
 \newdimen\subsecnwidth%
 \newdimen\@figuremaxnumdim%
@@ -611,10 +596,6 @@
 \newskip\fixauthorcontentwidth
 \newskip\fixchapcontentwidth
 \newskip\enspacechapcontentwidth
-\newskip\ctocfixsectioncontentwidth
-\newskip\ctocenspacesectioncontentwidth%
-\newskip\ctocfixsubsectioncontentwidth
-\newskip\ctocenspacesubsectioncontentwidth%
 \newskip\enspacefigurecontentwidth
 \newskip\fixfigurecontentwidth
 \newskip\fixtablecontentwidth
@@ -633,8 +614,6 @@
 %
 \newtoks\authorrunning
 \newtoks\titlerunning
-\newtoks\tocauthor
-\newtoks\toctitle
 \newtoks\CharCounttoks
 
 \newwrite\@maintab%%
@@ -653,7 +632,6 @@
 \DeclareOption{tabloidsize}{\lettersizefalse\legalsizefalse\tabloidsizetrue}%
 \DeclareOption{registermark}{\registermarktrue}
 \DeclareOption{keyedin}{\keyedintrue}
-\DeclareOption{combtoc}{\combtoctrue}
 \DeclareOption{dbleed}{\global\dbleedtrue}
 \DeclareOption{supertitle}{\global\supertitletrue}
 \DeclareOption{bkmerge}{\global\bkmergetrue}
@@ -678,12 +656,11 @@
 \DeclareOption{ddraft}{\setlength\overfullrule{5pt}\draftrule.25pt\drafttrue}
 \DeclareOption{online}{\global\onlinetrue}
 \DeclareOption{final}{\setlength\overfullrule{0pt}}
-\DeclareOption{nolinenum}{\global\nolinenotrue}
 \DeclareOption{contact}{\setlength\overfullrule{0pt}\contacttrue}
+\DeclareOption{nolinenum}{\global\nolinenotrue}
 \DeclareOption{printer}{\setlength\overfullrule{0pt}\trimrule0pt\printertrue}
 \DeclareOption{purexml}{\global\puretexfalse}
 \DeclareOption{puretex}{\global\puretextrue}
-\DeclareOption{merge}{\global\tocfiletrue}
 \DeclareOption{mathtif}{\global\mathtiftrue\global\puretextrue}
 \DeclareOption{bookreview}{\global\bookreviewtrue}
 \DeclareOption{noranges}{\global\norangestrue}
@@ -695,7 +672,6 @@
 \DeclareOption{callpaper}{\global\callpapertrue}
 \DeclareOption{texteditor}{\global\texteditortrue}
 \DeclareOption{editorial}{\global\editorialtrue}
-\DeclareOption{mergetoc}{\global\mergetoctrue}
 \DeclareOption{noauthor}{\global\noauthortrue}
 \DeclareOption{dhead}{\global\dheadtrue}
 \DeclareOption{noabstract}{\global\noabstracttrue}
@@ -704,7 +680,6 @@
 \DeclareOption{bkblurb}{\global\bkblurbtrue}
 \DeclareOption{splissue}{\global\splissuetrue}
 \DeclareOption{announcement}{\global\announcementtrue}
-\DeclareOption{voltoc}{\global\voltoctrue}
 \DeclareOption{erratum}{\global\erratumtrue}
 
 \ExecuteOptions{final}
@@ -1105,12 +1080,11 @@
       {\color{black}\scriptsize\the\JFP@linecount}\hfill
       \global\advance\JFP@linecount by \@ne}}}
 
-\def\JFP@linecountL{%
-  % comment next line out to remove line numbers
+\def\JFP@linecountL{\ifnolineno\else%
   \JFP@mk@linecount%\newsavebox{\JFP@linecount@bx}
   \begin{picture}(0,0)%\newlength\JFP@linecount@bxht
     \put(-35,-27){\usebox{\JFP@linecount@bx}}%\newcount\JFP@linecount
-  \end{picture}}
+  \end{picture}\fi}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End Parameters %%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -1299,13 +1273,12 @@
             }%
 
 
-\def\OAtext{the terms of the Creative Commons Attribution licence (\href{http://creativecommons.org/licenses/by/4.0/}{http://creativecommons.org/licenses/by/4.0/}), which permits\newline
-unrestricted re-use, distribution, and reproduction in any medium, provided the original work is properly cited.}
+\def\OAtext{This is an Open Access article, distributed under the terms of the Creative Commons Attribution licence (\href{http://creativecommons.org/licenses/by/4.0/}{http://creativecommons.org/licenses/by/4.0/}), which permits unrestricted re-use, distribution, and reproduction in any medium, provided the original work is properly cited.}
 
 \def\ps@openaccess{\let\@mkboth\@gobbletwo%
        \def\@oddhead{%
             \hbox to 0pt{\vbox{\vspace*{4.9pt}%
-            {{\psplainfont\global\copoddheadtrue{\it\journal@title}\if@issue\ {\bf\volume@no},\ {\edtext\@edno}\else\fi,\ \@totalpg\ pages,\ \@cpyear.\hspace{5.5pt}{{{\copyright}\ \@copyline\ \@cpyear}}. This is an Open Access article, distributed under\hfill{\raisebox{-1.9pt}{\foliofont\thepage}}\par{\psplainfont\OAtext\@par}{\vbox{\psplainfont\doitext\@doi}}}}}}}
+            {{\psplainfont\global\copoddheadtrue{\it\journal@title}\if@issue\ {\bf\volume@no},\ {\edtext\@edno}\else\fi,\ \@totalpg\ pages,\ \@cpyear.\hspace{5.5pt}{{{\copyright}\ \@copyline\ \@cpyear}}. Published by Cambridge University Press. \hfill{\raisebox{-1.9pt}{\foliofont\thepage}}\par{\psplainfont\OAtext\@par}{\vbox{\psplainfont\doitext\@doi}}}}}}}
             \let\@evenfoot\@empty%
         \let\@oddfoot\@empty%
        \let\@evenhead\@oddhead}
@@ -3051,35 +3024,12 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
     }%
 \def\mrhfont{\fontfamily{\sfdefault}\fontsize{9}{9}\bfseries\selectfont}
 
-\def\ps@mtochead{%
-    \let\@oddfoot\@empty%
-    \let\@evenfoot\@empty%
-    \def\@oddhead{%
-        \hbox to \typewidth{{\mrhfont\contentsname}\hfill{\moddfolio}}%
-        }%
-    \def\@evenhead{%
-        \hbox to \textwidth{{\mevenfolio}\hfill{\mrhfont\contentsname}}%
-        }%
-    \let\@mkboth\markboth
-    \def\chaptermark##1{\markboth{\@versorh}{\@rectorh}}%
-%    \def\sectionmark##1{\markright{##1}}%
-    }
-
 \def\mfoliofont{\fontfamily{\sfdefault}\fontsize{9}{9}\bfseries\selectfont}
 
 \def\moddfolio{{\mfoliofont\thepage}}
 
 \def\mevenfolio{{\mfoliofont\thepage}}
 
-\def\ps@mtocopen{%
-    \let\@evenfoot\@empty%
-       \def\@oddfoot{%
-        \vbox to 4pt{\hbox to \textwidth{\hfill{\moddfolio}\hfill}}}
-    \def\@oddhead{\relax}%
-    \def\@evenhead{\relax}%
-    \let\@mkboth\markboth
-    \def\chaptermark##1{\markboth{\@versorh}{\@rectorh}}}
-%
 \def\ps@empty{%
       \def\@oddfoot{}%
       \let\@evenfoot\@oddfoot
@@ -3226,383 +3176,39 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
  \bibcleanup
 }%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  End Bibliography Section %%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TOC  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-\def\@tochead#1{\thispagestyle{empty}%
-  \vbox{\vspace*{6.6pc}
-    \noindent{\fontsize{12}{12}\selectfont #1\endgraf}}\vspace*{4pc}}
-%
-\newcommand\tableofcontents{%
-\UnicodeCharacter{13}{\ignorespaces}%
-   \let\l@title\l@chapter%
-   \let\l@section\l@ctocsection%
-   \let\l@subsection\l@ctocsubsection%
-    \@tochead{\contentsname}%
-   \markboth{\contentsname}{\contentsname}%
-   \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
-   \@starttoc{toc}%
-\UnicodeCharacter{13}{ \ignorespaces}}%
-%% LIST OF FIGURES%
-\newcommand\listoffigures{%
-   \setlength\overfullrule{\z@}%
-   \chapter*{\listfigurename}%
-   \markboth{\listfigurename}{\listfigurename}%
-   \@starttoc{lof}}%
-%% LIST OF TABLES %%
-\newcommand\listoftables{%
-   \setlength\overfullrule{\z@}%
-   \chapter*{\listtablename}%
-   \markboth{\listtablename}{\listtablename}%
-   \@starttoc{lot}}%
 %
 \newcommand\@pnumwidth{.5pc}%
 \newcommand\@tocrmarg{2em}%
 \newcommand\@minitocrmarg{1.5pc}%
 \newcommand\@dotsep{4.5}%
 \setcounter{tocdepth}{3}%
-%%
-\def\fmbmcontentfont{}%
-\def\fmbmcontentpagefont{}%
-%%
-\fixfmbmcontentwidth=\z@%
-%%
-\newcommand\l@fmbm[2]{%
-   {\par%
-      \iffirstfm\vspace*{\z@}\else\vskip\z@\fi%
-      \iffirstbm\vskip13.1\p@\else\fi%
-      \noindent\rightskip\@pnumwidth\parfillskip-\@pnumwidth%
-      \ifdottedfmbmcontent%
-         {\fmbmcontentfont#1}%
-         \nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak%
-         \hb@xt@\@pnumwidth{\hfil{\ifstartfm{\it page\ }\fi{\fmbmcontentpagefont#2}}}\par%
-      \else%
-         \noindent\@hangfrom{\hbox to \fixfmbmcontentwidth{}}%
-         {\fmbmcontentfont#1}\hfill{\ifstartfm{\it page\ }\fi{\fmbmcontentpagefont#2}}\par%
-      \fi}%
-   \global\firstfmfalse%
-   \global\startfmfalse%
-   \global\firstbmfalse}%
-%% Author contentsline %%
-\def\authorcontentfont{\ifmergetoc\fontsize{10}{12}\selectfont\itshape\leftskip\z@\rightskip5pc plus1fill{}\else\fontsize{10}{12}\selectfont\bfseries\leftskip\z@\rightskip5pc plus1fill{}\fi}%
-%%
-\fixauthorcontentwidth=\z@%
-%%
-\newcommand\l@author[2]{%
-   {\par%
-      \iffixauthorcontent%
-         \rightskip\@pnumwidth\parfillskip -\@pnumwidth%
-         \noindent\@hangfrom{\hbox to \authorcontentwidth{}}%
-      \else%
-         \rightskip\@tocrmarg%
-         \advance\rightskip by\z@\@plus2cm%
-         \parfillskip-\@tocrmarg%
-               \noindent\@hangfrom{\hbox to \authorcontentwidth{}}%
-      \fi%
-      {\authorcontentfont#1}%
-      \ifmergetoc\else\nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\fi\hfill\nobreak%
-      \ifmergetoc\else\hb@xt@\@pnumwidth{\hfil\chapcontentpagefont\iffirstproof 000\else#2\fi}\fi\par}}%
-%% Chapter contentsline %
-%%
-\def\chapcontentnumfont{\fontsize{10}{12}\bfseries\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\chapcontentfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\chapcontentpagefont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-%%
-\def\chappunct#1{\gdef\@chappunct{#1}}\chappunct{}%
-%%
-\newcommand\chpmax[1]{%
-         \setbox\tempbox\hbox{\chapcontentnumfont#1\@chappunct}%
-         \global\chapwidth\wd\tempbox}%
-%%
-\def\chapnumberline#1{\ifswitch@CH@bkm@no#1\quad\else\hb@xt@\@tempdima{\hbox to \chapwidth{\hfill\chapcontentnumfont#1\@chappunct}\hfil}\fi}%
-%%
-\fixchapcontentwidth=\z@%
-\enspacechapcontentwidth=1em%
-%%
-\newcommand\l@chapter[2]{%
-   \overfullrule\z@%
-   \par\addvspace{12\p@}%
-   \let\numberline\chapnumberline%
-   \ifnum\c@tocdepth >\m@ne%
-      \iffirstfm\vskip \z@\else\vskip 13\p@\fi%
-      \global\firstfmtrue%
-      \global\firstbmtrue%
-      \iffixchapcontent%
-         \setlength\@tempdima{\fixchapcontentwidth}%
-      \else%
-         \setlength\@tempdima{\chapwidth}%
-         \advance\@tempdima\enspacechapcontentwidth%
-      \fi%
-      \ifdottedchapcontent%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@tocrmarg%
-            \advance\rightskip by\z@\@plus2cm%
-            \parfillskip-\@tocrmarg%
-            \leavevmode%
- %           \advance\leftskip\@tempdima%
-%            \hskip-\leftskip%
-            {\chapcontentfont#1}%
-            \penalty\@highpenalty%
-         \endgroup%
-      \else%
-         \begingroup%
-            \parindent\z@%
-            %\rightskip\@pnumwidth plus1fill%
-            %\parfillskip-\@pnumwidth%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip-\leftskip%
-            \noindent{\chapcontentfont#1\par}%
-            \vskip-\baselineskip%
-            %\nobreak\hfil %
-            \nobreak\hbox to\textwidth{\chapcontentpagefont\hss #2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \fi%
-      \vskip\z@%
-   \fi}%
-%%
-%% CTOC Section contentsline %%
-%%
-\def\minitocsectioncontentnumfont{\fontsize{8.5}{10}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsectioncontentnumfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsectioncontentfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsectioncontentpagefont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-%%
-\def\ctocsectionpunct#1{\gdef\@ctocsectionpunct{#1}}\ctocsectionpunct{}%
-%%
-\newcommand\ctocsecmax[1]{%
-   \setbox\tempbox\hbox{\ctocsectioncontentnumfont#1\@ctocsectionpunct}%
-   \@ctocsecmaxnumdim\wd\tempbox%
-   \global\ctocsecnwidth\wd\tempbox}%
-%%
-\newcommand\sectmax[1]{%
-         \setbox\tempbox\hbox{\ctocsectioncontentnumfont#1\@ctocsectionpunct}%
-         \@secmaxnumdim\wd\tempbox%
-         \global\secnwidth\wd\tempbox}%
-%%
-\def\ctocsecnumberline#1{%
-         \hb@xt@\@tempdima{%
-            \hbox to \ctocsecnwidth{%
-               \hfill\hb@xt@\@ctocsecmaxnumdim{\ctocsectioncontentnumfont#1\@ctocsectionpunct\hfil}\hfil}}}%
-%%
-\def\minitocsecnumberline#1{%
-         \hb@xt@\@tempdima{%
-            \hbox to \ctocsecnwidth{%
-               \hfill\hb@xt@\@ctocsecmaxnumdim{\minitocsectioncontentnumfont#1\@ctocsectionpunct\hfil}\hfil}}}%
-%%
-\ctocfixsectioncontentwidth=\z@%
-\ctocenspacesectioncontentwidth=1em%
-%%
-\newcommand\l@ctocsection[2]{}%
-\newcommand\l@subsubsection[2]{}%
-\newcommand\l@paragraph[2]{}%
-%% CTOC Subsection contentsline %%
-\def\minitocsubsectioncontentnumfont{\fontsize{8.5}{10}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsubsectioncontentnumfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsubsectioncontentfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\ctocsubsectioncontentpagefont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-%%
-\def\ctocsubsectionpunct#1{\gdef\@ctocsubsectionpunct{#1}}\ctocsubsectionpunct{}%
-%%
-\newcommand\ctocsubsecmax[1]{%
-   \setbox\tempbox\hbox{\ctocsubsectioncontentnumfont#1\@ctocsubsectionpunct}%
-   \@ctocsubsecmaxnumdim\wd\tempbox%
-   \global\ctocsubsecnwidth\wd\tempbox}%
-%%
-\newcommand\subsectmax[1]{%
-         \setbox\tempbox\hbox{\ctocsubsectioncontentnumfont#1\@ctocsubsectionpunct}%
-         \@subsecmaxnumdim\wd\tempbox%
-         \global\subsecnwidth\wd\tempbox}%
-%%
-\def\ctocsubsecnumberline#1{%
-         \hb@xt@\@tempdima{\hbox to \ctocsubsecnwidth{\hfill\hb@xt@\@ctocsubsecmaxnumdim{\ctocsubsectioncontentnumfont#1\@ctocsubsectionpunct\hfill}}\hfil}}%
-%%
-\def\minitocsubsecnumberline#1{%
-         \hb@xt@\@tempdima{\hbox to \ctocsubsecnwidth{\hfill\hb@xt@\@ctocsubsecmaxnumdim{\minitocsubsectioncontentnumfont#1\@ctocsubsectionpunct\hfill}}\hfil}}%
-%%
-\ctocfixsubsectioncontentwidth=\z@%
-\ctocenspacesubsectioncontentwidth=1em%
-%%
-\newcommand\l@ctocsubsection[2]{%
-\ifmono%
-   \overfullrule\z@%
-   \par\addvspace{\z@}%
-   \let\numberline\ctocsubsecnumberline%
-   \ifnum\c@tocdepth >\m@ne%
-      \iffirstfm\vskip \z@\else\vskip 13\p@\fi%
-      \global\firstfmtrue%
-      \global\firstbmtrue%
-      \ifctocfixsubsectioncontent%
-         \setlength\@tempdima{\ctocfixsubsectioncontentwidth}%
-      \else%
-         \setlength\@tempdima{\subsecnwidth}%
-         \advance\@tempdima\ctocenspacesubsectioncontentwidth%
-      \fi%
-      \ifctocdottedsubsectioncontent%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@tocrmarg%
-            \advance\rightskip by\z@\@plus2cm%
-            \parfillskip-\@tocrmarg%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-        \hskip-\leftskip%
-        \advance\leftskip\chapwidth%
-        \advance\leftskip\enspacechapcontentwidth%
-        \advance\leftskip\secnwidth%
-        \advance\leftskip\ctocenspacesectioncontentwidth%
-            {\ctocsubsectioncontentfont#1\unskip}%
-            \nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak%
-            \hb@xt@\@pnumwidth{\hfil\ctocsectioncontentpagefont#2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \else%
-         \begingroup%
-            \parindent\z@%
-            %\rightskip\@pnumwidth plus1fill%
-            \parfillskip-\@pnumwidth%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip-\leftskip%
-            \noindent{\ctocsubsectioncontentfont#1\par}%
-            \vskip-\baselineskip%
-            %\nobreak\hfil%
-            \nobreak\hbox to\textwidth{\ctocsubsectioncontentpagefont\hss #2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \fi%
-      \vskip\z@%
-   \fi%
-\fi}%
-%% Figure contentsline %%
-\def\figurecontentnumfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\figurecontentfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\figurecontentpagefont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-%%
-\def\figurepunct#1{\gdef\@figurepunct{#1}}\figurepunct{}%
-%%
-\newcommand\figmax[1]{%
-   \setbox\tempbox\hbox{\figurecontentnumfont#1\@figurepunct}%
-   \@figuremaxnumdim\wd\tempbox%
-   \global\figurecontwidth\wd\tempbox%
-   \advance\figurecontwidth\enspacefigurecontentwidth}%
-%%
-\def\figurenumberline#1{\hb@xt@\@tempdima{\hbox to \figurecontwidth{\figurecontentnumfont#1\@figurepunct\hfill}\hfil}}%
-%%
-\fixfigurecontentwidth=\z@%
-\enspacefigurecontentwidth=6\p@%
-%%
-\newcommand\l@figure[2]{%
-   \overfullrule\z@%
-   \par\addvspace{\z@}%
-   \let\numberline\figurenumberline%
-   \ifnum\c@tocdepth >\m@ne%
-      \iffirstfm\vskip \z@\else\vskip 13\p@\fi%
-      \global\firstfmtrue%
-      \global\firstbmtrue%
-      \iffixfigurecontent%
-         \setlength\@tempdima{\fixfigurecontentwidth}%
-      \else%
-         \setlength\@tempdima{\figurecontwidth}%
-         \advance\@tempdima\enspacefigurecontentwidth%
-      \fi%
-      \ifdottedfigurecontent%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@tocrmarg%
-            \advance\rightskip by\z@\@plus2cm%
-            \parfillskip-\@tocrmarg%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip-\leftskip%
-            {\figurecontentfont#1}%
-            \nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak%
-            \hb@xt@\@pnumwidth{\hfil\figurecontentpagefont#2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \else%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@pnumwidth plus1fill%
-            \parfillskip-\@pnumwidth%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip-\leftskip%
-            \noindent{\figurecontentfont#1\par}%
-            \vskip-\baselineskip%
-            %\nobreak\hfil%
-            \nobreak\hbox to\textwidth{\figurecontentpagefont\hss #2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \fi%
-      \vskip\z@%
-   \fi}%
-%% Table contentsline %%
-\def\tablecontentnumfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\tablecontentfont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-\def\tablecontentpagefont{\fontsize{10}{12}\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-%
-\def\tablepunct#1{\gdef\@tablepunct{#1}}\tablepunct{}%
-%%
-\newcommand\tabmax[1]{%
-   \setbox\tempbox\hbox{\tablecontentnumfont#1\@tablepunct}%
-   \@tablemaxnumdim\wd\tempbox%
-   \global\tablecontwidth\wd\tempbox%
-   \advance\tablecontwidth\enspacetablecontentwidth}%
-%%
-\def\tablenumberline#1{\hb@xt@\@tempdima{\hbox to \tablecontwidth{\tablecontentnumfont#1\@tablepunct\hfill}\hfil}}%
-%%
-\fixtablecontentwidth=\z@%
-\enspacetablecontentwidth=6\p@%
-%%
-\newcommand\l@table[2]{%
-   \overfullrule\z@%
-   \par\addvspace{\z@}%
-   \let\numberline\tablenumberline%
-   \ifnum\c@tocdepth >\m@ne%
-      \iffirstfm\vskip \z@\else\vskip 13\p@\fi%
-      \global\firstfmtrue%
-      \global\firstbmtrue%
-      \iffixtablecontent%
-         \setlength\@tempdima{\fixtablecontentwidth}%
-      \else%
-         \setlength\@tempdima{\tablecontwidth}%
-         \advance\@tempdima\enspacetablecontentwidth%
-      \fi%
-      \ifdottedtablecontent%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@tocrmarg%
-            \advance\rightskip by\z@\@plus2cm%
-            \parfillskip-\@tocrmarg%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip-\leftskip%
-            {\tablecontentfont#1}%
-            \nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak%
-            \hb@xt@\@pnumwidth{\hfil\tablecontentpagefont#2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \else%
-         \begingroup%
-            \parindent\z@%
-            \rightskip\@pnumwidth plus1fill%
-            %\parfillskip -\@pnumwidth%
-            \leavevmode%
-            \advance\leftskip\@tempdima%
-            \hskip -\leftskip%
-            \noindent{\tablecontentfont#1\par}%
-            \vskip-\baselineskip%
-            %\nobreak\hfil%
-            \nobreak\hbox to\textwidth{\tablecontentpagefont\hss #2}\par%
-            \penalty\@highpenalty%
-         \endgroup%
-      \fi%
-      \vskip\z@%
-   \fi}%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  End FM  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\tableofcontents{%
+   \title{\contentsname}%
+   \markboth{\contentsname}{\contentsname}%
+   \@starttoc{toc}}%
+
+\newcommand*\l@title[2]{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+  \fi}
+\newcommand*\l@section{\@dottedtocline{1}{1.5em}{2.3em}}
+\newcommand*\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
+\newcommand*\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
+\newcommand*\l@paragraph{\@dottedtocline{4}{10em}{5em}}
+\newcommand*\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
+
 %
 \def\Copyright{\leavevmode\fontsize{6.5}{11}\selectfont{\ooalign{\hfil\raise-.25pt\hbox{\fontsize{5}{11}\selectfont C\hskip.5pt}%
                 \hfil\crcr\mathhexbox20D}}}
@@ -4006,6 +3612,7 @@ unrestricted re-use, distribution, and reproduction in any medium, provided the 
 \def\QtoClient#1{\@question{{\bf Client/PM:\ #1}}}
 \def\QtoQC#1{\@question{{\bf QC:\ #1}}}
 \def\QtoGL#1{\@question{{\bf GL:\ #1}}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End Output Routine  %%%%%%%%%%%%%%%%%%%%%%
 %
 \def\spreadlong#1{\ifodd\c@page\wlog{Ignoring spreadlong}
@@ -4154,88 +3761,6 @@ breaklinks=true}
 \def\Dheadeditor#1{\gdef\@Dheadeditor{#1}}\Dheadeditor{}
 %
 \def\@TiTle{}
-%
-\def\toctltlfont{\fontsize{10}{12}\bfseries\selectfont\rightskip0pt plus 1fill{}\leftskip0pt plus 1fill{}}
-\def\tocvolfont{\fontfamily{\rmdefault}\fontsize{10}{10}\selectfont\rightskip0pt plus 1fill{}\leftskip0pt plus 1fill{}}
-\def\tocconfont{\fontsize{10}{12}\bfseries\selectfont\rightskip0pt plus 1fill{}\leftskip0pt plus 1fill{}}
-%
-\def\toctitle#1{\gdef\@toctitle{#1}}\toctitle{JOURNAL OF OCCUPATIONAL THERAPY, SCHOOLS,\endgraf \& EARLY INTERVENTION}
-
-\def\tocvolume#1{\gdef\@tocvolume{Volume\ #1}}
-\def\tocissue#1{\gdef\@tocissue{Number\ #1}}
-
-\def\tocvolumes#1{\gdef\@tocvolumes{Volumes\ #1}}
-\def\tocissues#1{\gdef\@tocissues{Numbers\ #1}}
-
-\def\tocyear#1{\gdef\@tocyear{#1}}\tocyear{2010}
-%
-\def\@tochead#1{\thispagestyle{empty}%
-  \vbox{\vspace*{-32.5pt}
-  {\toctltlfont \@toctitle\par\vskip14pt}
-  {\tocvolfont {\ifx\@tocvolume\undefined\else\@tocvolume\fi\ifx\@tocvolumes\undefined\else\@tocvolumes\fi}, {\ifx\@tocissue\undefined\else\@tocissue\fi\ifx\@tocissues\undefined\else\@tocissues\fi}, {\@tocyear}\par\vskip12pt}
-  \noindent{\tocconfont#1\endgraf}}\vskip10.5pt}
-
-\renewcommand\tableofcontents{%
-\UnicodeCharacter{13}{\ignorespaces}
-   \let\l@title\l@chapter%
-   \let\l@section\l@ctocsection%
-   \let\l@subsection\l@ctocsubsection%
-    \@tochead{\contentsname}%
-   \markboth{\contentsname}{\contentsname}%
-   \vspace*{-1.65mm}%%%%\vspace*{-4.28mm}%modified on 30-05-2009 to get the first line align to 13th line
-   \@starttoc{toc}%
-\UnicodeCharacter{13}{ \ignorespaces}}%
-
-\def\chapcontentfont{\fontsize{10}{12}\selectfont}%
-\def\chapcontentpagefont{\fontsize{10}{12}\bfseries\selectfont\leftskip\z@\rightskip\z@ plus1fill{}}%
-
-\renewcommand*\l@chapter[2]{%
-  \ifnum \c@tocdepth >\m@ne
-   \par\addvspace{6\p@}%
-    \setlength\@tempdima{2em}%
-    \begingroup
-      \parindent \z@
-      \rightskip\@tocrmarg
-%%      \parfillskip -\@pnumwidth
-%%      \leavevmode
-      {\chapcontentfont#1\par}
-       \addpenalty{-\@highpenalty}%
-      \penalty\@highpenalty
-    \endgroup
-  \fi}
-%
-\newcommand*\l@part[2]{%
-  \ifnum \c@tocdepth >\m@ne
-   \par\addvspace{12\p@}%
-    \setlength\@tempdima{2em}%
-    \begingroup
-      \parindent \z@
-      \rightskip\@tocrmarg
-%%      \parfillskip -\@pnumwidth
-%%      \leavevmode
-      {\chapcontentfont\underline{#1}\par}\vspace*{2pt}
-       \addpenalty{-\@highpenalty}%
-      \penalty\@highpenalty
-    \endgroup
-  \fi}
-%
-\renewcommand\@pnumwidth{14pt}%
-%
-\renewcommand\l@author[2]{%
-   {%
-      \par%
-      \iffixauthorcontent%
-         \rightskip\@pnumwidth\parfillskip -\@pnumwidth%
-         \noindent\@hangfrom{\hbox to \authorcontentwidth{}}%
-      \else%
-         \rightskip\@tocrmarg%
-         \advance\rightskip by\z@\@plus2cm%
-         \parfillskip-\@tocrmarg%
-               \noindent\@hangfrom{\hbox to \authorcontentwidth{}}%
-      \fi%
-      {\authorcontentfont#1\kern-3pt}%
-      \nobreak\leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak%
-      \hb@xt@\@pnumwidth{\hss\chapcontentpagefont#2\par}\par}}%
 %%%
 \def\aulabel{Au:\ }
 
@@ -4267,6 +3792,7 @@ breaklinks=true}
 
 %\newcommand{\email}{\textit{email address:}\ }%
 \newcommand{\email}{\textit{e-mail:}\ }%
+\newcommand{\emails}{\textit{e-mails:}\ }%
 
 \def\doilink#1{\ifonline\href{https://doi.org/#1}{\textcolor{blue}{#1}}\else#1\fi}
 \def\arxlink#1{\ifonline\href{https://arxiv.org/abs/#1}{\textcolor{blue}{#1}}\else#1\fi}
@@ -4359,3 +3885,19 @@ breaklinks=true}
 
 %%% \subtitle command was commented
 %%% \title command was modified with single argument.
+
+%%% V1.6
+%%%% Changes done based on the update mentioned by Charlotte mail dated November 8, 2021 8:57 PM
+
+%%% nolinenum class option defined to remove the linenumbers
+
+%%% V1.7
+%%%% Changes done based on the update mentioned by Charlotte mail dated 28 January 2022 19:44 PM
+
+%%% bst file updated for software and online entry in bib
+%%% full stop updated after the title in incollection entries
+
+%%% V1.8
+%%%% Changes done based on the update mentioned by Charlotte mail dated 23 June 2022 19:26 PM
+
+%%% Table of Contents macro modified to remove \UnicodeCharacter and the "occupational therapy" head (hardwired into the class file)
